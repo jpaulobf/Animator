@@ -1,0 +1,200 @@
+package br.com.game.animator.game.gameUI;
+
+import java.awt.AlphaComposite;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+
+import br.com.game.animator.util.ImageUtil;
+
+/**
+ * @author Jo�o Paulo
+ *
+ */
+public class GameExitMenuImpl implements GameExitMenu {
+	
+	//----------------------------------------------------------------------//
+	//--------   PROPRIEDADES 				--------------------------------//
+	//----------------------------------------------------------------------//
+	private Integer exitMenuCounter							= 0;
+	private volatile boolean showExitMenu 					= false;
+	private Integer PWIDTH									= null;
+	private Integer PHEIGHT									= null;
+	protected ImageUtil imageUtil							= null;
+	private Integer optionSelected							= 0;
+	private Integer MENU_BACKGROUND_POSITION_X				= 0;
+	private Integer MENU_BACKGROUND_POSITION_Y				= 0;
+	private final static Integer MENU_LABEL_POSITION_X 		= 22;
+	private final static Integer MENU_LABEL_POSITION_Y 		= 59;
+	private final static Integer BUTTON_YES_POSITION_X 		= 136;
+	private final static Integer BUTTON_YES_POSITION_Y 		= 157;
+	private final static Integer BUTTON_NO_POSITION_X 		= 313;
+	private final static Integer BUTTON_NO_POSITION_Y 		= 157;
+	private final static Integer BUTTON_HL_YES_POSITION_X 	= 125;
+	private final static Integer BUTTON_HL_YES_POSITION_Y 	= 143;
+	private final static Integer BUTTON_HL_NO_POSITION_X 	= 296;
+	private final static Integer BUTTON_HL_NO_POSITION_Y 	= 143;
+	
+	private BufferedImage bgExitMenu						= null;
+	private BufferedImage labelExitMenu						= null;
+	private BufferedImage buttonYesExitMenu					= null;
+	private BufferedImage buttonNoExitMenu					= null;
+	private BufferedImage highlightButtonExitMenu			= null;
+	
+	/**
+	 * Construtor Padr�o.
+	 */
+	public GameExitMenuImpl(Integer pwidth, Integer pheight, Integer currentAspectRatio) {
+		//---------------------------------------------------------//
+		//--- Atualiza o tamanho do canvas.               		---//
+		//---------------------------------------------------------//
+		this.PWIDTH 						= pwidth;
+		this.PHEIGHT 						= pheight;
+		this.imageUtil 						= new ImageUtil(pwidth, pheight, currentAspectRatio);
+		
+		this.bgExitMenu						= this.imageUtil.loadScaledImage("/res/images/quit_bg.png");
+		this.labelExitMenu					= this.imageUtil.loadScaledImage("/res/images/really_quit_question.png");
+		this.buttonYesExitMenu				= this.imageUtil.loadScaledImage("/res/images/yes_button.png");
+		this.buttonNoExitMenu				= this.imageUtil.loadScaledImage("/res/images/no_button.png");
+		this.highlightButtonExitMenu		= this.imageUtil.loadScaledImage("/res/images/yes_no_highlight.png");
+		
+		this.MENU_BACKGROUND_POSITION_X		= (this.PWIDTH / 2) - (this.bgExitMenu.getWidth() / 2);
+		this.MENU_BACKGROUND_POSITION_Y		= (this.PHEIGHT / 2) - (this.bgExitMenu.getHeight() / 2);
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.animator.gameUI.GameExitMenu#update()
+	 */
+	public void update() {
+		//---------------------------------------------------------//
+		//--- Mant�m o counter atualizado a cada chamada do 	---//
+		//--- update. 											---//
+		//---------------------------------------------------------//
+		this.exitMenuCounter++;
+	}
+	
+	/* (non-Javadoc)
+	 * @see br.com.animator.gameUI.GameExitMenu#drawExitMenu(java.awt.Graphics2D)
+	 */
+	public void drawExitMenu(Graphics2D g2d) {
+		if (this.showExitMenu) {
+			
+			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
+			
+			g2d.drawImage(this.bgExitMenu, 
+						  MENU_BACKGROUND_POSITION_X,
+						  MENU_BACKGROUND_POSITION_Y, 
+						  this.bgExitMenu.getWidth(),
+						  this.bgExitMenu.getHeight(),
+						  null);
+			
+			g2d.drawImage(this.labelExitMenu, 
+						  MENU_BACKGROUND_POSITION_X + this.imageUtil.getScaledWidth(MENU_LABEL_POSITION_X),
+						  MENU_BACKGROUND_POSITION_Y + this.imageUtil.getScaledHeight(MENU_LABEL_POSITION_Y), 
+						  this.labelExitMenu.getWidth(),
+						  this.labelExitMenu.getHeight(),
+						  null);
+			
+			if (this.optionSelected == 1) {
+				g2d.drawImage(this.highlightButtonExitMenu, 
+							  MENU_BACKGROUND_POSITION_X + this.imageUtil.getScaledWidth(BUTTON_HL_YES_POSITION_X),
+							  MENU_BACKGROUND_POSITION_Y + this.imageUtil.getScaledHeight(BUTTON_HL_YES_POSITION_Y), 
+							  this.highlightButtonExitMenu.getWidth(),
+							  this.highlightButtonExitMenu.getHeight(),
+							  null);
+			} else {
+				g2d.drawImage(this.highlightButtonExitMenu, 
+							  MENU_BACKGROUND_POSITION_X + this.imageUtil.getScaledWidth(BUTTON_HL_NO_POSITION_X),
+							  MENU_BACKGROUND_POSITION_Y + this.imageUtil.getScaledHeight(BUTTON_HL_NO_POSITION_Y), 
+							  this.highlightButtonExitMenu.getWidth(),
+							  this.highlightButtonExitMenu.getHeight(),
+							  null);
+			}
+			
+			g2d.drawImage(this.buttonYesExitMenu, 
+						  MENU_BACKGROUND_POSITION_X + this.imageUtil.getScaledWidth(BUTTON_YES_POSITION_X),
+						  MENU_BACKGROUND_POSITION_Y + this.imageUtil.getScaledHeight(BUTTON_YES_POSITION_Y), 
+						  this.buttonYesExitMenu.getWidth(),
+						  this.buttonYesExitMenu.getHeight(),
+						  null);
+			
+			g2d.drawImage(this.buttonNoExitMenu, 
+						  MENU_BACKGROUND_POSITION_X + this.imageUtil.getScaledWidth(BUTTON_NO_POSITION_X),
+						  MENU_BACKGROUND_POSITION_Y + this.imageUtil.getScaledHeight(BUTTON_NO_POSITION_Y), 
+						  this.buttonYesExitMenu.getWidth(),
+						  this.buttonYesExitMenu.getHeight(),
+						  null);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see br.com.animator.gameUI.GameExitMenu#showExitMenu()
+	 */
+	public void showExitMenu() {
+		this.showExitMenu = true;
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.animator.gameUI.GameExitMenu#hideExitMenu()
+	 */
+	public void hideExitMenu() {
+		this.showExitMenu = false;
+		this.resetCounters();
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.animator.gameUI.GameExitMenu#updateGraphics(boolean, java.lang.Integer, java.lang.Integer)
+	 */
+	public void updateGraphics(boolean fullScreen, Integer pwidth, Integer pheight, Integer currentAspectRatio) {
+		this.PWIDTH 	= pwidth;
+		this.PHEIGHT 	= pheight;
+		this.imageUtil.updateCanvasProperties(pwidth, pheight, currentAspectRatio);
+
+		this.bgExitMenu						= this.imageUtil.loadScaledImage("/res/images/quit_bg.png");
+		this.labelExitMenu					= this.imageUtil.loadScaledImage("/res/images/really_quit_question.png");
+		this.buttonYesExitMenu				= this.imageUtil.loadScaledImage("/res/images/yes_button.png");
+		this.buttonNoExitMenu				= this.imageUtil.loadScaledImage("/res/images/no_button.png");
+		this.highlightButtonExitMenu		= this.imageUtil.loadScaledImage("/res/images/yes_no_highlight.png");
+		
+		this.MENU_BACKGROUND_POSITION_X		= (this.PWIDTH / 2) - (this.bgExitMenu.getWidth() / 2);
+		this.MENU_BACKGROUND_POSITION_Y		= (this.PHEIGHT / 2) - (this.bgExitMenu.getHeight() / 2);
+	}
+	
+	/* (non-Javadoc)
+	 * @see br.com.animator.gameUI.GameExitMenu#resetCounters()
+	 */
+	public void resetCounters() {
+		this.exitMenuCounter = 0;
+		this.optionSelected = 0;
+	}
+	
+	/* (non-Javadoc)
+	 * @see br.com.animator.gameUI.GameExitMenu#nextGameOption()
+	 */
+	public void nextGameOption() {
+		this.optionSelected = (this.optionSelected + 1) % 2;
+	}
+	
+	/* (non-Javadoc)
+	 * @see br.com.animator.gameUI.GameExitMenu#previousGameOption()
+	 */
+	public void previousGameOption() {
+		this.optionSelected = (this.optionSelected - 1);
+		if (this.optionSelected < 0) {
+			this.optionSelected = 1;	
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.animator.gameUI.GameExitMenu#isShowingExitMenu()
+	 */
+	public boolean isShowingExitMenu() {
+		return (this.showExitMenu);
+	}
+	
+	/* (non-Javadoc)
+	 * @see br.com.animator.gameUI.GameExitMenu#isToExit()
+	 */
+	public boolean isToExit() {
+		return (this.optionSelected == 1);
+	}
+}
