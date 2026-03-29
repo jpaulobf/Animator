@@ -1,27 +1,8 @@
 package br.com.game.animator.input;
 
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseListener;
-import javax.swing.JOptionPane;
+public class InputHandler {
 
-import br.com.game.animator.engine.GameEngine;
-import br.com.game.animator.game.gameData.enumerators.ScreenMode;
-
-/**
- * InputHandler centraliza o tratamento de eventos de teclado e mouse.
- */
-public class InputHandler extends KeyAdapter implements MouseListener, MouseMotionListener {
-
-    private GameEngine engine;
-
-    public InputHandler(GameEngine engine) {
-        this.engine = engine;
-    }
-
-    @Override
+    /*
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
 
@@ -218,25 +199,5 @@ public class InputHandler extends KeyAdapter implements MouseListener, MouseMoti
             else engine.gameExitMenu.hideExitMenu();
         }
     }
-
-    @Override
-    public void mouseMoved(MouseEvent e) {
-        // Equivalente ao antigo testMove() da GameEngine
-        if (engine.running && engine.fullScreen) {
-            // Lógica específica para movimento em tela cheia se necessário
-        }
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-        // Equivalente ao antigo testPress() da GameEngine
-        System.out.println("Mouse Click X: " + e.getX() + " Y: " + e.getY());
-    }
-
-    // Implementações obrigatórias de interface (vazias se não usadas)
-    @Override public void mouseDragged(MouseEvent e) {}
-    @Override public void mouseClicked(MouseEvent e) {}
-    @Override public void mouseReleased(MouseEvent e) {}
-    @Override public void mouseEntered(MouseEvent e) {}
-    @Override public void mouseExited(MouseEvent e) {}
+    */
 }
