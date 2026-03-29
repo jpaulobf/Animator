@@ -10,13 +10,11 @@ import br.com.game.animator.game.gameData.enumerators.ScreenMode;
 import br.com.game.animator.util.ImageUtil;
 
 /**
- * @author Jo�o Paulo
- */
+ * Game Graphics Screen Implementation.
+  */
 public class GameGraphicsScreenImpl implements GameGraphicsScreen {
 
-	//----------------------------------------------------------------------//
-	//--------   PROPRIEDADES 				--------------------------------//
-	//----------------------------------------------------------------------//
+	//Properties
 	private Integer graphicsOptionGameCounter							= 0;
 	private Integer PWIDTH												= null;
 	private Integer PHEIGHT												= null;
@@ -71,8 +69,8 @@ public class GameGraphicsScreenImpl implements GameGraphicsScreen {
 	private final static Integer LABEL_APPLY_POSITION_Y 				= 849;
 	private final static Integer LABEL_CANCEL_POSITION_X 				= 60;
 	private final static Integer LABEL_CANCEL_POSITION_Y 				= 949;
-	private final static Integer VALUE_SCREENRES_POSITION_X 			= 0;
-	private final static Integer VALUE_SCREENRES_POSITION_Y 			= 0;
+	//private final static Integer VALUE_SCREENRES_POSITION_X 			= 0;
+	//private final static Integer VALUE_SCREENRES_POSITION_Y 			= 0;
 	private final static Integer LABEL_YES_BUFFER_POSITION_X 			= 802 - 48;
 	private final static Integer LABEL_YES_BUFFER_POSITION_Y 			= 388;
 	private final static Integer LABEL_NO_BUFFER_POSITION_X 			= 979 - 54;
@@ -728,8 +726,6 @@ public class GameGraphicsScreenImpl implements GameGraphicsScreen {
 		
 	}
 	
-	
-	
 	/* (non-Javadoc)
 	 * @see br.com.animator.gameUI.GameGraphicsScreen#resetMustApplyForChanges()
 	 */
@@ -763,5 +759,12 @@ public class GameGraphicsScreenImpl implements GameGraphicsScreen {
 	 */
 	public void cancelChanges() {
 		this.parentGameGraphicsOption.cloneProperties(this.originalGameGraphicsOption);
+	}
+
+	public BufferedImage getScreenResolutionStrip() {
+		return screenResolutionStrip;
+	}
+	public BufferedImage getScreenResolutionValue() {
+		return screenResolutionValue;
 	}
 }

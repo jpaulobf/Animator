@@ -52,7 +52,8 @@ import br.com.game.animator.input.InputHandler;
 import br.com.game.animator.util.GlobalProperties;
 
 /**
- * @author João Paulo Faria
+ * GameEngine - main engine class for the game. It is responsible for the game
+ * loop, rendering, and managing game states.
  */
 public class GameEngine extends JFrame implements WindowListener, Runnable {
 
@@ -68,7 +69,7 @@ public class GameEngine extends JFrame implements WindowListener, Runnable {
 	private Integer PWIDTH = null;
 	private Integer PHEIGHT = null;
 
-	// ------------------------------------------------------------------------//
+	// -------------------------------------------------------//
 	public static final Integer FPS = 60;
 	private static final Integer MAX_FRAME_SKIPS = 5;
 	private final long PERIOD = 1000000000L / FPS;
@@ -79,7 +80,7 @@ public class GameEngine extends JFrame implements WindowListener, Runnable {
 	private volatile boolean isToShowFPS = true;
 	private volatile boolean loading = false;
 
-	// ------------------------------------------------------------------------//
+	// -------------------------------------------------------//
 	public volatile boolean isDevLogoScreen = true;
 	public volatile boolean isSubIntroScreen = false;
 	public volatile boolean isIntroScreen = false;
@@ -110,7 +111,7 @@ public class GameEngine extends JFrame implements WindowListener, Runnable {
 	public GameSoundOptions gameSoundOptions = null;
 	public GameGraphicsScreen gameGraphicsScreen = null;
 
-	// ------------------------------------------------------------------------//
+	// -------------------------------------------------------//
 	private static long MAX_STATS_INTERVAL = 1000000000L;
 	private static long FIRST_STATS_INTERVAL = 2000000000L;
 	private long statsInterval = 0L;
@@ -125,12 +126,12 @@ public class GameEngine extends JFrame implements WindowListener, Runnable {
 	private long totalFramesSkipped = 0L;
 	private double upsStore[] = null;
 	private double averageUPS = 0.0;
-	private DecimalFormat df = new DecimalFormat("0.##"); // 2 dp
+	private DecimalFormat df = new DecimalFormat("0.##");
 	private boolean storeStats = true;
 	private boolean startStoreStats = false;
 	private Graphics2D graphics2D = null;
 
-	// ------------------------------------------------------------------------//
+	// -------------------------------------------------------//
 	private DisplayMode currentDisplayMode = null;
 	private volatile boolean tripleBuffering = false;
 	private Integer currentAspectRatio = null;
@@ -172,7 +173,8 @@ public class GameEngine extends JFrame implements WindowListener, Runnable {
 			this.PHEIGHT = this.getBounds().height;
 
 		} else {
-			this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/res/images/game-icon.png")));
+			this.setIconImage(
+					Toolkit.getDefaultToolkit().getImage(getClass().getResource("/res/images/game-icon.png")));
 
 			this.setPreferredSize(new Dimension(CURRENT_WINDOW_WIDTH, CURRENT_WINDOW_HEIGHT));
 			this.setLocation(
@@ -343,9 +345,6 @@ public class GameEngine extends JFrame implements WindowListener, Runnable {
 		}
 	}
 
-	// -------------------------------------------------------------------------------------------------//
-	// --- CONTROLE DO JOGO ---//
-	// -------------------------------------------------------------------------------------------------//
 	/**
 	 * gameUpdate - Pausa o Jogo
 	 */
@@ -493,112 +492,38 @@ public class GameEngine extends JFrame implements WindowListener, Runnable {
 			// --- Se for para mostrar a 'sub intro' ---//
 			// ---------------------------------------------------------//
 		} else if (this.isSubIntroScreen) {
-
-			// ---------------------------------------------------------//
-			// --- Mostra a propaganda do developer. ---//
-			// ---------------------------------------------------------//
 			this.gameIntro.drawSubIntro(this.graphics2D);
 
-			// ---------------------------------------------------------//
-			// --- Se for para mostrar a 'introdu��o' ---//
-			// ---------------------------------------------------------//
 		} else if (this.isIntroScreen) {
-
-			// ---------------------------------------------------------//
-			// --- Mostra a propaganda do developer. ---//
-			// ---------------------------------------------------------//
 			this.gameIntro.drawIntro(this.graphics2D);
 
-			// ---------------------------------------------------------//
-			// --- Se for para mostrar os 'hiscores' ---//
-			// ---------------------------------------------------------//
 		} else if (this.isShowHighScoreScreen) {
-
-			// ---------------------------------------------------------//
-			// --- Mostra a propaganda do developer. ---//
-			// ---------------------------------------------------------//
 			this.gameScore.drawHiScores(this.graphics2D);
 
-			// ---------------------------------------------------------//
-			// --- Se for para mostrar o 'Main Menu' ---//
-			// ---------------------------------------------------------//
 		} else if (this.isMainMenuScreen) {
-
-			// ---------------------------------------------------------//
-			// --- Mostra a propaganda do developer. ---//
-			// ---------------------------------------------------------//
 			this.gameMainMenu.drawMainMenu(this.graphics2D);
 
-			// ---------------------------------------------------------//
-			// --- Se for para mostrar o 'Main Game Options' ---//
-			// ---------------------------------------------------------//
 		} else if (this.isInMainOptionScreen) {
-
-			// ---------------------------------------------------------//
-			// --- Mostra a propaganda do developer. ---//
-			// ---------------------------------------------------------//
 			this.gameMainOptionScreen.drawMainOptionScreen(this.graphics2D);
 
-			// ---------------------------------------------------------//
-			// --- Se for para mostrar o 'Game Options' ---//
-			// ---------------------------------------------------------//
 		} else if (this.isInOptionGameScreen) {
-
-			// ---------------------------------------------------------//
-			// --- Mostra a propaganda do developer. ---//
-			// ---------------------------------------------------------//
 			this.gameOptionScreen.drawOptionScreen(this.graphics2D);
 
-			// ---------------------------------------------------------//
-			// --- Se for para mostrar o 'Game Sound Options' ---//
-			// ---------------------------------------------------------//
 		} else if (this.isInOptionSoundScreen) {
-
-			// ---------------------------------------------------------//
-			// --- Mostra a propaganda do developer. ---//
-			// ---------------------------------------------------------//
 			this.gameSoundOptionScreen.drawSoundOptionScreen(this.graphics2D);
 
-			// ---------------------------------------------------------//
-			// --- Se for para mostrar o 'Game Graphics Options' ---//
-			// ---------------------------------------------------------//
 		} else if (this.isInOptionGFXScreen) {
-
-			// ---------------------------------------------------------//
-			// --- Mostra a propaganda do developer. ---//
-			// ---------------------------------------------------------//
 			this.gameGraphicsScreen.drawGraphicsOptionScreen(this.graphics2D);
 
-			// ---------------------------------------------------------//
-			// --- Jogo Rodando. ---//
-			// ---------------------------------------------------------//
 		} else {
-
-			// ---------------------------------------------------------//
-			// --- Se for solicitada a exibi��o de FPSs. ---//
-			// ---------------------------------------------------------//
 			if (this.isToShowFPS) {
-				// ---------------------------------------------------------//
-				// --- Mostra os FPSs na tela. ---//
-				// ---------------------------------------------------------//
 				// this.showFPSValueInScreen();
 			}
-
-			// ---------------------------------------------------------//
-			// --- Se estiver em tela cheia, completa os elementos. ---//
-			// ---------------------------------------------------------//
 			if (this.fullScreen) {
 			}
-
-			// ---------------------------------------------------------//
-			// --- Retorna a cor do foreground para preto. ---//
-			// ---------------------------------------------------------//
 			this.graphics2D.setColor(Color.BLACK);
 		}
 
-		// ---------------------------------------------------------//
-		// --- Mostrar o menu de sair acima de qualquer tela. ---//
-		// ---------------------------------------------------------//
 		if (this.gameExitMenu.isShowingExitMenu()) {
 			this.gameExitMenu.drawExitMenu(this.graphics2D);
 		}
@@ -606,7 +531,7 @@ public class GameEngine extends JFrame implements WindowListener, Runnable {
 		if (this.graphics2D != null) {
 			this.graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
 			this.graphics2D.setColor(Color.RED);
-			this.graphics2D.drawString("M�dia de FPS / UPS: " + (int) (this.averageFPS) + " / " +
+			this.graphics2D.drawString("Média de FPS / UPS: " + (int) (this.averageFPS) + " / " +
 					(int) (this.averageUPS), 10, 20);
 		}
 	}
@@ -1472,7 +1397,8 @@ public class GameEngine extends JFrame implements WindowListener, Runnable {
 	// -------------------------------------------------------------------------------------------------//
 
 	/**
-	 * Store the game statistics in the Stats Store to calculate the average FPS and UPS.
+	 * Store the game statistics in the Stats Store to calculate the average FPS and
+	 * UPS.
 	 */
 	private void storeStats() {
 		this.frameCount++;
@@ -1495,7 +1421,8 @@ public class GameEngine extends JFrame implements WindowListener, Runnable {
 
 			this.totalFramesSkipped += this.framesSkipped;
 
-			// Armazena no buffer circular de médias (tamanho definido na inicialização, ex: 10)
+			// Armazena no buffer circular de médias (tamanho definido na inicialização, ex:
+			// 10)
 			int numSamples = this.fpsStore.length;
 			int index = (int) (this.statsCount % numSamples);
 			this.fpsStore[index] = actualFPS;
@@ -1506,7 +1433,7 @@ public class GameEngine extends JFrame implements WindowListener, Runnable {
 			double totalFPS = 0.0;
 			double totalUPS = 0.0;
 			int activeSamples = (int) Math.min(this.statsCount, numSamples);
-			
+
 			for (int i = 0; i < activeSamples; i++) {
 				totalFPS += this.fpsStore[i];
 				totalUPS += this.upsStore[i];
