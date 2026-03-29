@@ -41,7 +41,7 @@ public class GameExitMenuImpl implements GameExitMenu {
 	private BufferedImage highlightButtonExitMenu			= null;
 	
 	/**
-	 * Construtor Padr�o.
+	 * Construtor
 	 */
 	public GameExitMenuImpl(Integer pwidth, Integer pheight, Integer currentAspectRatio) {
 		//---------------------------------------------------------//
