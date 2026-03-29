@@ -1,7 +1,7 @@
 package br.com.game.animator;
 
 import javax.swing.SwingUtilities;
-import br.com.game.animator.game.MenuGame;
+import br.com.game.animator.game.Game;
 
 /**
  * Launcher class to start the game engine.
@@ -11,7 +11,7 @@ public class Launcher {
 		SwingUtilities.invokeLater(new Runnable() {
 
 			public void run() {
-				new MenuGame();
+				new Game();
 			}
 		});
 	}
