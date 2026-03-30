@@ -11,7 +11,7 @@ public class Launcher {
 		SwingUtilities.invokeLater(new Runnable() {
 
 			public void run() {
-				new Game();
+				new Game().startGame(1000);
 			}
 		});
 	}
