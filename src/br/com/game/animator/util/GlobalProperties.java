@@ -1,13 +1,11 @@
 package br.com.game.animator.util;
 
 /**
- * @author Jo�o Paulo
+ * @author João Paulo Faria
  */
 public class GlobalProperties {
 
-	//------------------------------------------------------------------------//
-	//--------   DEFINI��ES DOS TAMANHOS DE JANELA      ----------------------//
-	//------------------------------------------------------------------------//
+	//--- Global properties for the application
 	public static final Integer DEFAULT_INSETS 			= 48;
 	public static final Integer WINDOW_WIDTH_X1_16_9	=  800 - 10;
 	public static final Integer WINDOW_WIDTH_X2_16_9	= 1024 - 10;
