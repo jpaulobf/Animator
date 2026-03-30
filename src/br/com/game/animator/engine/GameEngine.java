@@ -9,9 +9,9 @@ import br.com.game.animator.game.IGame;
 public class GameEngine implements Runnable {
 
 	//--- Constants ---//
-	public static final Integer FPS = 60;
+	private final int FPS;// = 60;
+	private final long PERIOD;// = 1000000000L / FPS;
 	private static final Integer MAX_FRAME_SKIPS = 5;
-	private final long PERIOD = 1000000000L / FPS;
 	private final static long MAX_STATS_INTERVAL = 1000000000L;
 	private final static long FIRST_STATS_INTERVAL = 2000000000L;
 
@@ -39,7 +39,9 @@ public class GameEngine implements Runnable {
 	 * 
 	 * @param game The game instance to be managed by the engine.
 	 */
-	public GameEngine(IGame game) {
+	public GameEngine(IGame game, int fps) {
+		FPS = fps;
+		PERIOD = 1000000000L / FPS;
 		this.game = game;
 		this.startEngine();
 	}
