@@ -2,14 +2,12 @@ package br.com.game.animator.game.gameUI;
 
 import java.awt.Graphics2D;
 
-import br.com.game.animator.engine.GameEngine;
-
 /**
  * @author Jo�o Paulo
  */
 public interface DeveloperAdvertise {
 
-	public final static Float MAX_COUNTER_VALUE = GameEngine.FPS * 5f;
+	public final static Float MAX_COUNTER_VALUE = 300f;
 	
 	/**
 	 * Verifica se a apresenta��o terminou.
