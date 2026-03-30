@@ -3,7 +3,7 @@ package br.com.game.animator.game.gameData;
 import br.com.game.animator.game.gameData.enumerators.GameDifficulty;
 
 /**
- * @author Jo�o Paulo
+ * @author João Paulo Faria
  *
  */
 public class GameOptionsImpl implements GameOptions {
