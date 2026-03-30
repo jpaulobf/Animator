@@ -2,14 +2,12 @@ package br.com.game.animator.game.gameUI;
 
 import java.awt.Graphics2D;
 
-import br.com.game.animator.engine.GameEngine;
-
 /**
  * @author Jo�o Paulo
  */
 public interface GameIntro {
 	
-	public final static Float MAX_COUNTER_SUBINTRO_VALUE 	= GameEngine.FPS * 15f;
+	public final static Float MAX_COUNTER_SUBINTRO_VALUE = 900f;
 
 	/**
 	 * Verifica se a sub apresenta��o terminou.
