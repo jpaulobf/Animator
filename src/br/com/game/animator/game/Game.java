@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
-import br.com.game.animator.engine.GameEngine;
 import br.com.game.animator.game.gameData.GameGraphics;
 import br.com.game.animator.game.gameData.GameGraphicsImpl;
 import br.com.game.animator.game.gameData.GameOptions;
@@ -33,7 +32,6 @@ import br.com.game.animator.game.gameUI.GameSoundOptionScreen;
 import br.com.game.animator.game.gameUI.GameSoundOptionScreenImpl;
 import br.com.game.animator.game.gameUI.Loading;
 import br.com.game.animator.game.gameUI.LoadingImpl;
-import br.com.game.animator.window.Window;
 
 /**
  * Class responsable for managing the game menu, including the developer logo, intro, high score presentation, 
@@ -71,16 +69,14 @@ public class Game extends AbstractGame {
 	public volatile boolean isInOptionSoundScreen = false;
 	public volatile boolean isInOptionGFXScreen = false;
 	private volatile boolean isInOptionTestGFXScreen = false;
-	private volatile boolean isInOptionProfileScreen = false;
+	private volatile boolean isInOptionProfileScreen = false;  
 
-    /**
-     * Construtor
-     */
     public Game() {
-        super();
-        this.gameWindow = new Window(this);
-
-		this.gameOptions = new GameOptionsImpl();
+        //do nothing
+    }
+    
+    public void init() {
+        this.gameOptions = new GameOptionsImpl();
 		this.gameLoading = new LoadingImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(), gameWindow.getCurrentAspectRatio());
 		this.gameSoundOptions = new GameSoundOptionsImpl();
 		this.gameGraphics = new GameGraphicsImpl(gameWindow.isFullScreen(), gameWindow.isTripleBuffering());
@@ -93,8 +89,6 @@ public class Game extends AbstractGame {
 		this.gameOptionScreen = new GameOptionScreenImpl(this.gameOptions, gameWindow.getPanelWidth(), gameWindow.getPanelHeight(), gameWindow.getCurrentAspectRatio());
 		this.gameSoundOptionScreen = new GameSoundOptionScreenImpl(this.gameSoundOptions, gameWindow.getPanelWidth(), gameWindow.getPanelHeight(), gameWindow.getCurrentAspectRatio());
 		this.gameGraphicsScreen = new GameGraphicsScreenImpl(this.gameGraphics, gameWindow.getPanelWidth(), gameWindow.getPanelHeight(), gameWindow.getCurrentAspectRatio());
-
-		this.gameEngine = new GameEngine(this);
     }
 
     /**
