@@ -1,20 +1,20 @@
 package br.com.game.animator.exceptions;
 
 /**
- * Exceção lançada quando o sistema não suporta o modo de tela cheia.
+ * Exception thrown when the system does not support full screen mode.
  */
 public class FullScreenNotSupportedException extends Exception {
+    
     /**
-     * Construtor padrão da exceção.
+     * Constructor
      */
     public FullScreenNotSupportedException() {
         super("O modo de tela cheia não é suportado neste sistema.");
     }
 
     /**
-     * Construtor da exceção com uma mensagem personalizada.
-     *
-     * @param message A mensagem de erro personalizada.
+     * Constructor
+     * @param message
      */
     public FullScreenNotSupportedException(String message) {
         super(message);
