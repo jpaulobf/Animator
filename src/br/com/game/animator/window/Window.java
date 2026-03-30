@@ -17,7 +17,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import javax.swing.JFrame;
-import br.com.game.animator.game.IGame;
+import br.com.game.animator.game.core.IGame;
 import br.com.game.animator.util.GlobalProperties;
 
 /**
