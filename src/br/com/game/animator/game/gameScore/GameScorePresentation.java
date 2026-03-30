@@ -2,14 +2,12 @@ package br.com.game.animator.game.gameScore;
 
 import java.awt.Graphics2D;
 
-import br.com.game.animator.engine.GameEngine;
-
 /**
  * @author Jo�o Paulo
  */
 public interface GameScorePresentation {
 
-	public final static Float MAX_HI_SCORE_COUNTER_VALUE = GameEngine.FPS * 28f;
+	public final static Float MAX_HI_SCORE_COUNTER_VALUE = 1680f;
 	
 	/**
 	 * Verifica se a apresenta��o terminou.
