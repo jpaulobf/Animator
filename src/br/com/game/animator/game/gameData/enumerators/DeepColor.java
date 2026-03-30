@@ -1,7 +1,7 @@
 package br.com.game.animator.game.gameData.enumerators;
 
 /**
- * @author Jo�o Paulo
+ * @author João Paulo Faria
  *
  */
 @SuppressWarnings("unused")
