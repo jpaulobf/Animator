@@ -1,7 +1,8 @@
 package br.com.game.animator.engine;
 
 import java.text.DecimalFormat;
-import br.com.game.animator.game.IGame;
+
+import br.com.game.animator.game.core.IGame;
 
 /**
  * GameEngine - Responsible for the game loop, timing, and performance tracking (FPS/UPS).
@@ -9,8 +10,8 @@ import br.com.game.animator.game.IGame;
 public class GameEngine implements Runnable {
 
 	//--- Constants ---//
-	private final int FPS;// = 60;
-	private final long PERIOD;// = 1000000000L / FPS;
+	private final int FPS;
+	private final long PERIOD;
 	private static final Integer MAX_FRAME_SKIPS = 5;
 	private final static long MAX_STATS_INTERVAL = 1000000000L;
 	private final static long FIRST_STATS_INTERVAL = 2000000000L;
