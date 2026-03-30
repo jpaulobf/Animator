@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
+
+import br.com.game.animator.game.core.AbstractGame;
 import br.com.game.animator.game.gameData.GameGraphics;
 import br.com.game.animator.game.gameData.GameGraphicsImpl;
 import br.com.game.animator.game.gameData.GameOptions;
@@ -12,26 +14,26 @@ import br.com.game.animator.game.gameData.GameOptionsImpl;
 import br.com.game.animator.game.gameData.GameSoundOptions;
 import br.com.game.animator.game.gameData.GameSoundOptionsImpl;
 import br.com.game.animator.game.gameData.enumerators.ScreenMode;
-import br.com.game.animator.game.gameScore.GameScorePresentation;
-import br.com.game.animator.game.gameScore.GameScorePresentationImpl;
-import br.com.game.animator.game.gameUI.DeveloperAdvertise;
-import br.com.game.animator.game.gameUI.DeveloperAdvertiseImpl;
-import br.com.game.animator.game.gameUI.GameExitMenu;
-import br.com.game.animator.game.gameUI.GameExitMenuImpl;
-import br.com.game.animator.game.gameUI.GameGraphicsScreen;
-import br.com.game.animator.game.gameUI.GameGraphicsScreenImpl;
-import br.com.game.animator.game.gameUI.GameIntro;
-import br.com.game.animator.game.gameUI.GameIntroImpl;
-import br.com.game.animator.game.gameUI.GameMainMenu;
-import br.com.game.animator.game.gameUI.GameMainMenuImpl;
-import br.com.game.animator.game.gameUI.GameMainOptionScreen;
-import br.com.game.animator.game.gameUI.GameMainOptionScreenImpl;
-import br.com.game.animator.game.gameUI.GameOptionScreen;
-import br.com.game.animator.game.gameUI.GameOptionScreenImpl;
-import br.com.game.animator.game.gameUI.GameSoundOptionScreen;
-import br.com.game.animator.game.gameUI.GameSoundOptionScreenImpl;
-import br.com.game.animator.game.gameUI.Loading;
-import br.com.game.animator.game.gameUI.LoadingImpl;
+import br.com.game.animator.game.gameUI.advertise.DeveloperAdvertise;
+import br.com.game.animator.game.gameUI.advertise.DeveloperAdvertiseImpl;
+import br.com.game.animator.game.gameUI.intro.GameIntro;
+import br.com.game.animator.game.gameUI.intro.GameIntroImpl;
+import br.com.game.animator.game.gameUI.loading.Loading;
+import br.com.game.animator.game.gameUI.loading.LoadingImpl;
+import br.com.game.animator.game.gameUI.menu.GameExitMenu;
+import br.com.game.animator.game.gameUI.menu.GameExitMenuImpl;
+import br.com.game.animator.game.gameUI.menu.GameMainMenu;
+import br.com.game.animator.game.gameUI.menu.GameMainMenuImpl;
+import br.com.game.animator.game.gameUI.options.GameGraphicsScreen;
+import br.com.game.animator.game.gameUI.options.GameGraphicsScreenImpl;
+import br.com.game.animator.game.gameUI.options.GameMainOptionScreen;
+import br.com.game.animator.game.gameUI.options.GameMainOptionScreenImpl;
+import br.com.game.animator.game.gameUI.options.GameOptionScreen;
+import br.com.game.animator.game.gameUI.options.GameOptionScreenImpl;
+import br.com.game.animator.game.gameUI.options.GameSoundOptionScreen;
+import br.com.game.animator.game.gameUI.options.GameSoundOptionScreenImpl;
+import br.com.game.animator.game.gameUI.score.GameScorePresentation;
+import br.com.game.animator.game.gameUI.score.GameScorePresentationImpl;
 
 /**
  * Class responsable for managing the game menu, including the developer logo, intro, high score presentation, 
@@ -40,18 +42,18 @@ import br.com.game.animator.game.gameUI.LoadingImpl;
 public class Game extends AbstractGame {
 
    	private Loading gameLoading = null;
-	public DeveloperAdvertise developerAdvertise = null;
-	public GameGraphics gameGraphics = null;
-	public GameIntro gameIntro = null;
-	public GameScorePresentation gameScore = null;
-	public GameMainMenu gameMainMenu = null;
-	public GameExitMenu gameExitMenu = null;
-	public GameMainOptionScreen gameMainOptionScreen = null;
-	public GameOptionScreen gameOptionScreen = null;
-	public GameSoundOptionScreen gameSoundOptionScreen = null;
-	public GameOptions gameOptions = null;
-	public GameSoundOptions gameSoundOptions = null;
-	public GameGraphicsScreen gameGraphicsScreen = null;
+	private DeveloperAdvertise developerAdvertise = null;
+	private GameGraphics gameGraphics = null;
+	private GameIntro gameIntro = null;
+	private GameScorePresentation gameScore = null;
+	private GameMainMenu gameMainMenu = null;
+	private GameExitMenu gameExitMenu = null;
+	private GameMainOptionScreen gameMainOptionScreen = null;
+	private GameOptionScreen gameOptionScreen = null;
+	private GameSoundOptionScreen gameSoundOptionScreen = null;
+	private GameOptions gameOptions = null;
+	private GameSoundOptions gameSoundOptions = null;
+	private GameGraphicsScreen gameGraphicsScreen = null;
 
    	// -------------------------------------------------------//
 	public volatile boolean isDevLogoScreen = true;
@@ -71,14 +73,22 @@ public class Game extends AbstractGame {
 	private volatile boolean isInOptionTestGFXScreen = false;
 	private volatile boolean isInOptionProfileScreen = false;  
 
+    /**
+     * Constructor for the Game class.
+     */
     public Game() {
         //do nothing
     }
     
+    /**
+     * Initializes the game menu by creating instances of the various screens 
+     * and options, and setting up their properties based on the game window's 
+     * dimensions and aspect ratio.
+     */
     public void init() {
         this.gameOptions = new GameOptionsImpl();
-		this.gameLoading = new LoadingImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(), gameWindow.getCurrentAspectRatio());
 		this.gameSoundOptions = new GameSoundOptionsImpl();
+        this.gameLoading = new LoadingImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(), gameWindow.getCurrentAspectRatio());
 		this.gameGraphics = new GameGraphicsImpl(gameWindow.isFullScreen(), gameWindow.isTripleBuffering());
 		this.developerAdvertise = new DeveloperAdvertiseImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(), gameWindow.getCurrentAspectRatio());
 		this.gameIntro = new GameIntroImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(), gameWindow.getCurrentAspectRatio());
@@ -92,19 +102,18 @@ public class Game extends AbstractGame {
     }
 
     /**
-     * Updates the game menu based on the elapsed frame time.
-     * @param frametime The time elapsed since the last frame update.
+     * Updates the game menu based on the current state and the elapsed time since the last frame.
      */
     @Override
     public void update(long frametime) {
         if (!this.loading) {
 			if (this.isDevLogoScreen) {
-				if (this.developerAdvertise.developerLogoPresentationFinished()) {
+				if (this.developerAdvertise.finished()) {
 					this.isDevLogoScreen = false;
 					this.isSubIntroScreen = true;
 					this.developerAdvertise.resetCounters();
 				} else {
-					this.developerAdvertise.update();
+					this.developerAdvertise.update(frametime);
 				}
 
 			} else if (this.isSubIntroScreen) {
@@ -117,29 +126,26 @@ public class Game extends AbstractGame {
 				}
 
 			} else if (this.isIntroScreen) {
-				if (this.gameIntro.introFinished()) {
+				if (this.gameIntro.finished()) {
 					this.isIntroScreen = false;
 					this.isShowHighScoreScreen = true;
 					this.gameIntro.resetCounters();
 				} else {
-					this.gameIntro.updateIntro();
+					this.gameIntro.update(frametime);
 				}
 
 			} else if (this.isShowHighScoreScreen) {
-				if (this.gameScore.hiScorePresentationFinished()) {
+				if (this.gameScore.finished()) {
 					this.isShowHighScoreScreen = false;
 					this.isSubIntroScreen = true;
 					this.gameScore.resetCounters();
 				} else {
-					this.gameScore.update();
+					this.gameScore.update(frametime);
 				}
 			} else if (this.isMainMenuScreen) {
-				if (this.gameMainMenu.mainMenuFinished()) {
-					// this.isMainMenuScreen = false;
-					// this.isIntroScreen = true;
-					// this.gameMainMenu.resetCounters();
+				if (this.gameMainMenu.finished()) {
 				} else {
-					this.gameMainMenu.update();
+					this.gameMainMenu.update(frametime);
 				}
 			} else if (this.isInGameScreen) {
 				 if (!this.isPaused && !this.gameOver) {
@@ -148,11 +154,11 @@ public class Game extends AbstractGame {
 			} else if (this.isInGameOptionScreen) {
 			    //todo
             } else if (this.isInMainOptionScreen) {
-                this.gameMainOptionScreen.update();
+                this.gameMainOptionScreen.update(frametime);
             } else if (this.isInOptionGameScreen) {
-                this.gameOptionScreen.update();
+                this.gameOptionScreen.update(frametime);
             } else if (this.isInOptionSoundScreen) {
-                this.gameSoundOptionScreen.update();
+                this.gameSoundOptionScreen.update(frametime);
             } else if (this.isInOptionKeyJoyScreen) {
                 //todo
             } else if (this.isInOptionKeyScreen) {
@@ -160,14 +166,14 @@ public class Game extends AbstractGame {
             } else if (this.isInOptionJoyScreen) {
 			    //todo
             } else if (this.isInOptionGFXScreen) {
-				this.gameGraphicsScreen.update();
+				this.gameGraphicsScreen.update(frametime);
             } else if (this.isInOptionTestGFXScreen) {
                 //todo
             } else if (this.isInOptionProfileScreen) {
                 //todo
             }
 		} else {
-			this.gameLoading.update();
+			this.gameLoading.update(frametime);
 		}
     }
 
@@ -202,25 +208,25 @@ public class Game extends AbstractGame {
 			this.gameIntro.drawSubIntro(this.graphics2D);
 
 		} else if (this.isIntroScreen) {
-			this.gameIntro.drawIntro(this.graphics2D);
+			this.gameIntro.draw(this.graphics2D);
 
 		} else if (this.isShowHighScoreScreen) {
-			this.gameScore.drawHiScores(this.graphics2D);
+			this.gameScore.draw(this.graphics2D);
 
 		} else if (this.isMainMenuScreen) {
-			this.gameMainMenu.drawMainMenu(this.graphics2D);
+			this.gameMainMenu.draw(this.graphics2D);
 
 		} else if (this.isInMainOptionScreen) {
-			this.gameMainOptionScreen.drawMainOptionScreen(this.graphics2D);
+			this.gameMainOptionScreen.draw(this.graphics2D);
 
 		} else if (this.isInOptionGameScreen) {
-			this.gameOptionScreen.drawOptionScreen(this.graphics2D);
+			this.gameOptionScreen.draw(this.graphics2D);
 
 		} else if (this.isInOptionSoundScreen) {
-			this.gameSoundOptionScreen.drawSoundOptionScreen(this.graphics2D);
+			this.gameSoundOptionScreen.draw(this.graphics2D);
 
 		} else if (this.isInOptionGFXScreen) {
-			this.gameGraphicsScreen.drawGraphicsOptionScreen(this.graphics2D);
+			this.gameGraphicsScreen.draw(this.graphics2D);
 
 		} else {
 			if (gameWindow.isFullScreen()) {
@@ -237,50 +243,51 @@ public class Game extends AbstractGame {
         }
 
 		if (this.gameExitMenu.isShowingExitMenu()) {
-			this.gameExitMenu.drawExitMenu(this.graphics2D);
+			this.gameExitMenu.draw(this.graphics2D);
 		}
     }
 
     /**
-     * Updates the game settings based on the provided parameters, such as full screen mode, width, and height. 
-     * It also updates the canvas properties of all relevant game screens to reflect the new settings.
+     * Updates the game settings based on the current state of the game window.
      */
     public void updateGameSettings(boolean isFullScreen, Integer pWIDTH, Integer pHEIGHT) {
         
 		this.loading();
 
-		Integer currentAspectRatio = gameWindow.getCurrentAspectRatio();
-		if (this.gameLoading != null) {
-			this.gameLoading.updateCanvasProperties(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
-		}
-		if (this.developerAdvertise != null) {
-			this.developerAdvertise.updateCanvasProperties(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
-		}
-		if (this.gameIntro != null) {
-			this.gameIntro.updateCanvasProperties(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
-			this.gameIntro.updateCanvasPropertiesSubIntro(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
-		}
-		if (this.gameScore != null) {
-			this.gameScore.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
-		}
-		if (this.gameMainMenu != null) {
-			this.gameMainMenu.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
-		}
-		if (this.gameMainOptionScreen != null) {
-			this.gameMainOptionScreen.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
-		}
-		if (this.gameOptionScreen != null) {
-			this.gameOptionScreen.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
-		}
-		if (this.gameSoundOptionScreen != null) {
-			this.gameSoundOptionScreen.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
-		}
-		if (this.gameGraphicsScreen != null) {
-			this.gameGraphicsScreen.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
-		}
-		if (this.gameExitMenu != null) {
-			this.gameExitMenu.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
-		}
+        {
+            Integer currentAspectRatio = gameWindow.getCurrentAspectRatio();
+            if (this.gameLoading != null) {
+                this.gameLoading.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
+            }
+            if (this.developerAdvertise != null) {
+                this.developerAdvertise.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
+            }
+            if (this.gameIntro != null) {
+                this.gameIntro.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
+                this.gameIntro.updateCanvasPropertiesSubIntro(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
+            }
+            if (this.gameScore != null) {
+                this.gameScore.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
+            }
+            if (this.gameMainMenu != null) {
+                this.gameMainMenu.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
+            }
+            if (this.gameMainOptionScreen != null) {
+                this.gameMainOptionScreen.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
+            }
+            if (this.gameOptionScreen != null) {
+                this.gameOptionScreen.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
+            }
+            if (this.gameSoundOptionScreen != null) {
+                this.gameSoundOptionScreen.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
+            }
+            if (this.gameGraphicsScreen != null) {
+                this.gameGraphicsScreen.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
+            }
+            if (this.gameExitMenu != null) {
+                this.gameExitMenu.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
+            }
+        }
 
 		this.loadingDone();
     }
