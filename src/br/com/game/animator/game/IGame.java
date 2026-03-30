@@ -21,4 +21,8 @@ public interface IGame {
 	public void stopGame();
 
     public void keyPressed(int keyCode, boolean isAltDown);
+
+    public void startGame();
+
+    public void startGame(int fps);
 }
