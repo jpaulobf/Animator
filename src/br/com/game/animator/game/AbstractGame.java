@@ -28,8 +28,22 @@ public abstract class AbstractGame implements IGame {
      * Constructor
      */
     public AbstractGame() {
-        
+		//do nothing
     }
+
+	public void startGame() {
+		this.startGame(60);
+	}
+
+	public void startGame(int fps) {
+		this.gameWindow = new Window(this);
+
+		this.init();
+
+		this.gameEngine = new GameEngine(this, fps);
+	}
+
+	public abstract void init();
 
     /**
 	 * paintScreen - Paint the buffer to the screen.
