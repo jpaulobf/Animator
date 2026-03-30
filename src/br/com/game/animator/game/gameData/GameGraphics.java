@@ -6,7 +6,7 @@ import br.com.game.animator.game.gameData.enumerators.DeepColor;
 import br.com.game.animator.game.gameData.enumerators.ScreenMode;
 
 /**
- * @author Jo�o Paulo
+ * @author João Paulo Faria
  */
 public interface GameGraphics {
 
