@@ -2,8 +2,6 @@ package br.com.game.animator.game.gameUI;
 
 import java.awt.Graphics2D;
 
-import br.com.game.animator.engine.GameEngine;
-
 /**
  * @author Jo�o Paulo
  *
@@ -13,7 +11,7 @@ public interface GameMainMenu {
 	/**
 	 * 
 	 */
-	public final static Float MAX_COUNTER_MAIN_MENU_VALUE 	= GameEngine.FPS * 20f;
+	public final static Float MAX_COUNTER_MAIN_MENU_VALUE = 1200f;
 
 	/**
 	 * Verifica se � para sair do Main Menu.
