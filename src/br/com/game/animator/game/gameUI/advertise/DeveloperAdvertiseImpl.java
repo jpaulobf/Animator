@@ -37,7 +37,11 @@ public class DeveloperAdvertiseImpl implements DeveloperAdvertise {
 		this.positionY = (this.PHEIGHT / 2) - (this.imageHeight / 2);
 	}
 
-	@Override
+	/**
+	 * Update the advertise animation.
+	 * 
+	 * @param frametime
+	 */
 	public void update(long frametime) {
 		this.mainCounter++;
 		int factor = 60;
@@ -55,7 +59,9 @@ public class DeveloperAdvertiseImpl implements DeveloperAdvertise {
 		}
 	}
 
-	@Override
+	/**
+	 * Draw the advertise animation.
+	 */
 	public void draw(Graphics2D g2d) {
 		g2d.setColor(Color.BLACK);
 		g2d.fillRect(0, 0, this.PWIDTH, this.PHEIGHT);
@@ -71,6 +77,9 @@ public class DeveloperAdvertiseImpl implements DeveloperAdvertise {
 		}
 	}
 
+	/**
+	 * Update the graphics properties when the screen size or aspect ratio changes.
+	 */
 	public void updateGraphics(boolean fullScreen, Integer pwidth, Integer pheight, Integer currentAspectRatio) {
 		this.PWIDTH = pwidth;
 		this.PHEIGHT = pheight;
@@ -82,10 +91,16 @@ public class DeveloperAdvertiseImpl implements DeveloperAdvertise {
 		this.positionY = (this.PHEIGHT / 2) - (this.imageHeight / 2);
 	}
 
+	/**
+	 * Reset the animation counters.
+	 */
 	public void resetCounters() {
 		this.mainCounter = 0;
 	}
 
+	/**
+	 * Check if the animation has finished.
+	 */
 	public boolean finished() {
 		return (mainCounter >= MAX_COUNTER_VALUE);
 	}
