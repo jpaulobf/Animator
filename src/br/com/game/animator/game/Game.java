@@ -89,72 +89,6 @@ public class Game extends AbstractGame {
                 this.currentCoreGame.update(frametime);
             }
 
-
-			// if (this.isDevLogoScreen) {
-			// 	if (this.developerAdvertise.finished()) {
-			// 		this.isDevLogoScreen = false;
-			// 		this.isSubIntroScreen = true;
-			// 		this.developerAdvertise.resetCounters();
-			// 	} else {
-			// 		this.developerAdvertise.update(frametime);
-			// 	}
-
-			// } else if (this.isSubIntroScreen) {
-			// 	if (this.gameIntro.subIntroFinished()) {
-			// 		this.isSubIntroScreen = false;
-			// 		this.isIntroScreen = true;
-			// 		this.gameIntro.resetCounters();
-			// 	} else {
-			// 		this.gameIntro.updateSubIntro();
-			// 	}
-
-			// } else if (this.isIntroScreen) {
-			// 	if (this.gameIntro.finished()) {
-			// 		this.isIntroScreen = false;
-			// 		this.isShowHighScoreScreen = true;
-			// 		this.gameIntro.resetCounters();
-			// 	} else {
-			// 		this.gameIntro.update(frametime);
-			// 	}
-
-			// } else if (this.isShowHighScoreScreen) {
-			// 	if (this.gameScore.finished()) {
-			// 		this.isShowHighScoreScreen = false;
-			// 		this.isSubIntroScreen = true;
-			// 		this.gameScore.resetCounters();
-			// 	} else {
-			// 		this.gameScore.update(frametime);
-			// 	}
-			// } else if (this.isMainMenuScreen) {
-			// 	if (this.gameMainMenu.finished()) {
-			// 	} else {
-			// 		this.gameMainMenu.update(frametime);
-			// 	}
-			// } else if (this.isInGameScreen) {
-			// 	 if (!this.isPaused && !this.gameOver) {
-			// 	    //todo
-			// 	 }
-			// } else if (this.isInGameOptionScreen) {
-			//     //todo
-            // } else if (this.isInMainOptionScreen) {
-            //     this.gameMainOptionScreen.update(frametime);
-            // } else if (this.isInOptionGameScreen) {
-            //     this.gameOptionScreen.update(frametime);
-            // } else if (this.isInOptionSoundScreen) {
-            //     this.gameSoundOptionScreen.update(frametime);
-            // } else if (this.isInOptionKeyJoyScreen) {
-            //     //todo
-            // } else if (this.isInOptionKeyScreen) {
-			// 	//todo
-            // } else if (this.isInOptionJoyScreen) {
-			//     //todo
-            // } else if (this.isInOptionGFXScreen) {
-			// 	this.gameGraphicsScreen.update(frametime);
-            // } else if (this.isInOptionTestGFXScreen) {
-            //     //todo
-            // } else if (this.isInOptionProfileScreen) {
-            //     //todo
-            // }
 		} else {
 			this.currentCoreGame.update(frametime);
 		}
@@ -176,7 +110,7 @@ public class Game extends AbstractGame {
 			this.graphics2D.translate(0, gameWindow.getInsets().top);
 		}
 
-		this.graphics2D.setColor(Color.WHITE);
+		this.graphics2D.setColor(Color.BLACK);
 		this.graphics2D.fillRect(0, 0, gameWindow.getPanelWidth(), gameWindow.getPanelHeight());
 
         //draw the current screen based on the game state machine
@@ -469,4 +403,24 @@ public class Game extends AbstractGame {
             }
         }
     }
+
+    /**
+	 * loading - Set the loading flag to true, indicating that the game is currently
+	 * loading resources or performing some initialization tasks.
+	 */
+	public void loading() {
+        this.gameStateMachine.setLoadingState();
+        this.currentCoreGame = CoreGameFactory.getInstance(this.gameStateMachine, this.gameWindow);
+		this.loading = true;
+	}
+
+	/**
+	 * loadingDone - Set the loading flag to false, indicating that the game has
+	 * finished loading resources or initialization tasks.
+	 */
+	public void loadingDone() {
+        this.gameStateMachine.unloadState();
+        this.currentCoreGame = CoreGameFactory.getInstance(this.gameStateMachine, this.gameWindow);
+		this.loading = false;
+	}
 }

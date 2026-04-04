@@ -10,12 +10,14 @@ public class GameStateMachine {
 
     //--- properties
     private GameStates currentState;
+    private GameStates backupState;
 
     /**
      * Constructor initializes the game state machine with the default state, which is the developer logo screen.
      */
     public GameStateMachine() {
         this.currentState = GameStates.DEV_LOGO_SCREEN;
+        this.backupState = this.currentState;
     }
 
     /**
@@ -44,6 +46,7 @@ public class GameStateMachine {
         } else if (this.currentState == GameStates.HIGH_SCORE_SCREEN) {
             this.currentState = GameStates.SUB_INTRO_SCREEN;
         }
+        this.backupState = this.currentState;
     }
 
     /**
@@ -56,5 +59,9 @@ public class GameStateMachine {
 
     public void setLoadingState() {
         this.currentState = GameStates.LOADING;
+    }
+
+    public void unloadState() {
+        this.currentState = backupState;
     }
 }

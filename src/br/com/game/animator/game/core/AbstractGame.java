@@ -75,22 +75,6 @@ public abstract class AbstractGame implements IGame {
 	}
 
 	/**
-	 * loading - Set the loading flag to true, indicating that the game is currently
-	 * loading resources or performing some initialization tasks.
-	 */
-	public void loading() {
-		this.loading = true;
-	}
-
-	/**
-	 * loadingDone - Set the loading flag to false, indicating that the game has
-	 * finished loading resources or initialization tasks.
-	 */
-	public void loadingDone() {
-		this.loading = false;
-	}
-
-	/**
 	 * Resume the game.
 	 */
 	public void resumeGame() {
