@@ -4,36 +4,13 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
-import javax.swing.JOptionPane;
-
 import br.com.game.animator.game.core.AbstractGame;
-import br.com.game.animator.game.gameData.GameGraphics;
-import br.com.game.animator.game.gameData.GameGraphicsImpl;
-import br.com.game.animator.game.gameData.GameOptions;
-import br.com.game.animator.game.gameData.GameOptionsImpl;
-import br.com.game.animator.game.gameData.GameSoundOptions;
-import br.com.game.animator.game.gameData.GameSoundOptionsImpl;
-import br.com.game.animator.game.gameData.enumerators.ScreenMode;
-import br.com.game.animator.game.gameUI.advertise.DeveloperAdvertise;
-import br.com.game.animator.game.gameUI.advertise.DeveloperAdvertiseImpl;
-import br.com.game.animator.game.gameUI.intro.GameIntro;
-import br.com.game.animator.game.gameUI.intro.GameIntroImpl;
-import br.com.game.animator.game.gameUI.loading.Loading;
-import br.com.game.animator.game.gameUI.loading.LoadingImpl;
+import br.com.game.animator.game.factory.CoreGameFactory;
+import br.com.game.animator.game.gameUI.CoreGameLogic;
 import br.com.game.animator.game.gameUI.menu.GameExitMenu;
 import br.com.game.animator.game.gameUI.menu.GameExitMenuImpl;
-import br.com.game.animator.game.gameUI.menu.GameMainMenu;
-import br.com.game.animator.game.gameUI.menu.GameMainMenuImpl;
-import br.com.game.animator.game.gameUI.options.GameGraphicsScreen;
-import br.com.game.animator.game.gameUI.options.GameGraphicsScreenImpl;
-import br.com.game.animator.game.gameUI.options.GameMainOptionScreen;
-import br.com.game.animator.game.gameUI.options.GameMainOptionScreenImpl;
-import br.com.game.animator.game.gameUI.options.GameOptionScreen;
-import br.com.game.animator.game.gameUI.options.GameOptionScreenImpl;
-import br.com.game.animator.game.gameUI.options.GameSoundOptionScreen;
-import br.com.game.animator.game.gameUI.options.GameSoundOptionScreenImpl;
-import br.com.game.animator.game.gameUI.score.GameScorePresentation;
-import br.com.game.animator.game.gameUI.score.GameScorePresentationImpl;
+import br.com.game.animator.game.state.GameStateMachine;
+import br.com.game.animator.window.Window;
 
 /**
  * Class responsable for managing the game menu, including the developer logo, intro, high score presentation, 
@@ -41,37 +18,42 @@ import br.com.game.animator.game.gameUI.score.GameScorePresentationImpl;
  */
 public class Game extends AbstractGame {
 
-   	private Loading gameLoading = null;
-	private DeveloperAdvertise developerAdvertise = null;
-	private GameGraphics gameGraphics = null;
-	private GameIntro gameIntro = null;
-	private GameScorePresentation gameScore = null;
-	private GameMainMenu gameMainMenu = null;
-	private GameExitMenu gameExitMenu = null;
-	private GameMainOptionScreen gameMainOptionScreen = null;
-	private GameOptionScreen gameOptionScreen = null;
-	private GameSoundOptionScreen gameSoundOptionScreen = null;
-	private GameOptions gameOptions = null;
-	private GameSoundOptions gameSoundOptions = null;
-	private GameGraphicsScreen gameGraphicsScreen = null;
+    private CoreGameLogic currentCoreGame;
+    private GameStateMachine gameStateMachine;
+    private Window gameWindow;
+    private GameExitMenu gameExitMenu = null;
+
+   	// private Loading gameLoading = null;
+	// private DeveloperAdvertise developerAdvertise = null;
+	// private GameGraphics gameGraphics = null;
+	// private GameIntro gameIntro = null;
+	// private GameScorePresentation gameScore = null;
+	// private GameMainMenu gameMainMenu = null;
+	// private GameExitMenu gameExitMenu = null;
+	// private GameMainOptionScreen gameMainOptionScreen = null;
+	// private GameOptionScreen gameOptionScreen = null;
+	// private GameSoundOptionScreen gameSoundOptionScreen = null;
+	// private GameOptions gameOptions = null;
+	// private GameSoundOptions gameSoundOptions = null;
+	// private GameGraphicsScreen gameGraphicsScreen = null;
 
    	// -------------------------------------------------------//
-	public volatile boolean isDevLogoScreen = true;
-	public volatile boolean isSubIntroScreen = false;
-	public volatile boolean isIntroScreen = false;
-	public volatile boolean isShowHighScoreScreen = false;
-	public volatile boolean isMainMenuScreen = false;
-	public volatile boolean isInGameScreen = false;
-	private volatile boolean isInGameOptionScreen = false;
-	public volatile boolean isInMainOptionScreen = false;
-	public volatile boolean isInOptionGameScreen = false;
-	private volatile boolean isInOptionKeyJoyScreen = false;
-	private volatile boolean isInOptionKeyScreen = false;
-	private volatile boolean isInOptionJoyScreen = false;
-	public volatile boolean isInOptionSoundScreen = false;
-	public volatile boolean isInOptionGFXScreen = false;
-	private volatile boolean isInOptionTestGFXScreen = false;
-	private volatile boolean isInOptionProfileScreen = false;  
+	// public volatile boolean isDevLogoScreen = true;
+	// public volatile boolean isSubIntroScreen = false;
+	// public volatile boolean isIntroScreen = false;
+	// public volatile boolean isShowHighScoreScreen = false;
+	// public volatile boolean isMainMenuScreen = false;
+	// public volatile boolean isInGameScreen = false;
+	// private volatile boolean isInGameOptionScreen = false;
+	// public volatile boolean isInMainOptionScreen = false;
+	// public volatile boolean isInOptionGameScreen = false;
+	// private volatile boolean isInOptionKeyJoyScreen = false;
+	// private volatile boolean isInOptionKeyScreen = false;
+	// private volatile boolean isInOptionJoyScreen = false;
+	// public volatile boolean isInOptionSoundScreen = false;
+	// public volatile boolean isInOptionGFXScreen = false;
+	// private volatile boolean isInOptionTestGFXScreen = false;
+	// private volatile boolean isInOptionProfileScreen = false;
 
     /**
      * Constructor for the Game class.
@@ -86,19 +68,10 @@ public class Game extends AbstractGame {
      * dimensions and aspect ratio.
      */
     public void init() {
-        this.gameOptions = new GameOptionsImpl();
-		this.gameSoundOptions = new GameSoundOptionsImpl();
-        this.gameLoading = new LoadingImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(), gameWindow.getCurrentAspectRatio());
-		this.gameGraphics = new GameGraphicsImpl(gameWindow.isFullScreen(), gameWindow.isTripleBuffering());
-		this.developerAdvertise = new DeveloperAdvertiseImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(), gameWindow.getCurrentAspectRatio());
-		this.gameIntro = new GameIntroImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(), gameWindow.getCurrentAspectRatio());
-		this.gameScore = new GameScorePresentationImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(), gameWindow.getCurrentAspectRatio());
-		this.gameMainMenu = new GameMainMenuImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(), gameWindow.getCurrentAspectRatio());
-		this.gameExitMenu = new GameExitMenuImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(), gameWindow.getCurrentAspectRatio());
-		this.gameMainOptionScreen = new GameMainOptionScreenImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(), gameWindow.getCurrentAspectRatio());
-		this.gameOptionScreen = new GameOptionScreenImpl(this.gameOptions, gameWindow.getPanelWidth(), gameWindow.getPanelHeight(), gameWindow.getCurrentAspectRatio());
-		this.gameSoundOptionScreen = new GameSoundOptionScreenImpl(this.gameSoundOptions, gameWindow.getPanelWidth(), gameWindow.getPanelHeight(), gameWindow.getCurrentAspectRatio());
-		this.gameGraphicsScreen = new GameGraphicsScreenImpl(this.gameGraphics, gameWindow.getPanelWidth(), gameWindow.getPanelHeight(), gameWindow.getCurrentAspectRatio());
+        this.gameWindow = this.getGameWindow();
+        this.gameStateMachine = new GameStateMachine();
+        this.currentCoreGame = CoreGameFactory.getInstance(this.gameStateMachine, this.gameWindow);
+        this.gameExitMenu = new GameExitMenuImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(), gameWindow.getCurrentAspectRatio());
     }
 
     /**
@@ -107,73 +80,83 @@ public class Game extends AbstractGame {
     @Override
     public void update(long frametime) {
         if (!this.loading) {
-			if (this.isDevLogoScreen) {
-				if (this.developerAdvertise.finished()) {
-					this.isDevLogoScreen = false;
-					this.isSubIntroScreen = true;
-					this.developerAdvertise.resetCounters();
-				} else {
-					this.developerAdvertise.update(frametime);
-				}
 
-			} else if (this.isSubIntroScreen) {
-				if (this.gameIntro.subIntroFinished()) {
-					this.isSubIntroScreen = false;
-					this.isIntroScreen = true;
-					this.gameIntro.resetCounters();
-				} else {
-					this.gameIntro.updateSubIntro();
-				}
-
-			} else if (this.isIntroScreen) {
-				if (this.gameIntro.finished()) {
-					this.isIntroScreen = false;
-					this.isShowHighScoreScreen = true;
-					this.gameIntro.resetCounters();
-				} else {
-					this.gameIntro.update(frametime);
-				}
-
-			} else if (this.isShowHighScoreScreen) {
-				if (this.gameScore.finished()) {
-					this.isShowHighScoreScreen = false;
-					this.isSubIntroScreen = true;
-					this.gameScore.resetCounters();
-				} else {
-					this.gameScore.update(frametime);
-				}
-			} else if (this.isMainMenuScreen) {
-				if (this.gameMainMenu.finished()) {
-				} else {
-					this.gameMainMenu.update(frametime);
-				}
-			} else if (this.isInGameScreen) {
-				 if (!this.isPaused && !this.gameOver) {
-				    //todo
-				 }
-			} else if (this.isInGameOptionScreen) {
-			    //todo
-            } else if (this.isInMainOptionScreen) {
-                this.gameMainOptionScreen.update(frametime);
-            } else if (this.isInOptionGameScreen) {
-                this.gameOptionScreen.update(frametime);
-            } else if (this.isInOptionSoundScreen) {
-                this.gameSoundOptionScreen.update(frametime);
-            } else if (this.isInOptionKeyJoyScreen) {
-                //todo
-            } else if (this.isInOptionKeyScreen) {
-				//todo
-            } else if (this.isInOptionJoyScreen) {
-			    //todo
-            } else if (this.isInOptionGFXScreen) {
-				this.gameGraphicsScreen.update(frametime);
-            } else if (this.isInOptionTestGFXScreen) {
-                //todo
-            } else if (this.isInOptionProfileScreen) {
-                //todo
+            if (this.currentCoreGame.finished()) {
+                this.currentCoreGame.resetCounters();
+                this.gameStateMachine.gotoNextState();
+                this.currentCoreGame = CoreGameFactory.getInstance(this.gameStateMachine, this.gameWindow);
+            } else {
+                this.currentCoreGame.update(frametime);
             }
+
+
+			// if (this.isDevLogoScreen) {
+			// 	if (this.developerAdvertise.finished()) {
+			// 		this.isDevLogoScreen = false;
+			// 		this.isSubIntroScreen = true;
+			// 		this.developerAdvertise.resetCounters();
+			// 	} else {
+			// 		this.developerAdvertise.update(frametime);
+			// 	}
+
+			// } else if (this.isSubIntroScreen) {
+			// 	if (this.gameIntro.subIntroFinished()) {
+			// 		this.isSubIntroScreen = false;
+			// 		this.isIntroScreen = true;
+			// 		this.gameIntro.resetCounters();
+			// 	} else {
+			// 		this.gameIntro.updateSubIntro();
+			// 	}
+
+			// } else if (this.isIntroScreen) {
+			// 	if (this.gameIntro.finished()) {
+			// 		this.isIntroScreen = false;
+			// 		this.isShowHighScoreScreen = true;
+			// 		this.gameIntro.resetCounters();
+			// 	} else {
+			// 		this.gameIntro.update(frametime);
+			// 	}
+
+			// } else if (this.isShowHighScoreScreen) {
+			// 	if (this.gameScore.finished()) {
+			// 		this.isShowHighScoreScreen = false;
+			// 		this.isSubIntroScreen = true;
+			// 		this.gameScore.resetCounters();
+			// 	} else {
+			// 		this.gameScore.update(frametime);
+			// 	}
+			// } else if (this.isMainMenuScreen) {
+			// 	if (this.gameMainMenu.finished()) {
+			// 	} else {
+			// 		this.gameMainMenu.update(frametime);
+			// 	}
+			// } else if (this.isInGameScreen) {
+			// 	 if (!this.isPaused && !this.gameOver) {
+			// 	    //todo
+			// 	 }
+			// } else if (this.isInGameOptionScreen) {
+			//     //todo
+            // } else if (this.isInMainOptionScreen) {
+            //     this.gameMainOptionScreen.update(frametime);
+            // } else if (this.isInOptionGameScreen) {
+            //     this.gameOptionScreen.update(frametime);
+            // } else if (this.isInOptionSoundScreen) {
+            //     this.gameSoundOptionScreen.update(frametime);
+            // } else if (this.isInOptionKeyJoyScreen) {
+            //     //todo
+            // } else if (this.isInOptionKeyScreen) {
+			// 	//todo
+            // } else if (this.isInOptionJoyScreen) {
+			//     //todo
+            // } else if (this.isInOptionGFXScreen) {
+			// 	this.gameGraphicsScreen.update(frametime);
+            // } else if (this.isInOptionTestGFXScreen) {
+            //     //todo
+            // } else if (this.isInOptionProfileScreen) {
+            //     //todo
+            // }
 		} else {
-			this.gameLoading.update(frametime);
+			this.currentCoreGame.update(frametime);
 		}
     }
 
@@ -196,43 +179,8 @@ public class Game extends AbstractGame {
 		this.graphics2D.setColor(Color.WHITE);
 		this.graphics2D.fillRect(0, 0, gameWindow.getPanelWidth(), gameWindow.getPanelHeight());
 
-		if (this.loading) {
-			this.gameLoading.draw(this.graphics2D);
-
-		} else if (this.gameOver) {
-            //todo
-		} else if (this.isDevLogoScreen) {
-			this.developerAdvertise.draw(this.graphics2D);
-
-		} else if (this.isSubIntroScreen) {
-			this.gameIntro.drawSubIntro(this.graphics2D);
-
-		} else if (this.isIntroScreen) {
-			this.gameIntro.draw(this.graphics2D);
-
-		} else if (this.isShowHighScoreScreen) {
-			this.gameScore.draw(this.graphics2D);
-
-		} else if (this.isMainMenuScreen) {
-			this.gameMainMenu.draw(this.graphics2D);
-
-		} else if (this.isInMainOptionScreen) {
-			this.gameMainOptionScreen.draw(this.graphics2D);
-
-		} else if (this.isInOptionGameScreen) {
-			this.gameOptionScreen.draw(this.graphics2D);
-
-		} else if (this.isInOptionSoundScreen) {
-			this.gameSoundOptionScreen.draw(this.graphics2D);
-
-		} else if (this.isInOptionGFXScreen) {
-			this.gameGraphicsScreen.draw(this.graphics2D);
-
-		} else {
-			if (gameWindow.isFullScreen()) {
-			}
-			this.graphics2D.setColor(Color.BLACK);
-		}
+        //draw the current screen based on the game state machine
+		this.currentCoreGame.draw(this.graphics2D);
 
         if (this.isToShowFPS) {
             if (this.graphics2D != null) {
@@ -250,40 +198,13 @@ public class Game extends AbstractGame {
     /**
      * Updates the game settings based on the current state of the game window.
      */
-    public void updateGameSettings(boolean isFullScreen, Integer pWIDTH, Integer pHEIGHT) {
-        
+    public void updateGameSettings(boolean isFullScreen, Integer pWIDTH, Integer pHEIGHT) {     
 		this.loading();
 
         {
             Integer currentAspectRatio = gameWindow.getCurrentAspectRatio();
-            if (this.gameLoading != null) {
-                this.gameLoading.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
-            }
-            if (this.developerAdvertise != null) {
-                this.developerAdvertise.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
-            }
-            if (this.gameIntro != null) {
-                this.gameIntro.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
-                this.gameIntro.updateCanvasPropertiesSubIntro(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
-            }
-            if (this.gameScore != null) {
-                this.gameScore.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
-            }
-            if (this.gameMainMenu != null) {
-                this.gameMainMenu.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
-            }
-            if (this.gameMainOptionScreen != null) {
-                this.gameMainOptionScreen.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
-            }
-            if (this.gameOptionScreen != null) {
-                this.gameOptionScreen.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
-            }
-            if (this.gameSoundOptionScreen != null) {
-                this.gameSoundOptionScreen.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
-            }
-            if (this.gameGraphicsScreen != null) {
-                this.gameGraphicsScreen.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
-            }
+            this.currentCoreGame.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
+
             if (this.gameExitMenu != null) {
                 this.gameExitMenu.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
             }
@@ -300,6 +221,7 @@ public class Game extends AbstractGame {
     @Override
     public void keyPressed(int keyCode, boolean isAltDown) {
         if (!gameExitMenu.isShowingExitMenu()) {
+            /*
             if (isMainMenuScreen && gameMainMenu != null) {
                 if (keyCode == KeyEvent.VK_ENTER) {
                     if (gameMainMenu.isExitSelected()) {
@@ -530,6 +452,7 @@ public class Game extends AbstractGame {
                     isMainMenuScreen = true;
                 }
             }
+                */
         } else {
             if (keyCode == KeyEvent.VK_LEFT) {
                 gameExitMenu.previousGameOption();
