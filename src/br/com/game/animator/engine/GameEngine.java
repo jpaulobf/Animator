@@ -18,13 +18,6 @@ public class GameEngine implements Runnable {
 	private static final String ENGINE_THREAD_NAME = "GameEngine-Thread";
 	private static final DecimalFormat STATS_FORMATTER = new DecimalFormat("0.##");
 
-	// FPS frame times as static constants
-	private static final long FPS240 = 1_000_000_000L / 240;
-	private static final long FPS120 = 1_000_000_000L / 120;
-	private static final long FPS90 = 1_000_000_000L / 90;
-	private static final long FPS60 = 1_000_000_000L / 60;
-	private static final long FPS30 = 1_000_000_000L / 30;
-
 	// --- Properties ---//
 	private final IGame game;
 	private final int targetFPS;
