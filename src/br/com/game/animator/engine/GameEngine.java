@@ -9,9 +9,8 @@ import br.com.game.animator.game.core.IGame;
 public class GameEngine implements Runnable {
 
 	//--- Constants ---//
-	private final int FPS;
-	private final long PERIOD;
-	private static final Integer MAX_FRAME_SKIPS = 5;
+	private static final long MAX_DELTA_TIME = 100_000_000L; // 100ms cap para delta time
+	private static final long SLEEP_BUFFER = 500_000L; // 0.5ms buffer para sleep
 	private final static long MAX_STATS_INTERVAL = 1000000000L;
 	private final static long FIRST_STATS_INTERVAL = 2000000000L;
 	private long FPS240                 = (long)(1_000_000_000 / 240);
@@ -47,9 +46,6 @@ public class GameEngine implements Runnable {
 	 * @param game The game instance to be managed by the engine.
 	 */
 	public GameEngine(IGame game, int targetFPS) {
-		FPS = targetFPS;
-		PERIOD = 1000000000L / FPS;
-
 		this.UNLIMITED_FPS = false;
 		switch(targetFPS) {
 			case 30:
@@ -89,68 +85,8 @@ public class GameEngine implements Runnable {
 		}
 	}
 
-	/**
-	 * run - The main game loop, responsible for updating, rendering, and timing control.
-	 */
-	public void run2() {
-		this.running = true;
-		long beforeTime = System.nanoTime();
-		long overSleepTime = 0L;
-		this.prevStatsTime = beforeTime;
-
-		while (this.running) {
-			this.gameUpdate(PERIOD);
-			try {
-				this.paint();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-			this.gameRender(PERIOD);
-
-			long afterTime = System.nanoTime();
-			long timeDiff = afterTime - beforeTime;
-			long sleepTime = (PERIOD - timeDiff) - overSleepTime;
-
-			if (sleepTime > 0) {
-				long sleepMs = sleepTime / 1000000L;
-				if (sleepMs > 2) {
-					try {
-						Thread.sleep(sleepMs - 2);
-					} catch (InterruptedException e) {
-					}
-				}
-
-				while (System.nanoTime() - beforeTime < PERIOD) {
-				}
-
-				overSleepTime = (System.nanoTime() - afterTime) - sleepTime;
-			} else {
-				long excess = -sleepTime;
-				overSleepTime = 0L;
-
-				int skips = 0;
-				while ((excess > PERIOD) && (skips < MAX_FRAME_SKIPS)) {
-					excess -= PERIOD;
-					this.gameUpdate(PERIOD);
-					skips++;
-				}
-				this.framesSkipped += skips;
-			}
-
-			beforeTime = System.nanoTime();
-
-			if (this.storeStats) {
-				this.storeStats();
-			}
-		}
-
-		this.printStats();
-		System.exit(0);
-	}
-
 	public void run() {
-		long lastTime           = System.nanoTime(); // Usado para calcular o delta time no modo de FPS ilimitado
+		long lastTime           = System.nanoTime();
 		long now                = 0;
 		long elapsed            = 0;
 		long wait               = 0;
@@ -159,14 +95,14 @@ public class GameEngine implements Runnable {
 		this.prevStatsTime 		= lastTime;
 
 		if (UNLIMITED_FPS) {
-			System.out.println("Running in UNLIMITED FPS mode. No timing control will be applied.");
+			System.out.println("Running in UNLIMITED FPS mode.");
 			while (running) {
 				now = System.nanoTime();
 				elapsed = now - lastTime;
 				lastTime = now;
 
-				// Cap delta time to avoid huge jumps (e.g. 0.1s)
-				if (elapsed > 100_000_000) elapsed = 100_000_000;
+				// Cap delta time to avoid huge jumps
+				if (elapsed > MAX_DELTA_TIME) elapsed = MAX_DELTA_TIME;
 
 				this.gameUpdate(elapsed);
 				this.paint();
@@ -189,7 +125,7 @@ public class GameEngine implements Runnable {
 				this.paint();
 				this.gameRender(elapsed);
 
-				// Calculate time taken
+				// Calculate time taken for this frame
 				long workTime = System.nanoTime() - now;
 
 				// Calculate wait time, compensating for previous over-sleep/lag
@@ -197,32 +133,35 @@ public class GameEngine implements Runnable {
 
 				if (wait > 0) {
 					try {
-						// Hybrid Sleep Strategy:
-						// Sleep for (wait - 2ms) to save CPU, then spin-wait for precision
-						long sleepMs = (wait / 1_000_000) - 2;
+						// Hybrid Sleep Strategy with dynamic buffer:
+						// Use dynamic buffer or fixed minimum, then spin-wait for precision
+						long sleepBuffer = Math.max(SLEEP_BUFFER, wait / 10); // Adaptive buffer
+						long sleepMs = (wait - sleepBuffer) / 1_000_000;
+						
 						if (sleepMs > 0) {
 							Thread.sleep(sleepMs);
 						}
 						
-						// Busy-wait for the remaining nanoseconds
+						// Busy-wait for the remaining nanoseconds with yield for other threads
 						while (System.nanoTime() < now + TARGET_FRAMETIME - overSleep) {
-							// Cede o tempo de CPU para outras threads enquanto espera, para evitar 100% de uso.
 							Thread.yield();
 						}
 						overSleep = 0;
 					} catch (InterruptedException e) {
-						// ignore
+						Thread.currentThread().interrupt();
 					}
 				} else {
 					// We are behind schedule
 					overSleep = -wait;
 					
-					// Frame Skipping: Se estamos atrasados por mais de um quadro completo,
-					// precisamos recuperar o tempo executando a lógica do jogo sem renderizar.
-					while (overSleep >= TARGET_FRAMETIME) {
-						this.gameUpdate(TARGET_FRAMETIME); // Executa um passo da simulação para recuperar o tempo
-						overSleep -= TARGET_FRAMETIME; // "Paga" a dívida de tempo de um quadro
+					// Frame Skipping: Limit skips per cycle to prevent extreme lag recovery
+					int skipsThisCycle = 0;
+					while ((overSleep >= TARGET_FRAMETIME) && (skipsThisCycle < 2)) {
+						this.gameUpdate(TARGET_FRAMETIME);
+						overSleep -= TARGET_FRAMETIME;
+						skipsThisCycle++;
 					}
+					this.framesSkipped += skipsThisCycle;
 				}
 				if (this.storeStats) {
 					this.storeStats();
