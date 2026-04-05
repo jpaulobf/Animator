@@ -1,6 +1,7 @@
 package br.com.game.animator.game.gameUI;
 
 import java.awt.Graphics2D;
+import br.com.game.animator.game.Game;
 
 public interface CoreGameLogic {
 
@@ -13,4 +14,6 @@ public interface CoreGameLogic {
 	public void updateGraphics(boolean fullScreen, Integer pwidth, Integer pheight, Integer currentAspectRatio);
 
 	public boolean finished();
+
+	public void handleInput(Game game, int keyCode, boolean isAltDown);
 }

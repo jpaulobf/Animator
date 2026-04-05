@@ -4,6 +4,7 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import br.com.game.animator.game.Game;
 import br.com.game.animator.util.ImageUtil;
 
 /**
@@ -103,5 +104,10 @@ public class DeveloperAdvertiseImpl implements DeveloperAdvertise {
 	 */
 	public boolean finished() {
 		return (mainCounter >= MAX_COUNTER_VALUE);
+	}
+
+	@Override
+	public void handleInput(Game game, int keyCode, boolean isAltDown) {
+		//todo
 	}
 }
