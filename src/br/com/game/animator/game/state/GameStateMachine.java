@@ -1,6 +1,7 @@
 package br.com.game.animator.game.state;
 
 import java.util.Map;
+import br.com.game.animator.util.GameConfig;
 
 /**
  * Class responsable for managing the game menu, including the developer logo, intro, high score presentation, 
@@ -8,13 +9,8 @@ import java.util.Map;
  */
 public class GameStateMachine {
 
-    //--- State Transitions Mapping
-    private static final Map<GameStates, GameStates> STATE_TRANSITIONS = Map.ofEntries(
-        Map.entry(GameStates.DEV_LOGO_SCREEN, GameStates.SUB_INTRO_SCREEN),
-        Map.entry(GameStates.SUB_INTRO_SCREEN, GameStates.INTRO_SCREEN),
-        Map.entry(GameStates.INTRO_SCREEN, GameStates.HIGH_SCORE_SCREEN),
-        Map.entry(GameStates.HIGH_SCORE_SCREEN, GameStates.SUB_INTRO_SCREEN)
-    );
+    //--- Configuration
+    private final GameConfig config = GameConfig.getInstance();
 
     //--- State Groups for Classification
     private static final Map<GameStates, String> STATE_GROUPS = Map.ofEntries(
@@ -32,21 +28,73 @@ public class GameStateMachine {
     private GameStates backupState;
 
     /**
-     * Constructor initializes the game state machine with the default state, which is the developer logo screen.
+     * Constructor initializes the game state machine with the initial state based on configuration.
+     * If DEV_LOGO_SCREEN is enabled (config.ini), starts there.
+     * Otherwise, starts at SUB_INTRO_SCREEN (mandatory screen).
      */
     public GameStateMachine() {
-        this.currentState = GameStates.DEV_LOGO_SCREEN;
+        this.setupInitialState();
         this.backupState = this.currentState;
     }
 
     /**
-     * Transitions to the next state in the automated game flow (intro -> menu -> options).
-     * Uses centralized STATE_TRANSITIONS map to define valid transitions.
+     * Sets up the initial state based on GameConfig settings.
+     * DEV_LOGO_SCREEN can be disabled via config.ini to skip directly to SUB_INTRO_SCREEN.
+     */
+    private void setupInitialState() {
+        if (config.isDevLogoEnabled()) {
+            this.currentState = GameStates.DEV_LOGO_SCREEN;
+        } else {
+            this.currentState = GameStates.SUB_INTRO_SCREEN;
+        }
+    }
+
+    /**
+     * Transitions to the next state in the automated game flow.
+     * Respects configuration settings for optional screens (DEV_LOGO, INTRO, HIGH_SCORE).
+     * SUB_INTRO_SCREEN is always mandatory.
      */
     public void gotoNextState() {
-        GameStates nextState = STATE_TRANSITIONS.get(this.currentState);
+        GameStates nextState = calculateNextState(this.currentState);
         if (nextState != null) {
             navigateTo(nextState);
+        }
+    }
+
+    /**
+     * Calculates the next state based on current state and configuration.
+     * Handles dynamic transitions when screens are enabled/disabled.
+     * @param current The current state
+     * @return The next state, or null if no valid transition exists
+     */
+    private GameStates calculateNextState(GameStates current) {
+        switch (current) {
+            case DEV_LOGO_SCREEN:
+                return GameStates.SUB_INTRO_SCREEN;
+
+            case SUB_INTRO_SCREEN:
+                // SUB_INTRO -> INTRO (if enabled) -> HIGH_SCORE (if INTRO disabled but HS enabled) -> SUB_INTRO (if both disabled)
+                if (config.isIntroScreenEnabled()) {
+                    return GameStates.INTRO_SCREEN;
+                } else if (config.isHighScoreScreenEnabled()) {
+                    return GameStates.HIGH_SCORE_SCREEN;
+                } else {
+                    return GameStates.SUB_INTRO_SCREEN;  // Loop if both disabled
+                }
+
+            case INTRO_SCREEN:
+                // INTRO -> HIGH_SCORE (if enabled) -> SUB_INTRO (if HS disabled)
+                if (config.isHighScoreScreenEnabled()) {
+                    return GameStates.HIGH_SCORE_SCREEN;
+                } else {
+                    return GameStates.SUB_INTRO_SCREEN;
+                }
+
+            case HIGH_SCORE_SCREEN:
+                return GameStates.SUB_INTRO_SCREEN;  // Always loop back to SUB_INTRO
+
+            default:
+                return null;  // No automatic transition for other states
         }
     }
 
