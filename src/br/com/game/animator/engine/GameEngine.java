@@ -4,11 +4,12 @@ import java.text.DecimalFormat;
 import br.com.game.animator.game.core.IGame;
 
 /**
- * GameEngine - Responsible for the game loop, timing, and performance tracking (FPS/UPS).
+ * GameEngine - Responsible for the game loop, timing, and performance tracking
+ * (FPS/UPS).
  */
 public class GameEngine implements Runnable {
 
-	//--- Constants ---//
+	// --- Constants ---//
 	private static final long MAX_DELTA_TIME = 100_000_000L; // 100ms cap for delta time
 	private static final long SLEEP_BUFFER = 500_000L; // 0.5ms sleep buffer
 	private static final int STATS_BUFFER_SIZE = 10; // Circular buffer size for statistics
@@ -16,15 +17,15 @@ public class GameEngine implements Runnable {
 	private static final long FIRST_STATS_INTERVAL = 2_000_000_000L;
 	private static final String ENGINE_THREAD_NAME = "GameEngine-Thread";
 	private static final DecimalFormat STATS_FORMATTER = new DecimalFormat("0.##");
-	
+
 	// FPS frame times as static constants
 	private static final long FPS240 = 1_000_000_000L / 240;
 	private static final long FPS120 = 1_000_000_000L / 120;
-	private static final long FPS90  = 1_000_000_000L / 90;
-	private static final long FPS60  = 1_000_000_000L / 60;
-	private static final long FPS30  = 1_000_000_000L / 30;
+	private static final long FPS90 = 1_000_000_000L / 90;
+	private static final long FPS60 = 1_000_000_000L / 60;
+	private static final long FPS30 = 1_000_000_000L / 30;
 
-	//--- Properties ---//
+	// --- Properties ---//
 	private final IGame game;
 	private final int targetFPS;
 	private final long targetFrametime;
@@ -33,14 +34,14 @@ public class GameEngine implements Runnable {
 	private long frameCount = 0;
 	private long lastFrameCount = 0L;
 
-	//--- Stats Tracking ---//
+	// --- Stats Tracking ---//
 	public double averageFPS = 0.0;
 	public double averageUPS = 0.0;
 	private long prevStatsTime = 0L;
 	private double fpsStore[] = new double[STATS_BUFFER_SIZE];
 	private double upsStore[] = new double[STATS_BUFFER_SIZE];
-	private double totalFPSStore = 0.0; // Acumulador para média móvel O(1)
-	private double totalUPSStore = 0.0; // Acumulador para média móvel O(1)
+	private double totalFPSStore = 0.0;
+	private double totalUPSStore = 0.0;
 	private long statsCount = 0;
 	private long framesSkipped = 0L;
 	private long totalFramesSkipped = 0L;
@@ -49,7 +50,7 @@ public class GameEngine implements Runnable {
 	/**
 	 * Constructor
 	 * 
-	 * @param game The game instance to be managed by the engine.
+	 * @param game      The game instance to be managed by the engine.
 	 * @param targetFPS Target frames per second (0 for unlimited)
 	 */
 	public GameEngine(IGame game, int targetFPS) {
@@ -58,7 +59,7 @@ public class GameEngine implements Runnable {
 		this.targetFrametime = getTargetFrametime(this.targetFPS);
 		this.startEngine();
 	}
-	
+
 	/**
 	 * Gets the target frame time in nanoseconds based on desired FPS.
 	 * 
@@ -66,7 +67,7 @@ public class GameEngine implements Runnable {
 	 * @return Frame time in nanoseconds, or -1 for unlimited
 	 */
 	private long getTargetFrametime(int fps) {
-		return switch(fps) {
+		return switch (fps) {
 			case 30 -> FPS30;
 			case 60 -> FPS60;
 			case 90 -> FPS90;
@@ -92,13 +93,13 @@ public class GameEngine implements Runnable {
 	 * run - The main game loop with adaptive timing control.
 	 */
 	public void run() {
-		long lastTime           = System.nanoTime();
-		long now                = 0;
-		long elapsed            = 0;
-		long wait               = 0;
-		long overSleep          = 0;
-		this.running            = true;
-		this.prevStatsTime      = lastTime;
+		long lastTime = System.nanoTime();
+		long now = 0;
+		long elapsed = 0;
+		long wait = 0;
+		long overSleep = 0;
+		this.running = true;
+		this.prevStatsTime = lastTime;
 
 		if (this.targetFrametime < 0) {
 			// Unlimited FPS mode
@@ -109,12 +110,13 @@ public class GameEngine implements Runnable {
 				lastTime = now;
 
 				// Cap delta time to avoid huge jumps
-				if (elapsed > MAX_DELTA_TIME) elapsed = MAX_DELTA_TIME;
+				if (elapsed > MAX_DELTA_TIME)
+					elapsed = MAX_DELTA_TIME;
 
 				this.gameUpdate(elapsed);
 				this.paint();
 				this.gameRender(elapsed);
-				
+
 				// Yield to prevent CPU starvation
 				Thread.yield();
 
@@ -145,11 +147,11 @@ public class GameEngine implements Runnable {
 						// Use dynamic buffer or fixed minimum, then spin-wait for precision
 						long sleepBuffer = Math.max(SLEEP_BUFFER, wait / 10); // Adaptive buffer
 						long sleepMs = (wait - sleepBuffer) / 1_000_000;
-						
+
 						if (sleepMs > 0) {
 							Thread.sleep(sleepMs);
 						}
-						
+
 						// Busy-wait for the remaining nanoseconds with yield for other threads
 						while (System.nanoTime() < now + this.targetFrametime - overSleep) {
 							Thread.yield();
@@ -161,7 +163,7 @@ public class GameEngine implements Runnable {
 				} else {
 					// We are behind schedule
 					overSleep = -wait;
-					
+
 					// Frame Skipping: Limit skips per cycle to prevent extreme lag recovery
 					int skipsThisCycle = 0;
 					while ((overSleep >= this.targetFrametime) && (skipsThisCycle < 2)) {
@@ -195,6 +197,7 @@ public class GameEngine implements Runnable {
 
 	/**
 	 * gameUpdate - Update the game state based on the elapsed frame time.
+	 * 
 	 * @param frametime
 	 */
 	private void gameUpdate(long frametime) {
@@ -203,6 +206,7 @@ public class GameEngine implements Runnable {
 
 	/**
 	 * gameRender - Render the game state to the screen.
+	 * 
 	 * @param frametime
 	 */
 	private void gameRender(long frametime) {
@@ -218,14 +222,15 @@ public class GameEngine implements Runnable {
 		long timeNow = System.nanoTime();
 		long realElapsedTime = timeNow - this.prevStatsTime;
 
-		// Define se usamos o intervalo inicial (2s) ou o normal (1s)
+		// Uses initial intervals or the max_stats
 		long triggerInterval = startStoreStats ? MAX_STATS_INTERVAL : FIRST_STATS_INTERVAL;
 
 		if (realElapsedTime >= triggerInterval) {
 			this.startStoreStats = true;
 
 			// Validation for zero time (edge case)
-			if (realElapsedTime <= 0) return;
+			if (realElapsedTime <= 0)
+				return;
 
 			// Calcula quantos quadros ocorreram APENAS neste último intervalo
 			long framesInInterval = this.frameCount - this.lastFrameCount;
@@ -268,14 +273,14 @@ public class GameEngine implements Runnable {
 	 * printStats - Thread-safe stats printing
 	 */
 	private void printStats() {
-		synchronized(this) {
+		synchronized (this) {
 			System.out.println("Frame Count/Loss: " + this.frameCount + " / " + this.totalFramesSkipped);
 			System.out.println("Average FPS: " + STATS_FORMATTER.format(this.averageFPS));
 			System.out.println("Average UPS: " + STATS_FORMATTER.format(this.averageUPS));
 		}
 	}
 
-    public void stop() {
-        this.running = false;
-    }
+	public void stop() {
+		this.running = false;
+	}
 }

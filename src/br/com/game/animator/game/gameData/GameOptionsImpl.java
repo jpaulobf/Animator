@@ -18,7 +18,7 @@ public class GameOptionsImpl implements GameOptions {
 	private boolean enableSubtitles					= false;
 
 	/**
-	 * Construtor Padr�o
+	 * Constructor.
 	 */
 	public GameOptionsImpl() {
 		this.gameDifficulty 				= GameDifficulty.NORMAL;

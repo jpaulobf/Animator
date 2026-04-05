@@ -1,7 +1,6 @@
 package br.com.game.animator.game.gameData;
 
 import java.util.Map;
-
 import br.com.game.animator.game.gameData.enumerators.DeepColor;
 import br.com.game.animator.game.gameData.enumerators.ScreenMode;
 

@@ -20,7 +20,7 @@ public class GameScoreImpl implements GameScore {
 	private Map<String, Long> sortedScores			= null;
 	
 	/**
-	 * Construtor padr�o.
+	 * Constructor.
 	 */
 	public GameScoreImpl() {
 

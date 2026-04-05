@@ -25,7 +25,7 @@ public class DeveloperAdvertiseImpl implements DeveloperAdvertise {
 	private Integer imageHeight = 0;
 
 	/**
-	 * Construtor.
+	 * Constructor.
 	 */
 	public DeveloperAdvertiseImpl(Integer pwidth, Integer pheight, Integer currentAspectRatio) {
 		this.PWIDTH = pwidth;
