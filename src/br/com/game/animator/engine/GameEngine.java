@@ -12,19 +12,24 @@ public class GameEngine implements Runnable {
 	private static final long MAX_DELTA_TIME = 100_000_000L; // 100ms cap para delta time
 	private static final long SLEEP_BUFFER = 500_000L; // 0.5ms buffer para sleep
 	private static final int STATS_BUFFER_SIZE = 10; // Tamanho do buffer circular para estatísticas
-	private final static long MAX_STATS_INTERVAL = 1000000000L;
-	private final static long FIRST_STATS_INTERVAL = 2000000000L;
-	private long FPS240                 = (long)(1_000_000_000 / 240);
-	private long FPS120                 = (long)(1_000_000_000 / 120);
-	private long FPS90                  = (long)(1_000_000_000 / 90);
-	private long FPS60                  = (long)(1_000_000_000 / 60);
-	private long FPS30                  = (long)(1_000_000_000 / 30);
-	private long TARGET_FRAMETIME       = 0;
-	private boolean UNLIMITED_FPS       = false;
+	private static final long MAX_STATS_INTERVAL = 1_000_000_000L;
+	private static final long FIRST_STATS_INTERVAL = 2_000_000_000L;
+	private static final String ENGINE_THREAD_NAME = "GameEngine-Thread";
+	private static final DecimalFormat STATS_FORMATTER = new DecimalFormat("0.##");
+	
+	// FPS frame times as static constants
+	private static final long FPS240 = 1_000_000_000L / 240;
+	private static final long FPS120 = 1_000_000_000L / 120;
+	private static final long FPS90  = 1_000_000_000L / 90;
+	private static final long FPS60  = 1_000_000_000L / 60;
+	private static final long FPS30  = 1_000_000_000L / 30;
 
 	//--- Properties ---//
-	private IGame game = null;
+	private final IGame game;
+	private final int targetFPS;
+	private final long targetFrametime;
 	public volatile boolean running = false;
+	private volatile boolean storeStats = true;
 	private long frameCount = 0;
 	private long lastFrameCount = 0L;
 
@@ -39,65 +44,64 @@ public class GameEngine implements Runnable {
 	private long statsCount = 0;
 	private long framesSkipped = 0L;
 	private long totalFramesSkipped = 0L;
-	private DecimalFormat df = new DecimalFormat("0.##");
-	private boolean storeStats = true;
 	private boolean startStoreStats = false;
 
 	/**
 	 * Constructor
 	 * 
 	 * @param game The game instance to be managed by the engine.
+	 * @param targetFPS Target frames per second (0 for unlimited)
 	 */
 	public GameEngine(IGame game, int targetFPS) {
-		this.UNLIMITED_FPS = false;
-		switch(targetFPS) {
-			case 30:
-				this.TARGET_FRAMETIME = FPS30;
-				break;
-			case 60:
-				this.TARGET_FRAMETIME = FPS60;
-				break;
-			case 90:
-				this.TARGET_FRAMETIME = FPS90;
-				break;
-			case 120:
-				this.TARGET_FRAMETIME = FPS120;
-				break;
-			case 240:
-				this.TARGET_FRAMETIME = FPS240;
-				break;
-			case 0:
-				this.UNLIMITED_FPS = true;
-				break;
-			default:
-				this.TARGET_FRAMETIME = FPS30;
-				break;
-		}
-
 		this.game = game;
+		this.targetFPS = targetFPS;
+		this.targetFrametime = getTargetFrametime(this.targetFPS);
 		this.startEngine();
+	}
+	
+	/**
+	 * Gets the target frame time in nanoseconds based on desired FPS.
+	 * 
+	 * @param fps Target FPS (0 for unlimited)
+	 * @return Frame time in nanoseconds, or -1 for unlimited
+	 */
+	private long getTargetFrametime(int fps) {
+		return switch(fps) {
+			case 30 -> FPS30;
+			case 60 -> FPS60;
+			case 90 -> FPS90;
+			case 120 -> FPS120;
+			case 240 -> FPS240;
+			case 0 -> -1; // Unlimited FPS
+			default -> FPS30;
+		};
 	}
 
 	/**
-	 * startEngine - Starts the game loop in a new thread.
+	 * startEngine - Starts the game loop in a new thread with appropriate priority.
 	 */
 	protected void startEngine() {
 		if (!this.running) {
-			Thread engine = new Thread(this);
+			Thread engine = new Thread(this, ENGINE_THREAD_NAME);
+			engine.setPriority(Thread.MAX_PRIORITY);
 			engine.start();
 		}
 	}
 
+	/**
+	 * run - The main game loop with adaptive timing control.
+	 */
 	public void run() {
 		long lastTime           = System.nanoTime();
 		long now                = 0;
 		long elapsed            = 0;
 		long wait               = 0;
 		long overSleep          = 0;
-		this.running 			= true;
-		this.prevStatsTime 		= lastTime;
+		this.running            = true;
+		this.prevStatsTime      = lastTime;
 
-		if (UNLIMITED_FPS) {
+		if (this.targetFrametime < 0) {
+			// Unlimited FPS mode
 			System.out.println("Running in UNLIMITED FPS mode.");
 			while (running) {
 				now = System.nanoTime();
@@ -119,6 +123,7 @@ public class GameEngine implements Runnable {
 				}
 			}
 		} else {
+			// Fixed FPS mode
 			while (running) {
 				now = System.nanoTime();
 				elapsed = now - lastTime;
@@ -132,7 +137,7 @@ public class GameEngine implements Runnable {
 				long workTime = System.nanoTime() - now;
 
 				// Calculate wait time, compensating for previous over-sleep/lag
-				wait = TARGET_FRAMETIME - workTime - overSleep;
+				wait = this.targetFrametime - workTime - overSleep;
 
 				if (wait > 0) {
 					try {
@@ -146,7 +151,7 @@ public class GameEngine implements Runnable {
 						}
 						
 						// Busy-wait for the remaining nanoseconds with yield for other threads
-						while (System.nanoTime() < now + TARGET_FRAMETIME - overSleep) {
+						while (System.nanoTime() < now + this.targetFrametime - overSleep) {
 							Thread.yield();
 						}
 						overSleep = 0;
@@ -159,9 +164,9 @@ public class GameEngine implements Runnable {
 					
 					// Frame Skipping: Limit skips per cycle to prevent extreme lag recovery
 					int skipsThisCycle = 0;
-					while ((overSleep >= TARGET_FRAMETIME) && (skipsThisCycle < 2)) {
-						this.gameUpdate(TARGET_FRAMETIME);
-						overSleep -= TARGET_FRAMETIME;
+					while ((overSleep >= this.targetFrametime) && (skipsThisCycle < 2)) {
+						this.gameUpdate(this.targetFrametime);
+						overSleep -= this.targetFrametime;
 						skipsThisCycle++;
 					}
 					this.framesSkipped += skipsThisCycle;
@@ -180,7 +185,12 @@ public class GameEngine implements Runnable {
 	 * paint - Paint the buffer to the screen.
 	 */
 	private void paint() {
-		this.game.paintScreen();
+		try {
+			this.game.paintScreen();
+		} catch (Exception e) {
+			System.err.println("Error painting screen: " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -255,12 +265,14 @@ public class GameEngine implements Runnable {
 	}
 
 	/**
-	 * printStats
+	 * printStats - Thread-safe stats printing
 	 */
 	private void printStats() {
-		System.out.println("Frame Count/Loss: " + this.frameCount + " / " + this.totalFramesSkipped);
-		System.out.println("Average FPS: " + this.df.format(this.averageFPS));
-		System.out.println("Average UPS: " + this.df.format(this.averageUPS));
+		synchronized(this) {
+			System.out.println("Frame Count/Loss: " + this.frameCount + " / " + this.totalFramesSkipped);
+			System.out.println("Average FPS: " + STATS_FORMATTER.format(this.averageFPS));
+			System.out.println("Average UPS: " + STATS_FORMATTER.format(this.averageUPS));
+		}
 	}
 
     public void stop() {
