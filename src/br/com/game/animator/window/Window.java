@@ -37,32 +37,6 @@ import br.com.game.animator.util.GlobalProperties;
  */
 public class Window extends JFrame implements WindowListener, KeyListener, MouseListener, MouseMotionListener {
 
-	// --- Enum for Window Scale ---//
-	public enum WindowScale {
-		X1(1), X2(2), X3(3), X4(4);
-
-		private final int factor;
-
-		WindowScale(int factor) {
-			this.factor = factor;
-		}
-
-		public int getFactor() {
-			return factor;
-		}
-	}
-
-	// --- Inner class for Window Dimensions ---//
-	private static class WindowDimensions {
-		final int width;
-		final int height;
-
-		WindowDimensions(int width, int height) {
-			this.width = width;
-			this.height = height;
-		}
-	}
-
 	// --- Constants ---//
 	private static final int NUM_BUFFERS = 2;
 	private static final int TRIPLE_BUFFERS = 3;
