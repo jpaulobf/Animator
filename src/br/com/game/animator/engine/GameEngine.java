@@ -73,7 +73,7 @@ public class GameEngine implements Runnable {
 			case 120 -> FPS120;
 			case 240 -> FPS240;
 			case 0 -> -1; // Unlimited FPS
-			default -> FPS30;
+			default -> FPS60;
 		};
 	}
 
