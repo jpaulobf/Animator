@@ -354,8 +354,7 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 		this.setPreferredSize(new Dimension(CURRENT_WINDOW_WIDTH, CURRENT_WINDOW_HEIGHT));
 		this.setLocation(
 				(int) ((Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 2) - (CURRENT_WINDOW_WIDTH / 2)),
-				(int) ((Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2) - (CURRENT_WINDOW_HEIGHT / 2)
-						- 20));
+				(int) ((Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2) - (CURRENT_WINDOW_HEIGHT / 2) - 20));
 
 		super.addWindowListener(this);
 
