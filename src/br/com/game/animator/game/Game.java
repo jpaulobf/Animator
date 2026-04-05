@@ -15,15 +15,21 @@ import br.com.game.animator.game.state.GameStateMachine;
 import br.com.game.animator.window.Window;
 
 /**
- * Class responsable for managing the game menu, including the developer logo, intro, high score presentation, 
+ * Class responsible for managing the game menu, including the developer logo, intro, high score presentation, 
  * main menu, options menu, and exit menu. It handles user input to navigate through these screens and updates the game settings accordingly.
  */
 public class Game extends AbstractGame {
 
+    //--- Constants ---//
+    private static final String FS_ERROR_TITLE = "Erro ao alterar o modo de tela";
+    private static final String FS_ERROR_MESSAGE = "Não foi possível inicializar em FullScreen.\n" +
+                                                   "Tente alterar o modo de vídeo em Game-Options.";
+
+    //--- Properties ---//
     private CoreGameLogic currentCoreGame;
     private GameStateMachine gameStateMachine;
     private Window gameWindow;
-    private GameExitMenu gameExitMenu = null; 
+    private GameExitMenu gameExitMenu;
 
     /**
      * Constructor for the Game class.
@@ -40,8 +46,20 @@ public class Game extends AbstractGame {
     public void init() {
         this.gameWindow = this.getGameWindow();
         this.gameStateMachine = new GameStateMachine();
+        this.gameExitMenu = new GameExitMenuImpl(
+            gameWindow.getPanelWidth(), 
+            gameWindow.getPanelHeight(), 
+            gameWindow.getCurrentAspectRatio()
+        );
+        this.updateCurrentCoreGame();
+    }
+
+    /**
+     * Updates the current core game instance based on state machine.
+     * Centralizes the factory call to reduce duplication.
+     */
+    private void updateCurrentCoreGame() {
         this.currentCoreGame = CoreGameFactory.getInstance(this.gameStateMachine, this.gameWindow);
-        this.gameExitMenu = new GameExitMenuImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(), gameWindow.getCurrentAspectRatio());
     }
 
     /**
@@ -49,19 +67,12 @@ public class Game extends AbstractGame {
      */
     @Override
     public void update(long frametime) {
-        if (!this.loading) {
-
-            if (this.currentCoreGame.finished()) {
-                this.currentCoreGame.resetCounters();
-                this.gameStateMachine.gotoNextState();
-                this.currentCoreGame = CoreGameFactory.getInstance(this.gameStateMachine, this.gameWindow);
-            } else {
-                this.currentCoreGame.update(frametime);
-            }
-
-		} else {
-			this.currentCoreGame.update(frametime);
-		}
+        if (!this.loading && this.currentCoreGame.finished()) {
+            this.currentCoreGame.resetCounters();
+            this.gameStateMachine.gotoNextState();
+            this.updateCurrentCoreGame();
+        }
+        this.currentCoreGame.update(frametime);
     }
 
     /**
@@ -70,177 +81,231 @@ public class Game extends AbstractGame {
      */
     @Override
     public void render(long delta) {
-		this.graphics2D = (Graphics2D) gameWindow.getBufferStrategy().getDrawGraphics();
-
-		if (this.graphics2D == null) {
-			return;
-		}
-
-		if (!gameWindow.isFullScreen()) {
-			this.graphics2D.translate(0, gameWindow.getInsets().top);
-		}
-
-		this.graphics2D.setColor(Color.BLACK);
-		this.graphics2D.fillRect(0, 0, gameWindow.getPanelWidth(), gameWindow.getPanelHeight());
-
-        //draw the current screen based on the game state machine
-		this.currentCoreGame.draw(this.graphics2D);
-
-        if (this.isToShowFPS) {
-            if (this.graphics2D != null) {
-                this.graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
-                this.graphics2D.setColor(Color.RED);
-                this.graphics2D.drawString("Média de FPS / UPS: " + (int) (gameEngine.averageFPS) + " / " + (int) (gameEngine.averageUPS), 10, 20);
-            }
+        Graphics2D g2d = (Graphics2D) gameWindow.getBufferStrategy().getDrawGraphics();
+        if (g2d == null) {
+            return;
         }
 
-		if (this.gameExitMenu.isShowingExitMenu()) {
-			this.gameExitMenu.draw(this.graphics2D);
-		}
+        try {
+            // Apply window insets if windowed
+            if (!gameWindow.isFullScreen()) {
+                g2d.translate(0, gameWindow.getInsets().top);
+            }
+
+            // Clear background
+            g2d.setColor(Color.BLACK);
+            g2d.fillRect(0, 0, gameWindow.getPanelWidth(), gameWindow.getPanelHeight());
+
+            // Draw current screen
+            this.currentCoreGame.draw(g2d);
+
+            // Draw FPS overlay if enabled
+            if (this.isToShowFPS) {
+                drawFPSOverlay(g2d);
+            }
+
+            // Draw exit menu if visible
+            if (this.gameExitMenu.isShowingExitMenu()) {
+                this.gameExitMenu.draw(g2d);
+            }
+        } finally {
+            this.graphics2D = g2d;
+        }
+    }
+
+    /**
+     * Draws the FPS/UPS overlay on the screen.
+     */
+    private void drawFPSOverlay(Graphics2D g2d) {
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
+        g2d.setColor(Color.RED);
+        String fpsText = String.format("Média de FPS / UPS: %d / %d", 
+            (int) gameEngine.averageFPS, 
+            (int) gameEngine.averageUPS);
+        g2d.drawString(fpsText, 10, 20);
     }
 
     /**
      * Updates the game settings based on the current state of the game window.
      */
-    public void updateGameSettings(boolean isFullScreen, Integer pWIDTH, Integer pHEIGHT) {     
-		this.loading();
-
-        {
-            Integer currentAspectRatio = gameWindow.getCurrentAspectRatio();
-            this.currentCoreGame.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
-
-            if (this.gameExitMenu != null) {
-                this.gameExitMenu.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
-            }
+    public void updateGameSettings(boolean isFullScreen, Integer pWIDTH, Integer pHEIGHT) {
+        // Validate parameters
+        if (pWIDTH == null || pWIDTH <= 0 || pHEIGHT == null || pHEIGHT <= 0) {
+            System.err.println("Invalid window dimensions: " + pWIDTH + "x" + pHEIGHT);
+            return;
         }
 
-		this.loadingDone();
+        this.loading();
+        try {
+            Integer currentAspectRatio = gameWindow.getCurrentAspectRatio();
+            this.currentCoreGame.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
+            this.gameExitMenu.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
+        } finally {
+            this.loadingDone();
+        }
     }
 
     /**
-     * Handles key press events to navigate through the game menu and update settings based on user input. 
-     * It checks the current state of the menu and performs actions accordingly, such as navigating through options, 
-     * applying changes, or showing/hiding the exit menu.
+     * Handles key press events to navigate through the game menu and update settings based on user input.
      */
     @Override
     public void keyPressed(int keyCode, boolean isAltDown) {
-        if (!gameExitMenu.isShowingExitMenu()) {
-
-            if (isAltDown && (keyCode == KeyEvent.VK_F4)) {
-                if (!this.gameStateMachine.isInIntroDev() && 
-                    !this.gameStateMachine.isInOptions()) {
-                    if (gameExitMenu != null) {
-                        gameExitMenu.showExitMenu();
-                    }
-                }
-            } else if (keyCode != KeyEvent.VK_ALT && this.gameStateMachine.isInIntro()) {
-                this.gameStateMachine.gotoMainMenu();
-                this.currentCoreGame = CoreGameFactory.getInstance(this.gameStateMachine, this.gameWindow);
-            } else if (isAltDown && (keyCode == KeyEvent.VK_ENTER)) {
-                if (!gameWindow.isFullScreen()) {
-                    pauseGame();
-
-                    try {
-                        gameWindow.switchToFullScreen();
-                        CoreGameFactory.configureGameGraphics(ScreenMode.FULLSCREEN);
-
-                    } catch (Exception exception) {
-                        JOptionPane.showMessageDialog(null,
-                                "Nao foi possível inicializar em FullScreen.\n" +
-                                        "Tente alterar o modo de video em Game-Options.",
-                                "Erro ao alterar o modo de tela",
-                                JOptionPane.ERROR_MESSAGE);
-
-                        gameWindow.backToWindow();
-                        CoreGameFactory.configureGameGraphics(ScreenMode.WINDOWED);
-                    }
-                    resumeGame();
-                } else {
-                    pauseGame();
-
-                    gameWindow.backToWindow();
-                    CoreGameFactory.configureGameGraphics(ScreenMode.WINDOWED);
-
-                    resumeGame();
-                }
-            } else if (!this.gameStateMachine.isInIntro() && 
-                       !this.gameStateMachine.isInOptions() && 
-                      (keyCode == KeyEvent.VK_P) || (keyCode == KeyEvent.VK_PAUSE)) {
-                if (!isPaused) {
-                    pauseGame();
-                } else {
-                    resumeGame();
-                }
-
-            } else {
-                //handle input for the current screen based on the game state machine
-                this.currentCoreGame.handleInput(this, keyCode, isAltDown);
-            }
+        if (gameExitMenu.isShowingExitMenu()) {
+            handleExitMenuInput(keyCode);
         } else {
-            if (keyCode == KeyEvent.VK_LEFT) {
-                gameExitMenu.previousGameOption();
-            } else if (keyCode == KeyEvent.VK_RIGHT) {
-                gameExitMenu.nextGameOption();
-            }
+            handleGameInput(keyCode, isAltDown);
+        }
+    }
 
-            if (keyCode == KeyEvent.VK_ENTER) {
+    /**
+     * Handles input when exit menu is visible.
+     */
+    private void handleExitMenuInput(int keyCode) {
+        switch (keyCode) {
+            case KeyEvent.VK_LEFT:
+                gameExitMenu.previousGameOption();
+                break;
+            case KeyEvent.VK_RIGHT:
+                gameExitMenu.nextGameOption();
+                break;
+            case KeyEvent.VK_ENTER:
                 if (gameExitMenu.isToExit()) {
                     stopGame();
                 } else {
                     gameExitMenu.hideExitMenu();
                 }
-            }
+                break;
         }
     }
 
     /**
-	 * loading - Set the loading flag to true, indicating that the game is currently
-	 * loading resources or performing some initialization tasks.
-	 */
-	public void loading() {
-        this.gameStateMachine.setLoadingState();
-        this.currentCoreGame = CoreGameFactory.getInstance(this.gameStateMachine, this.gameWindow);
-		this.loading = true;
-	}
+     * Handles input during normal gameplay.
+     */
+    private void handleGameInput(int keyCode, boolean isAltDown) {
+        // Alt+F4: Show exit menu
+        if (isAltDown && keyCode == KeyEvent.VK_F4 && canShowExitMenu()) {
+            gameExitMenu.showExitMenu();
+            return;
+        }
 
-	/**
-	 * loadingDone - Set the loading flag to false, indicating that the game has
-	 * finished loading resources or initialization tasks.
-	 */
-	public void loadingDone() {
-        this.gameStateMachine.unloadState();
-        this.currentCoreGame = CoreGameFactory.getInstance(this.gameStateMachine, this.gameWindow);
-		this.loading = false;
-	}
+        // Any key in intro: Go to main menu
+        if (keyCode != KeyEvent.VK_ALT && gameStateMachine.isInIntro()) {
+            gotoMainMenu();
+            return;
+        }
 
-    public void showExitMenu() {
-        if (this.gameExitMenu != null) {
-            this.gameExitMenu.showExitMenu();
+        // Alt+Enter: Toggle fullscreen
+        if (isAltDown && keyCode == KeyEvent.VK_ENTER) {
+            handleFullscreenToggle();
+            return;
+        }
+
+        // P or Pause: Toggle pause
+        if ((keyCode == KeyEvent.VK_P || keyCode == KeyEvent.VK_PAUSE) && 
+            !gameStateMachine.isInIntro() && !gameStateMachine.isInOptions()) {
+            togglePause();
+            return;
+        }
+
+        // Default: Handle input for current screen
+        currentCoreGame.handleInput(this, keyCode, isAltDown);
+    }
+
+    /**
+     * Checks if the exit menu can be shown.
+     */
+    private boolean canShowExitMenu() {
+        return !gameStateMachine.isInIntroDev() && !gameStateMachine.isInOptions();
+    }
+
+    /**
+     * Handles fullscreen toggle via Alt+Enter.
+     */
+    private void handleFullscreenToggle() {
+        pauseGame();
+        try {
+            if (!gameWindow.isFullScreen()) {
+                gameWindow.switchToFullScreen();
+                CoreGameFactory.configureGameGraphics(ScreenMode.FULLSCREEN);
+            } else {
+                gameWindow.backToWindow();
+                CoreGameFactory.configureGameGraphics(ScreenMode.WINDOWED);
+            }
+        } catch (Exception e) {
+            System.err.println("Fullscreen toggle failed: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, FS_ERROR_MESSAGE, FS_ERROR_TITLE, 
+                JOptionPane.ERROR_MESSAGE);
+            gameWindow.backToWindow();
+            CoreGameFactory.configureGameGraphics(ScreenMode.WINDOWED);
+        } finally {
+            resumeGame();
         }
     }
 
+    /**
+     * Toggles the pause state.
+     */
+    private void togglePause() {
+        if (!isPaused) {
+            pauseGame();
+        } else {
+            resumeGame();
+        }
+    }
+
+    /**
+     * loading - Set the loading flag to true, indicating that the game is currently
+     * loading resources or performing some initialization tasks.
+     */
+    public void loading() {
+        gameStateMachine.setLoadingState();
+        updateCurrentCoreGame();
+        this.loading = true;
+    }
+
+    /**
+     * loadingDone - Set the loading flag to false, indicating that the game has
+     * finished loading resources or initialization tasks.
+     */
+    public void loadingDone() {
+        gameStateMachine.unloadState();
+        updateCurrentCoreGame();
+        this.loading = false;
+    }
+
+    /**
+     * Shows the exit menu.
+     */
+    public void showExitMenu() {
+        gameExitMenu.showExitMenu();
+    }
+
+    /**
+     * Navigate to a game state using the provided state navigator.
+     * Centralizes state transitions and core game updates.
+     */
+    private void navigateToState(Runnable stateNavigator) {
+        stateNavigator.run();
+        updateCurrentCoreGame();
+    }
+
     public void gotoMainOption() {
-        this.gameStateMachine.gotoMainOption();
-        this.currentCoreGame = CoreGameFactory.getInstance(gameStateMachine, gameWindow);
+        navigateToState(() -> gameStateMachine.gotoMainOption());
     }
 
     public void gotoMainMenu() {
-        this.gameStateMachine.gotoMainMenu();
-        this.currentCoreGame = CoreGameFactory.getInstance(gameStateMachine, gameWindow);
+        navigateToState(() -> gameStateMachine.gotoMainMenu());
     }
 
     public void gotoGameOptions() {
-        this.gameStateMachine.gotoGameOptions();
-        this.currentCoreGame = CoreGameFactory.getInstance(gameStateMachine, gameWindow);
+        navigateToState(() -> gameStateMachine.gotoGameOptions());
     }
 
     public void gotoSFXConfigMenu() {
-        this.gameStateMachine.gotoSFXConfigMenu();
-        this.currentCoreGame = CoreGameFactory.getInstance(gameStateMachine, gameWindow);
+        navigateToState(() -> gameStateMachine.gotoSFXConfigMenu());
     }
 
     public void gotoGFXConfigMenu() {
-        this.gameStateMachine.gotoGFXConfigMenu();
-        this.currentCoreGame = CoreGameFactory.getInstance(gameStateMachine, gameWindow);
+        navigateToState(() -> gameStateMachine.gotoGFXConfigMenu());
     }
 }
