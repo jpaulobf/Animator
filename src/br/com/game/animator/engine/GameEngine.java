@@ -11,6 +11,7 @@ public class GameEngine implements Runnable {
 	//--- Constants ---//
 	private static final long MAX_DELTA_TIME = 100_000_000L; // 100ms cap para delta time
 	private static final long SLEEP_BUFFER = 500_000L; // 0.5ms buffer para sleep
+	private static final int STATS_BUFFER_SIZE = 10; // Tamanho do buffer circular para estatísticas
 	private final static long MAX_STATS_INTERVAL = 1000000000L;
 	private final static long FIRST_STATS_INTERVAL = 2000000000L;
 	private long FPS240                 = (long)(1_000_000_000 / 240);
@@ -31,8 +32,10 @@ public class GameEngine implements Runnable {
 	public double averageFPS = 0.0;
 	public double averageUPS = 0.0;
 	private long prevStatsTime = 0L;
-	private double fpsStore[] = new double[10];
-	private double upsStore[] = new double[10];
+	private double fpsStore[] = new double[STATS_BUFFER_SIZE];
+	private double upsStore[] = new double[STATS_BUFFER_SIZE];
+	private double totalFPSStore = 0.0; // Acumulador para média móvel O(1)
+	private double totalUPSStore = 0.0; // Acumulador para média móvel O(1)
 	private long statsCount = 0;
 	private long framesSkipped = 0L;
 	private long totalFramesSkipped = 0L;
@@ -211,36 +214,39 @@ public class GameEngine implements Runnable {
 		if (realElapsedTime >= triggerInterval) {
 			this.startStoreStats = true;
 
+			// Validação de tempo zero (edge case)
+			if (realElapsedTime <= 0) return;
+
 			// Calcula quantos quadros ocorreram APENAS neste último intervalo
 			long framesInInterval = this.frameCount - this.lastFrameCount;
 			this.lastFrameCount = this.frameCount;
 
 			// FPS e UPS baseados no tempo real decorrido no intervalo
-			double actualFPS = ((double) framesInInterval / realElapsedTime) * 1000000000L;
-			double actualUPS = ((double) (framesInInterval + this.framesSkipped) / realElapsedTime) * 1000000000L;
+			double actualFPS = (framesInInterval * 1_000_000_000.0) / realElapsedTime;
+			double actualUPS = ((framesInInterval + this.framesSkipped) * 1_000_000_000.0) / realElapsedTime;
 
 			this.totalFramesSkipped += this.framesSkipped;
 
-			// Armazena no buffer circular de médias (tamanho definido na inicialização, ex:
-			// 10)
-			int numSamples = this.fpsStore.length;
-			int index = (int) (this.statsCount % numSamples);
-			this.fpsStore[index] = actualFPS;
-			this.upsStore[index] = actualUPS;
-			this.statsCount++;
+			// Sistema de buffer circular com acumulador eficiente O(1)
+			int index = (int) (this.statsCount % STATS_BUFFER_SIZE);
 
-			// Calcula a média móvel das últimas amostras
-			double totalFPS = 0.0;
-			double totalUPS = 0.0;
-			int activeSamples = (int) Math.min(this.statsCount, numSamples);
-
-			for (int i = 0; i < activeSamples; i++) {
-				totalFPS += this.fpsStore[i];
-				totalUPS += this.upsStore[i];
+			// Remove valor antigo do acumulador se buffer está cheio
+			if (this.statsCount >= STATS_BUFFER_SIZE) {
+				this.totalFPSStore -= this.fpsStore[index];
+				this.totalUPSStore -= this.upsStore[index];
 			}
 
-			this.averageFPS = totalFPS / activeSamples;
-			this.averageUPS = totalUPS / activeSamples;
+			// Adiciona novo valor
+			this.fpsStore[index] = actualFPS;
+			this.upsStore[index] = actualUPS;
+			this.totalFPSStore += actualFPS;
+			this.totalUPSStore += actualUPS;
+			this.statsCount++;
+
+			// Calcula média em O(1) ao invés de O(n)
+			int activeSamples = (int) Math.min(this.statsCount, STATS_BUFFER_SIZE);
+			this.averageFPS = this.totalFPSStore / activeSamples;
+			this.averageUPS = this.totalUPSStore / activeSamples;
 
 			// Reseta dados do intervalo
 			this.framesSkipped = 0;
