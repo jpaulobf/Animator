@@ -29,14 +29,14 @@ public class GameEngine implements Runnable {
 	private final IGame game;
 	private final int targetFPS;
 	private final long targetFrametime;
-	public volatile boolean running = false;
+	private volatile boolean running = false;
 	private volatile boolean storeStats = true;
 	private long frameCount = 0;
 	private long lastFrameCount = 0L;
 
 	// --- Stats Tracking ---//
-	public double averageFPS = 0.0;
-	public double averageUPS = 0.0;
+	private volatile double averageFPS = 0.0;
+	private volatile double averageUPS = 0.0;
 	private long prevStatsTime = 0L;
 	private double fpsStore[] = new double[STATS_BUFFER_SIZE];
 	private double upsStore[] = new double[STATS_BUFFER_SIZE];
@@ -67,15 +67,10 @@ public class GameEngine implements Runnable {
 	 * @return Frame time in nanoseconds, or -1 for unlimited
 	 */
 	private long getTargetFrametime(int fps) {
-		return switch (fps) {
-			case 30 -> FPS30;
-			case 60 -> FPS60;
-			case 90 -> FPS90;
-			case 120 -> FPS120;
-			case 240 -> FPS240;
-			case 0 -> -1; // Unlimited FPS
-			default -> FPS60;
-		};
+		if (fps <= 0) {
+			return -1;
+		}
+		return 1_000_000_000L / fps;
 	}
 
 	/**
@@ -180,7 +175,7 @@ public class GameEngine implements Runnable {
 		}
 
 		this.printStats();
-		System.exit(0);
+		System.exit(0);	
 	}
 
 	/**
@@ -278,6 +273,18 @@ public class GameEngine implements Runnable {
 			System.out.println("Average FPS: " + STATS_FORMATTER.format(this.averageFPS));
 			System.out.println("Average UPS: " + STATS_FORMATTER.format(this.averageUPS));
 		}
+	}
+
+	public double getAverageFPS() {
+		return averageFPS;
+	}
+
+	public double getAverageUPS() {
+		return averageUPS;
+	}
+
+	public boolean isRunning() {
+		return running;
 	}
 
 	public void stop() {

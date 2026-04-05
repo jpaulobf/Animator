@@ -120,8 +120,8 @@ public class Game extends AbstractGame {
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
         g2d.setColor(Color.RED);
         String fpsText = String.format("Média de FPS / UPS: %d / %d", 
-            (int) gameEngine.averageFPS, 
-            (int) gameEngine.averageUPS);
+            (int) gameEngine.getAverageFPS(), 
+            (int) gameEngine.getAverageUPS());
         g2d.drawString(fpsText, 10, 20);
     }
 
