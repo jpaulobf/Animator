@@ -31,7 +31,7 @@ public class DeveloperAdvertiseImpl implements DeveloperAdvertise {
 		this.PWIDTH = pwidth;
 		this.PHEIGHT = pheight;
 		this.imageUtil = new ImageUtil(pwidth, pheight, currentAspectRatio);
-		this.devLogo = this.imageUtil.loadScaledImage("/res/images/logo_phoenix.png");
+		this.devLogo = this.imageUtil.loadScaledImage("/images/logo_phoenix.png");
 		this.imageWidth = this.devLogo.getWidth();
 		this.imageHeight = this.devLogo.getHeight();
 		this.positionX = (this.PWIDTH / 2) - (this.imageWidth / 2);
@@ -85,7 +85,7 @@ public class DeveloperAdvertiseImpl implements DeveloperAdvertise {
 		this.PWIDTH = pwidth;
 		this.PHEIGHT = pheight;
 		this.imageUtil.updateCanvasProperties(pwidth, pheight, currentAspectRatio);
-		this.devLogo = this.imageUtil.loadScaledImage("/res/images/logo_phoenix.png");
+		this.devLogo = this.imageUtil.loadScaledImage("/images/logo_phoenix.png");
 		this.imageWidth = this.devLogo.getWidth();
 		this.imageHeight = this.devLogo.getHeight();
 		this.positionX = (this.PWIDTH / 2) - (this.imageWidth / 2);

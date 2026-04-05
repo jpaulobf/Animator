@@ -53,13 +53,13 @@ public class GameMainOptionScreenImpl implements GameMainOptionScreen {
 		this.PWIDTH = pwidth;
 		this.PHEIGHT = pheight;
 		this.imageUtil = new ImageUtil(pwidth, pheight, currentAspectRatio);
-		this.backgroundGameOptions = this.imageUtil.loadImage("/res/images/bg_option_screen.png");
-		this.btGameOptions = this.imageUtil.loadImage("/res/images/opt_game_option_button.png");
-		this.btConfigKeys = this.imageUtil.loadImage("/res/images/opt_configure_keys_button.png");
-		this.btConfigGFX = this.imageUtil.loadImage("/res/images/opt_gfx_settings_button.png");
-		this.btConfigSFX = this.imageUtil.loadImage("/res/images/opt_sfx_settings_button.png");
-		this.btBackMainMenu = this.imageUtil.loadImage("/res/images/opt_back_mainmenu_button.png");
-		this.highlightButton = this.imageUtil.loadImage("/res/images/opt_mainoption_selector.png");
+		this.backgroundGameOptions = this.imageUtil.loadImage("/images/bg_option_screen.png");
+		this.btGameOptions = this.imageUtil.loadImage("/images/opt_game_option_button.png");
+		this.btConfigKeys = this.imageUtil.loadImage("/images/opt_configure_keys_button.png");
+		this.btConfigGFX = this.imageUtil.loadImage("/images/opt_gfx_settings_button.png");
+		this.btConfigSFX = this.imageUtil.loadImage("/images/opt_sfx_settings_button.png");
+		this.btBackMainMenu = this.imageUtil.loadImage("/images/opt_back_mainmenu_button.png");
+		this.highlightButton = this.imageUtil.loadImage("/images/opt_mainoption_selector.png");
 	}
 
 	public void update(long frametime) {

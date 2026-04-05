@@ -112,15 +112,15 @@ public class GameMainMenuImpl implements GameMainMenu {
 		this.PHEIGHT 				= pheight;
 		this.imageUtil 				= new ImageUtil(pwidth, pheight, currentAspectRatio);
 		
-		this.logoPart1 				= this.imageUtil.loadScaledImage("/res/images/logo_p1.png");
-		this.logoPart2 				= this.imageUtil.loadScaledImage("/res/images/logo_p2.png");
-		this.logoPart3 				= this.imageUtil.loadScaledImage("/res/images/logo_p3.png");
-		this.logoPart4 				= this.imageUtil.loadScaledImage("/res/images/logo_p4.png");
-		this.logoPart5 				= this.imageUtil.loadScaledImage("/res/images/logo_p5.png");
-		this.startGameButton		= this.imageUtil.loadScaledImage("/res/images/start_game_button.png");
-		this.optionsButton			= this.imageUtil.loadScaledImage("/res/images/options_button.png");
-		this.quitGameButton			= this.imageUtil.loadScaledImage("/res/images/quit_game_button.png");
-		this.mainMenuHighlight		= this.imageUtil.loadScaledImage("/res/images/mainmenu_selection.png");
+		this.logoPart1 				= this.imageUtil.loadScaledImage("/images/logo_p1.png");
+		this.logoPart2 				= this.imageUtil.loadScaledImage("/images/logo_p2.png");
+		this.logoPart3 				= this.imageUtil.loadScaledImage("/images/logo_p3.png");
+		this.logoPart4 				= this.imageUtil.loadScaledImage("/images/logo_p4.png");
+		this.logoPart5 				= this.imageUtil.loadScaledImage("/images/logo_p5.png");
+		this.startGameButton		= this.imageUtil.loadScaledImage("/images/start_game_button.png");
+		this.optionsButton			= this.imageUtil.loadScaledImage("/images/options_button.png");
+		this.quitGameButton			= this.imageUtil.loadScaledImage("/images/quit_game_button.png");
+		this.mainMenuHighlight		= this.imageUtil.loadScaledImage("/images/mainmenu_selection.png");
 		
 		this.selectorPositionX1		= this.imageUtil.getScaledWidthForPosition(START_OVER_POSITION_X);
 		this.selectorPositionY1		= this.imageUtil.getScaledHeight(START_OVER_POSITION_Y);
@@ -268,15 +268,15 @@ public class GameMainMenuImpl implements GameMainMenu {
 		this.PHEIGHT 	= pheight;
 		this.imageUtil.updateCanvasProperties(pwidth, pheight, currentAspectRatio);
 		
-		this.logoPart1 				= this.imageUtil.loadScaledImage("/res/images/logo_p1.png");
-		this.logoPart2 				= this.imageUtil.loadScaledImage("/res/images/logo_p2.png");
-		this.logoPart3 				= this.imageUtil.loadScaledImage("/res/images/logo_p3.png");
-		this.logoPart4 				= this.imageUtil.loadScaledImage("/res/images/logo_p4.png");
-		this.logoPart5 				= this.imageUtil.loadScaledImage("/res/images/logo_p5.png");
-		this.startGameButton		= this.imageUtil.loadScaledImage("/res/images/start_game_button.png");
-		this.optionsButton			= this.imageUtil.loadScaledImage("/res/images/options_button.png");
-		this.quitGameButton			= this.imageUtil.loadScaledImage("/res/images/quit_game_button.png");
-		this.mainMenuHighlight		= this.imageUtil.loadScaledImage("/res/images/mainmenu_selection.png");
+		this.logoPart1 				= this.imageUtil.loadScaledImage("/images/logo_p1.png");
+		this.logoPart2 				= this.imageUtil.loadScaledImage("/images/logo_p2.png");
+		this.logoPart3 				= this.imageUtil.loadScaledImage("/images/logo_p3.png");
+		this.logoPart4 				= this.imageUtil.loadScaledImage("/images/logo_p4.png");
+		this.logoPart5 				= this.imageUtil.loadScaledImage("/images/logo_p5.png");
+		this.startGameButton		= this.imageUtil.loadScaledImage("/images/start_game_button.png");
+		this.optionsButton			= this.imageUtil.loadScaledImage("/images/options_button.png");
+		this.quitGameButton			= this.imageUtil.loadScaledImage("/images/quit_game_button.png");
+		this.mainMenuHighlight		= this.imageUtil.loadScaledImage("/images/mainmenu_selection.png");
 		
 		this.selectorPositionX1		= this.imageUtil.getScaledWidthForPosition(START_OVER_POSITION_X);
 		this.selectorPositionY1		= this.imageUtil.getScaledHeight(START_OVER_POSITION_Y);

@@ -43,11 +43,11 @@ public class GameExitMenuImpl implements GameExitMenu {
 		this.PWIDTH = pwidth;
 		this.PHEIGHT = pheight;
 		this.imageUtil = new ImageUtil(pwidth, pheight, currentAspectRatio);
-		this.bgExitMenu = this.imageUtil.loadScaledImage("/res/images/quit_bg.png");
-		this.labelExitMenu = this.imageUtil.loadScaledImage("/res/images/really_quit_question.png");
-		this.buttonYesExitMenu = this.imageUtil.loadScaledImage("/res/images/yes_button.png");
-		this.buttonNoExitMenu = this.imageUtil.loadScaledImage("/res/images/no_button.png");
-		this.highlightButtonExitMenu = this.imageUtil.loadScaledImage("/res/images/yes_no_highlight.png");
+		this.bgExitMenu = this.imageUtil.loadScaledImage("/images/quit_bg.png");
+		this.labelExitMenu = this.imageUtil.loadScaledImage("/images/really_quit_question.png");
+		this.buttonYesExitMenu = this.imageUtil.loadScaledImage("/images/yes_button.png");
+		this.buttonNoExitMenu = this.imageUtil.loadScaledImage("/images/no_button.png");
+		this.highlightButtonExitMenu = this.imageUtil.loadScaledImage("/images/yes_no_highlight.png");
 		this.MENU_BACKGROUND_POSITION_X = (this.PWIDTH / 2) - (this.bgExitMenu.getWidth() / 2);
 		this.MENU_BACKGROUND_POSITION_Y = (this.PHEIGHT / 2) - (this.bgExitMenu.getHeight() / 2);
 	}
@@ -114,11 +114,11 @@ public class GameExitMenuImpl implements GameExitMenu {
 		this.PHEIGHT = pheight;
 		this.imageUtil.updateCanvasProperties(pwidth, pheight, currentAspectRatio);
 
-		this.bgExitMenu = this.imageUtil.loadScaledImage("/res/images/quit_bg.png");
-		this.labelExitMenu = this.imageUtil.loadScaledImage("/res/images/really_quit_question.png");
-		this.buttonYesExitMenu = this.imageUtil.loadScaledImage("/res/images/yes_button.png");
-		this.buttonNoExitMenu = this.imageUtil.loadScaledImage("/res/images/no_button.png");
-		this.highlightButtonExitMenu = this.imageUtil.loadScaledImage("/res/images/yes_no_highlight.png");
+		this.bgExitMenu = this.imageUtil.loadScaledImage("/images/quit_bg.png");
+		this.labelExitMenu = this.imageUtil.loadScaledImage("/images/really_quit_question.png");
+		this.buttonYesExitMenu = this.imageUtil.loadScaledImage("/images/yes_button.png");
+		this.buttonNoExitMenu = this.imageUtil.loadScaledImage("/images/no_button.png");
+		this.highlightButtonExitMenu = this.imageUtil.loadScaledImage("/images/yes_no_highlight.png");
 
 		this.MENU_BACKGROUND_POSITION_X = (this.PWIDTH / 2) - (this.bgExitMenu.getWidth() / 2);
 		this.MENU_BACKGROUND_POSITION_Y = (this.PHEIGHT / 2) - (this.bgExitMenu.getHeight() / 2);

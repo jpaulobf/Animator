@@ -34,9 +34,7 @@
     </dependencies>
 
     <!-- Build Configuration -->
-    <build>
-        <sourceDirectory>src</sourceDirectory>
-        
+    <build>      
         <plugins>
             <!-- Java Compiler Plugin -->
             <plugin>
@@ -114,7 +112,7 @@
         <!-- Resource Configuration -->
         <resources>
             <resource>
-                <directory>src/res</directory>
+                <directory>src/main/resources</directory>
                 <includes>
                     <include>**/*.ini</include>
                     <include>**/*.properties</include>

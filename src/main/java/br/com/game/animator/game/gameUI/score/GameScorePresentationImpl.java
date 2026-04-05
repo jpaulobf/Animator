@@ -91,10 +91,10 @@ public class GameScorePresentationImpl implements GameScorePresentation {
 		this.lowerLetter			= new BufferedImage[26];
 		this.numbers				= new BufferedImage[11];
 		this.mapLetters				= new HashMap<String, BufferedImage>();
-		this.hallOfFameLogo			= this.imageUtil.loadScaledImage("/res/images/hall.png");
-		BufferedImage numbersImages	= this.imageUtil.loadImage("/res/images/numbers.png");
-		BufferedImage lowersImages 	= this.imageUtil.loadImage("/res/images/letter_lower.png");
-		BufferedImage uppersImages 	= this.imageUtil.loadImage("/res/images/letter_upper.png");
+		this.hallOfFameLogo			= this.imageUtil.loadScaledImage("/images/hall.png");
+		BufferedImage numbersImages	= this.imageUtil.loadImage("/images/numbers.png");
+		BufferedImage lowersImages 	= this.imageUtil.loadImage("/images/letter_lower.png");
+		BufferedImage uppersImages 	= this.imageUtil.loadImage("/images/letter_upper.png");
 		BufferedImage copy 			= null;
 
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();

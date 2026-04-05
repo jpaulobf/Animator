@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public class GameConfig {
 
-    private static final String CONFIG_FILE = "src/res/config/config.ini";
+    private static final String CONFIG_FILE = "src/main/resources/config/config.ini";
     private static final GameConfig INSTANCE = new GameConfig();
 
     private final Map<String, String> properties = new HashMap<>();

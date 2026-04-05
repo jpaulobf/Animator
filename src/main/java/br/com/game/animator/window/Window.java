@@ -145,7 +145,7 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 
 		} else {
 			this.setIconImage(
-					Toolkit.getDefaultToolkit().getImage(getClass().getResource("/res/images/game-icon.png")));
+					Toolkit.getDefaultToolkit().getImage(getClass().getResource("/images/game-icon.png")));
 
 			this.setPreferredSize(new Dimension(CURRENT_WINDOW_WIDTH, CURRENT_WINDOW_HEIGHT));
 			this.setLocation(
