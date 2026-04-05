@@ -1,7 +1,6 @@
 package br.com.game.animator.engine;
 
 import java.text.DecimalFormat;
-
 import br.com.game.animator.game.core.IGame;
 
 /**
@@ -15,6 +14,13 @@ public class GameEngine implements Runnable {
 	private static final Integer MAX_FRAME_SKIPS = 5;
 	private final static long MAX_STATS_INTERVAL = 1000000000L;
 	private final static long FIRST_STATS_INTERVAL = 2000000000L;
+	private long FPS240                 = (long)(1_000_000_000 / 240);
+	private long FPS120                 = (long)(1_000_000_000 / 120);
+	private long FPS90                  = (long)(1_000_000_000 / 90);
+	private long FPS60                  = (long)(1_000_000_000 / 60);
+	private long FPS30                  = (long)(1_000_000_000 / 30);
+	private long TARGET_FRAMETIME       = 0;
+	private boolean UNLIMITED_FPS       = false;
 
 	//--- Properties ---//
 	private IGame game = null;
@@ -40,9 +46,35 @@ public class GameEngine implements Runnable {
 	 * 
 	 * @param game The game instance to be managed by the engine.
 	 */
-	public GameEngine(IGame game, int fps) {
-		FPS = fps;
+	public GameEngine(IGame game, int targetFPS) {
+		FPS = targetFPS;
 		PERIOD = 1000000000L / FPS;
+
+		this.UNLIMITED_FPS = false;
+		switch(targetFPS) {
+			case 30:
+				this.TARGET_FRAMETIME = FPS30;
+				break;
+			case 60:
+				this.TARGET_FRAMETIME = FPS60;
+				break;
+			case 90:
+				this.TARGET_FRAMETIME = FPS90;
+				break;
+			case 120:
+				this.TARGET_FRAMETIME = FPS120;
+				break;
+			case 240:
+				this.TARGET_FRAMETIME = FPS240;
+				break;
+			case 0:
+				this.UNLIMITED_FPS = true;
+				break;
+			default:
+				this.TARGET_FRAMETIME = FPS30;
+				break;
+		}
+
 		this.game = game;
 		this.startEngine();
 	}
@@ -60,7 +92,7 @@ public class GameEngine implements Runnable {
 	/**
 	 * run - The main game loop, responsible for updating, rendering, and timing control.
 	 */
-	public void run() {
+	public void run2() {
 		this.running = true;
 		long beforeTime = System.nanoTime();
 		long overSleepTime = 0L;
@@ -110,6 +142,91 @@ public class GameEngine implements Runnable {
 
 			if (this.storeStats) {
 				this.storeStats();
+			}
+		}
+
+		this.printStats();
+		System.exit(0);
+	}
+
+	public void run() {
+		long lastTime           = System.nanoTime(); // Usado para calcular o delta time no modo de FPS ilimitado
+		long now                = 0;
+		long elapsed            = 0;
+		long wait               = 0;
+		long overSleep          = 0;
+		this.running 			= true;
+		this.prevStatsTime 		= lastTime;
+
+		if (UNLIMITED_FPS) {
+			System.out.println("Running in UNLIMITED FPS mode. No timing control will be applied.");
+			while (running) {
+				now = System.nanoTime();
+				elapsed = now - lastTime;
+				lastTime = now;
+
+				// Cap delta time to avoid huge jumps (e.g. 0.1s)
+				if (elapsed > 100_000_000) elapsed = 100_000_000;
+
+				this.gameUpdate(elapsed);
+				this.paint();
+				this.gameRender(elapsed);
+				
+				// Yield to prevent CPU starvation
+				Thread.yield();
+
+				if (this.storeStats) {
+					this.storeStats();
+				}
+			}
+		} else {
+			while (running) {
+				now = System.nanoTime();
+				elapsed = now - lastTime;
+				lastTime = now;
+
+				this.gameUpdate(elapsed);
+				this.paint();
+				this.gameRender(elapsed);
+
+				// Calculate time taken
+				long workTime = System.nanoTime() - now;
+
+				// Calculate wait time, compensating for previous over-sleep/lag
+				wait = TARGET_FRAMETIME - workTime - overSleep;
+
+				if (wait > 0) {
+					try {
+						// Hybrid Sleep Strategy:
+						// Sleep for (wait - 2ms) to save CPU, then spin-wait for precision
+						long sleepMs = (wait / 1_000_000) - 2;
+						if (sleepMs > 0) {
+							Thread.sleep(sleepMs);
+						}
+						
+						// Busy-wait for the remaining nanoseconds
+						while (System.nanoTime() < now + TARGET_FRAMETIME - overSleep) {
+							// Cede o tempo de CPU para outras threads enquanto espera, para evitar 100% de uso.
+							Thread.yield();
+						}
+						overSleep = 0;
+					} catch (InterruptedException e) {
+						// ignore
+					}
+				} else {
+					// We are behind schedule
+					overSleep = -wait;
+					
+					// Frame Skipping: Se estamos atrasados por mais de um quadro completo,
+					// precisamos recuperar o tempo executando a lógica do jogo sem renderizar.
+					while (overSleep >= TARGET_FRAMETIME) {
+						this.gameUpdate(TARGET_FRAMETIME); // Executa um passo da simulação para recuperar o tempo
+						overSleep -= TARGET_FRAMETIME; // "Paga" a dívida de tempo de um quadro
+					}
+				}
+				if (this.storeStats) {
+					this.storeStats();
+				}
 			}
 		}
 
