@@ -1,7 +1,9 @@
 package br.com.game.animator.game.gameUI.options;
 
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import br.com.game.animator.game.Game;
 import br.com.game.animator.game.gameData.GameGraphics;
 import br.com.game.animator.game.gameData.GameGraphicsImpl;
 import br.com.game.animator.game.gameData.enumerators.DeepColor;
@@ -677,5 +679,42 @@ public class GameGraphicsScreenImpl implements GameGraphicsScreen {
 	@Override
 	public boolean finished() {
 		return false;
+	}
+
+	@Override
+	public void handleInput(Game game, int keyCode, boolean isAltDown) {
+		if (keyCode == KeyEvent.VK_ENTER) {
+			if (this.isToBackToMainOption()) {
+				this.resetCounters();
+				this.cancelChanges();
+				game.gotoMainOption();
+
+			} else if (this.isToApply()) {
+				// todo
+			}
+		} else if (keyCode == KeyEvent.VK_UP) {
+			this.previousOption();
+
+		} else if (keyCode == KeyEvent.VK_DOWN) {
+			this.nextOption();
+
+		} else if (keyCode == KeyEvent.VK_LEFT) {
+			if (this.isOverEnableTripleBuffering()) {
+				this.enableTripleBuffer();
+			} else if (this.isOverScreenMode()) {
+				this.previousScreenMode();
+			} else if (this.isOverDeepColor()) {
+				this.previousScreenDeepColor();
+			}
+
+		} else if (keyCode == KeyEvent.VK_RIGHT) {
+			if (this.isOverEnableTripleBuffering()) {
+				this.disableTripleBuffer();
+			} else if (this.isOverScreenMode()) {
+				this.nextScreenMode();
+			} else if (this.isOverDeepColor()) {
+				this.nextScreenDeepColor();
+			}
+		}
 	}
 }

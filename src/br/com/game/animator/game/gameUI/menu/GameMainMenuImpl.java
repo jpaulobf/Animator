@@ -2,7 +2,9 @@ package br.com.game.animator.game.gameUI.menu;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import br.com.game.animator.game.Game;
 import br.com.game.animator.util.ImageUtil;
 
 /**
@@ -368,5 +370,20 @@ public class GameMainMenuImpl implements GameMainMenu {
 	@Override
 	public boolean finished() {
 		return false;
+	}
+
+	@Override
+	public void handleInput(Game game, int keyCode, boolean isAltDown) {
+		if (keyCode == KeyEvent.VK_ENTER) {
+			if (this.isExitSelected()) {
+				game.showExitMenu();
+			} else if (this.isOptionSelected()) {
+				game.gotoMainOption();
+			}
+		} else if (keyCode == KeyEvent.VK_UP) {
+			this.previousGameOption();
+		} else if (keyCode == KeyEvent.VK_DOWN) {
+			this.nextGameOption();
+		}
 	}
 }
