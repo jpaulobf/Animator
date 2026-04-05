@@ -64,4 +64,41 @@ public class GameStateMachine {
     public void unloadState() {
         this.currentState = backupState;
     }
+
+    public boolean isInIntro() {
+        return (this.currentState == GameStates.SUB_INTRO_SCREEN || this.currentState == GameStates.INTRO_SCREEN || this.currentState == GameStates.HIGH_SCORE_SCREEN);
+    }
+
+    public boolean isInIntroDev() {
+        return this.currentState == GameStates.DEV_LOGO_SCREEN;
+    }
+
+    public void gotoMainMenu() {
+        this.currentState = GameStates.MAIN_MENU_SCREEN;
+    }
+
+    public boolean isInMainMenu() {
+        return this.currentState == GameStates.MAIN_MENU_SCREEN;
+    }
+
+    public void gotoMainOption() {
+        this.currentState = GameStates.MAIN_OPTION_SCREEN;
+    }
+
+    public void gotoGameOptions() {
+        this.currentState = GameStates.GAME_OPTIONS_SCREEN;
+    }
+
+    public void gotoSFXConfigMenu() {
+        this.currentState = GameStates.SFX_CONFIG_MENU_SCREEN;
+    }
+
+    public void gotoGFXConfigMenu() {
+        this.currentState = GameStates.GFX_CONFIG_MENU_SCREEN;
+    }
+
+    public boolean isInOptions() {
+        return (this.currentState == GameStates.MAIN_OPTION_SCREEN || this.currentState == GameStates.GAME_OPTIONS_SCREEN || 
+                this.currentState == GameStates.SFX_CONFIG_MENU_SCREEN || this.currentState == GameStates.GFX_CONFIG_MENU_SCREEN);
+    }
 }
