@@ -76,8 +76,8 @@ public interface GameGraphics {
 	public Map<String, GameGraphics> getAvailableScreenResolutions();
 	
 	/**
-	 * @param screenResolutionsAvailable
 	 * Stores the list of available resolutions.
+	 * @param availableScreenResolutions The map of available screen resolutions
 	 */
 	public void setAvailableScreenResolutions(Map<String, GameGraphics> availableScreenResolutions);
 	

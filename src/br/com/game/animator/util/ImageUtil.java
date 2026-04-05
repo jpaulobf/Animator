@@ -38,9 +38,7 @@ public class ImageUtil {
 	private Integer currentAspectRatio = null;
 
 	/**
-	 * Construtor
-	 * 
-	 * @param ge
+	 * Default constructor. Initializes graphics environment and configuration.
 	 */
 	public ImageUtil() {
 		this.ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -48,9 +46,10 @@ public class ImageUtil {
 	}
 
 	/**
-	 * Construtor
-	 * 
-	 * @param ge
+	 * Constructor with canvas dimensions and aspect ratio.
+	 * @param canvasWidth The canvas width
+	 * @param canvasHeight The canvas height
+	 * @param currentAspectRatio The current aspect ratio
 	 */
 	public ImageUtil(Integer canvasWidth, Integer canvasHeight, Integer currentAspectRatio) {
 		this();
@@ -131,10 +130,10 @@ public class ImageUtil {
 	}
 
 	/**
-	 * Loads an image specified in the parameter.
+	 * Loads and scales an image based on canvas dimensions and aspect ratio.
 	 * 
-	 * @param imagePath
-	 * @return
+	 * @param bi The BufferedImage to scale
+	 * @return The scaled BufferedImage
 	 */
 	public BufferedImage loadScaledImage(BufferedImage bi) {
 
@@ -178,8 +177,8 @@ public class ImageUtil {
 	/**
 	 * Copies an image specified in the parameter.
 	 * 
-	 * @param imagePath
-	 * @return
+	 * @param source The source BufferedImage to copy
+	 * @return A copy of the source image
 	 */
 	public BufferedImage copyImage(BufferedImage source) {
 		try {
@@ -198,10 +197,14 @@ public class ImageUtil {
 	}
 
 	/**
-	 * Copies an image specified in the parameter.
+	 * Copies a portion of an image specified in the parameter.
 	 * 
-	 * @param imagePath
-	 * @return
+	 * @param source The source BufferedImage to copy
+	 * @param posicaoX Starting X position
+	 * @param posicaoY Starting Y position
+	 * @param largura Width of the region
+	 * @param altura Height of the region
+	 * @return A copy of the specified region
 	 */
 	public BufferedImage copyImage(BufferedImage source, int posicaoX, int posicaoY, int largura, int altura) {
 		try {
@@ -316,8 +319,12 @@ public class ImageUtil {
 	 * Draws a grayscale image on the Graphics2D object, using the source image
 	 * specified in the parameter.
 	 * 
-	 * @param src
-	 * @return
+	 * @param graphics2D The Graphics2D context to draw on
+	 * @param src The source BufferedImage
+	 * @param x The x coordinate
+	 * @param y The y coordinate
+	 * @param width The width to draw
+	 * @param height The height to draw
 	 */
 	public void drawImageInGrayscale(Graphics2D graphics2D, BufferedImage src, int x, int y, int width, int height) {
 		if (src != null) {
@@ -333,8 +340,9 @@ public class ImageUtil {
 	}
 
 	/**
-	 * @param graphics2D
-	 * @param src
+	 * Draws an image with red color filter on the Graphics2D object.
+	 * @param graphics2D The Graphics2D context to draw on
+	 * @param src The source BufferedImage to draw
 	 */
 	public void drawImageInRed(Graphics2D graphics2D, BufferedImage src) {
 		ImageFilter filter = new GetRedFilter();
@@ -344,8 +352,9 @@ public class ImageUtil {
 	}
 
 	/**
-	 * @param graphics2D
-	 * @param src
+	 * Gets an image with red color filter applied.
+	 * @param src The source BufferedImage
+	 * @return The image with red filter applied
 	 */
 	public BufferedImage getImageInRed(BufferedImage src) {
 		BufferedImage buffer = new BufferedImage(src.getWidth(), src.getHeight(),
