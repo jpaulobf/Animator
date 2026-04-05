@@ -4,7 +4,7 @@ import java.util.Comparator;
 import java.util.Map;
 
 /**
- * @author João Paulo Faria
+ * author: Joao Paulo Faria
  */
 public class ValueComparator implements Comparator<String> {
 	

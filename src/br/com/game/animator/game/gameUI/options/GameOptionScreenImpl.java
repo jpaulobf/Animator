@@ -9,7 +9,7 @@ import br.com.game.animator.game.gameData.enumerators.GameDifficulty;
 import br.com.game.animator.util.ImageUtil;
 
 /**
- * @author João Paulo Faria
+ * author: Joao Paulo Faria
  */
 public class GameOptionScreenImpl implements GameOptionScreen {
 	

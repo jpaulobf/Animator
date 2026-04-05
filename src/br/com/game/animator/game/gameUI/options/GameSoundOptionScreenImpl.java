@@ -8,7 +8,7 @@ import br.com.game.animator.game.gameData.GameSoundOptions;
 import br.com.game.animator.util.ImageUtil;
 
 /**
- * @author João Paulo Faria
+ * author: Joao Paulo Faria
  */
 public class GameSoundOptionScreenImpl implements GameSoundOptionScreen {
 	

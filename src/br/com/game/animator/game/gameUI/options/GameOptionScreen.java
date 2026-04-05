@@ -3,7 +3,7 @@ package br.com.game.animator.game.gameUI.options;
 import br.com.game.animator.game.gameUI.CoreGameLogic;
 
 /**
- * @author João Paulo Faria
+ * author: Joao Paulo Faria
  */
 public interface GameOptionScreen extends CoreGameLogic {
 

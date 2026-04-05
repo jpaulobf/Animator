@@ -1,7 +1,7 @@
 package br.com.game.animator.util;
 
 /**
- * @author João Paulo Faria
+ * author: Joao Paulo Faria
  */
 public class GlobalProperties {
 

@@ -7,7 +7,7 @@ import java.util.TreeMap;
 import br.com.game.animator.util.ValueComparator;
 
 /**
- * @author João Paulo Faria
+ * author: Joao Paulo Faria
  *
  */
 public class GameScoreImpl implements GameScore {

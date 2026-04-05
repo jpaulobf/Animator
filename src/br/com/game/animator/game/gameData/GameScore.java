@@ -3,7 +3,7 @@ package br.com.game.animator.game.gameData;
 import java.util.Set;
 
 /**
- * @author João Paulo Faria
+ * author: Joao Paulo Faria
  *
  */
 public interface GameScore {

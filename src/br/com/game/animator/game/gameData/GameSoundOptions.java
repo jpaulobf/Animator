@@ -1,7 +1,7 @@
 package br.com.game.animator.game.gameData;
 
 /**
- * @author João Paulo Faria
+ * author: Joao Paulo Faria
  *
  */
 public interface GameSoundOptions {

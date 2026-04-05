@@ -5,7 +5,7 @@ import br.com.game.animator.game.gameData.enumerators.DeepColor;
 import br.com.game.animator.game.gameData.enumerators.ScreenMode;
 
 /**
- * @author João Paulo Faria
+ * author: Joao Paulo Faria
  */
 public class GameGraphicsImpl implements GameGraphics {
 	
