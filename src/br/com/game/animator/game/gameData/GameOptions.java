@@ -10,61 +10,52 @@ public interface GameOptions {
 
 	/**
 	 * @return
-	 * Recupera a dificuldade atual do game
+	 * Gets the current difficulty level
 	 */
 	public GameDifficulty getGameDifficulty();
 	
 	/**
-	 * @param gameDifficulty
-	 * Define a dificuldade atual do game
+	 * Sets the current difficulty level
 	 */
 	public void setGameDifficulty(GameDifficulty gameDifficulty);
 	
 	/**
-	 * @return
-	 * Recupera a quantidade de vidas restantes
+	 * Gets the remaining number of lives
 	 */
 	public Integer getGameRestNumber();
 	
 	/**
-	 * @param restNumber
-	 * Informa a quantidade de vidas restantes
+	 * Sets the remaining number of lives
 	 */
 	public void setGameRestNumber(Integer restNumber);
 	
 	/**
-	 * @return
-	 * Recupera o montante de pontos que d�o nova vida
+	 * Gets the points threshold for an extra life
 	 */
 	public Integer getExtraLifeAtEachHowMuchPoints();
 	
 	/**
-	 * @param points
-	 * Informa a quantidade de pontos que d�o nova vida
+	 * Sets the points threshold for an extra life
 	 */
 	public void setExtraLifeAtEachHowMuchPoints(Integer points);
 	
 	/**
-	 * @return
-	 * Recupera o n�mero de continues restante: -1 = infinito.
+	 * Gets the remaining number of continues (-1 = infinite)
 	 */
 	public Integer getGameContinuesNumber();
 	
 	/**
-	 * @param continues
-	 * Informa a quantidade de continues para o game: -1 = infinito
+	 * Sets the number of continues (-1 = infinite)
 	 */
 	public void setGameContinuesNumber(Integer continues); //-1 = infinity
 	
 	/**
-	 * @return
-	 * Recupera se deve ou n�o exibir legendas
+	 * Checks if subtitles are enabled
 	 */
 	public boolean getSubtitlesEnabled();
 	
 	/**
-	 * @param enable
-	 * Define se deve ou n�o exibir legendas.
+	 * Sets whether subtitles are enabled
 	 */
 	public void setSubtitlesEnabled(boolean enable);
 }

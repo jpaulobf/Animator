@@ -116,9 +116,6 @@ public class GameSoundOptionScreenImpl implements GameSoundOptionScreen {
 	
 	public void draw(Graphics2D g2d) {
 		
-		//---------------------------------------------------------//
-		//--- Desenha a tela de plano de fundos.                 --//
-		//---------------------------------------------------------//
 		g2d.drawImage(this.backgroundGameOptions, 
 					  0,
 					  0, 
@@ -126,9 +123,6 @@ public class GameSoundOptionScreenImpl implements GameSoundOptionScreen {
 					  this.imageUtil.getScaledHeight(this.backgroundGameOptions.getHeight()),
 					  null);
 		
-		//---------------------------------------------------------//
-		//--- Desenha a logo na tela de plano de fundos.         --//
-		//---------------------------------------------------------//
 		g2d.drawImage(this.gameOptionsLogo, 
 					  this.imageUtil.getScaledWidthScaledWithInformed4x3(LOGO_SOUND_OPTIONS_POSITION_X, 450),
 					  this.imageUtil.getScaledHeight(LOGO_SOUND_OPTIONS_POSITION_Y),
@@ -156,9 +150,6 @@ public class GameSoundOptionScreenImpl implements GameSoundOptionScreen {
 					  this.imageUtil.getScaledHeight(this.highlightButton.getHeight()),
 					  null);
 		
-		//---------------------------------------------------------//
-		//--- Desenha a label do Controle de Músicas.  			---//
-		//---------------------------------------------------------//
 		g2d.drawImage(this.labelEnableMusic, 
 					  this.imageUtil.getScaledWidth(LABEL_ENABLE_MUSIC_POSITION_X),
 					  this.imageUtil.getScaledHeight(LABEL_ENABLE_MUSIC_POSITION_Y),
@@ -166,9 +157,6 @@ public class GameSoundOptionScreenImpl implements GameSoundOptionScreen {
 					  this.imageUtil.getScaledHeight(this.labelEnableMusic.getHeight()),
 					  null);
 		
-		//---------------------------------------------------------//
-		//--- Desenha a label do Controle de SFX.  				---//
-		//---------------------------------------------------------//
 		g2d.drawImage(this.labelEnableSFX, 
 					  this.imageUtil.getScaledWidth(LABEL_ENABLE_SFX_POSITION_X),
 					  this.imageUtil.getScaledHeight(LABEL_ENABLE_SFX_POSITION_Y),
@@ -176,9 +164,6 @@ public class GameSoundOptionScreenImpl implements GameSoundOptionScreen {
 					  this.imageUtil.getScaledHeight(this.labelEnableSFX.getHeight()),
 					  null);
 		
-		//---------------------------------------------------------//
-		//--- Desenha a label  do volume das Músicas.			---//
-		//---------------------------------------------------------//
 		g2d.drawImage(this.labelMusicVolume, 
 					  this.imageUtil.getScaledWidth(LABEL_MUSIC_VOL_POSITION_X),
 					  this.imageUtil.getScaledHeight(LABEL_MUSIC_VOL_POSITION_Y),
@@ -186,9 +171,6 @@ public class GameSoundOptionScreenImpl implements GameSoundOptionScreen {
 					  this.imageUtil.getScaledHeight(this.labelMusicVolume.getHeight()),
 					  null);
 		
-		//---------------------------------------------------------//
-		//--- Desenha a label do volume do SFX.       			---//
-		//---------------------------------------------------------//
 		g2d.drawImage(this.labelSFXVolume, 
 					  this.imageUtil.getScaledWidth(LABEL_SFX_VOL_POSITION_X),
 					  this.imageUtil.getScaledHeight(LABEL_SFX_VOL_POSITION_Y),
@@ -196,9 +178,6 @@ public class GameSoundOptionScreenImpl implements GameSoundOptionScreen {
 					  this.imageUtil.getScaledHeight(this.labelSFXVolume.getHeight()),
 					  null);
 		
-		//---------------------------------------------------------//
-		//--- Desenha a label do Back.       					---//
-		//---------------------------------------------------------//
 		g2d.drawImage(this.labelBack, 
 					  this.imageUtil.getScaledWidth(LABEL_BACK_POSITION_X),
 					  this.imageUtil.getScaledHeight(LABEL_BACK_POSITION_Y),
@@ -206,9 +185,6 @@ public class GameSoundOptionScreenImpl implements GameSoundOptionScreen {
 					  this.imageUtil.getScaledHeight(this.labelBack.getHeight()),
 					  null);
 		
-		//---------------------------------------------------------//
-		//--- Desenha os checkbox da música.					---//
-		//---------------------------------------------------------//
 		if (this.parentGameSoundOption.getMusicEnabled()) {
 			g2d.drawImage(this.checked, 
 						  this.imageUtil.getScaledWidth(BUTTON_CHECK_MUSIC_YES_POSITION_X),
@@ -239,9 +215,6 @@ public class GameSoundOptionScreenImpl implements GameSoundOptionScreen {
 						  null);
 		}
 		
-		//---------------------------------------------------------//
-		//--- Desenha os checkbox dos SFX.						---//
-		//---------------------------------------------------------//
 		if (this.parentGameSoundOption.getSFXEnabled()) {
 			g2d.drawImage(this.checked, 
 						  this.imageUtil.getScaledWidth(BUTTON_CHECK_SFX_YES_POSITION_X),
@@ -272,9 +245,6 @@ public class GameSoundOptionScreenImpl implements GameSoundOptionScreen {
 						  null);
 		}
 		
-		//---------------------------------------------------------//
-		//--- Desenha a label Sim (para músicas).				---//
-		//---------------------------------------------------------//
 		g2d.drawImage(this.labelYes, 
 					  this.imageUtil.getScaledWidth(LABEL_YES_MUSIC_POSITION_X),
 					  this.imageUtil.getScaledHeight(LABEL_YES_MUSIC_POSITION_Y),
@@ -282,9 +252,6 @@ public class GameSoundOptionScreenImpl implements GameSoundOptionScreen {
 					  this.imageUtil.getScaledHeight(this.labelYes.getHeight()),
 					  null);
 		
-		//---------------------------------------------------------//
-		//--- Desenha a label Não (para músicas).				---//
-		//---------------------------------------------------------//
 		g2d.drawImage(this.labelNo, 
 					  this.imageUtil.getScaledWidth(LABEL_NO_MUSIC_POSITION_X),
 					  this.imageUtil.getScaledHeight(LABEL_NO_MUSIC_POSITION_Y),
@@ -292,9 +259,6 @@ public class GameSoundOptionScreenImpl implements GameSoundOptionScreen {
 					  this.imageUtil.getScaledHeight(this.labelNo.getHeight()),
 					  null);
 		
-		//---------------------------------------------------------//
-		//--- Desenha a label Sim (para SFX).					---//
-		//---------------------------------------------------------//
 		g2d.drawImage(this.labelYes, 
 					  this.imageUtil.getScaledWidth(LABEL_YES_SFX_POSITION_X),
 					  this.imageUtil.getScaledHeight(LABEL_YES_SFX_POSITION_Y),
@@ -302,9 +266,6 @@ public class GameSoundOptionScreenImpl implements GameSoundOptionScreen {
 					  this.imageUtil.getScaledHeight(this.labelYes.getHeight()),
 					  null);
 		
-		//---------------------------------------------------------//
-		//--- Desenha a label Não (para SFX).					---//
-		//---------------------------------------------------------//
 		g2d.drawImage(this.labelNo, 
 					  this.imageUtil.getScaledWidth(LABEL_NO_SFX_POSITION_X),
 					  this.imageUtil.getScaledHeight(LABEL_NO_SFX_POSITION_Y),
@@ -312,9 +273,6 @@ public class GameSoundOptionScreenImpl implements GameSoundOptionScreen {
 					  this.imageUtil.getScaledHeight(this.labelNo.getHeight()),
 					  null);
 		
-		//---------------------------------------------------------//
-		//--- Desenha o volume das músicas.						---//
-		//---------------------------------------------------------//
 		BufferedImage image = this.imagesVolumes[this.parentGameSoundOption.getMusicVolume()];
 		g2d.drawImage(image, 
 					  this.imageUtil.getScaledWidth(COMMAND_MUSIC_VOL_POSITION_X),
@@ -323,9 +281,6 @@ public class GameSoundOptionScreenImpl implements GameSoundOptionScreen {
 					  this.imageUtil.getScaledHeight(image.getHeight()),
 					  null);
 		
-		//---------------------------------------------------------//
-		//--- Desenha o volume das músicas.						---//
-		//---------------------------------------------------------//
 		image = this.imagesVolumes[this.parentGameSoundOption.getSFXVolume()];
 		g2d.drawImage(image, 
 					  this.imageUtil.getScaledWidth(COMMAND_SFX_VOL_POSITION_X),

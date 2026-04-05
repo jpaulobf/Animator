@@ -9,12 +9,12 @@ import java.util.Set;
 public interface GameScore {
 	
 	/**
-	 * L� os HiScores
+	 * Reads the HiScores
 	 */
 	public void loadHiScores();
 	
 	/**
-	 * Salva os HiScores
+	 * Saves the HiScores
 	 */
 	public void saveHighScores();
 	

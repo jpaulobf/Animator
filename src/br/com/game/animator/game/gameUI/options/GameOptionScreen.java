@@ -8,99 +8,93 @@ import br.com.game.animator.game.gameUI.CoreGameLogic;
 public interface GameOptionScreen extends CoreGameLogic {
 
 	/**
-	 * Avança para a próxima opção do game-option
+	 * Advances to the next option
 	 */
 	public void nextOption();
 	
 	/**
-	 * Retrocede uma opção do game-option
+	 * Goes back to the previous option
 	 */
 	public void previousOption();
 	
 	/**
-	 * Verifica se deve voltar para o main-menu
-	 * @return
+	 * Checks if should return to main menu
 	 */
 	public boolean isToBackToMainOption();
 	
 	/**
-	 * Verifica se está sobre o menu de dificuldades.
-	 * @return
+	 * Checks if over difficulty menu
 	 */
 	public boolean isOverGameDifficulty();
 	
 	/**
-	 * Verifica se está sobre o menu de Vidas.
-	 * @return
+	 * Checks if over lives menu
 	 */
 	public boolean isOverRestsSelection();
 	
 	/**
-	 * Verifica se está sobre o menu de Extra-Life
-	 * @return
+	 * Checks if over extra-life menu
 	 */
 	public boolean isOverExtraLifeSelection();
 	
 	/**
-	 * Verifica se está sobre o menu de Continues.
-	 * @return
+	 * Checks if over continues menu
 	 */
 	public boolean isOverContinuesSelection();
 	
 	
 	/**
-	 * Verifica se está sobre o menu de legendas.
-	 * @return
+	 * Checks if over subtitles menu
 	 */
 	public boolean isOverEnableSubtitles();
 	
 	/**
-	 * Avança para a próxima opção de dificuldade
+	 * Advances to next difficulty
 	 */
 	public void setNextDifficulty();
 	
 	/**
-	 * Retrocede uma opção de dificuldade
+	 * Goes back to previous difficulty
 	 */
 	public void setPreviousDifficulty();
 	
 	/**
-	 * Adiciona uma vida ao Game
+	 * Adds a life
 	 */
 	public void addRest();
 	
 	/**
-	 * Retira uma vida do Game
+	 * Removes a life
 	 */
 	public void subRest();
 	
 	/**
-	 * Avança para a próxima opção de pontos para uma vida extra 
+	 * Advances to next extra life points option
 	 */
 	public void setNextExtraLifeAtPoints();
 	
 	/**
-	 * Retrocede uma opção de pontos para uma vida extra 
+	 * Goes back to previous extra life points option
 	 */
 	public void setPreviousExtraLifeAtPoints();
 	
 	/**
-	 * Adiciona um continue ao Game
+	 * Adds a continue
 	 */
 	public void addContinues();
 	
 	/**
-	 * Retira um continue do Game
+	 * Removes a continue
 	 */
 	public void subContinues();
 	
 	/**
-	 * Habilita as legendas
+	 * Enables subtitles
 	 */
 	public void enableSubtitles();
 	
 	/**
-	 * Desabilita as legendas
+	 * Disables subtitles
 	 */
 	public void disableSubtitles();
 }

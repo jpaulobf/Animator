@@ -9,93 +9,93 @@ import br.com.game.animator.game.gameUI.CoreGameLogic;
 public interface GameGraphicsScreen extends CoreGameLogic {
 
 	/**
-	 * Avança para a próxima opção do game-option
+	 * Advances to the next option
 	 */
 	public void nextOption();
 	
 	/**
-	 * Retrocede uma opção do game-option
+	 * Returns to the previous option
 	 */
 	public void previousOption();
 	
 	/**
-	 * Verifica se deve voltar para o main options menu
+	 * Checks if should return to the main options menu
 	 * @return
 	 */
 	public boolean isToBackToMainOption();
 	
 	/**
-	 * Verifica se está sobre o menu apply
+	 * Checks if hovering over the Apply menu
 	 * @return
 	 */
 	public boolean isToApply();
 	
 	/**
-	 * Verifica se está sobre o menu Screen Resolution
+	 * Checks if hovering over the Screen Resolution menu
 	 * @return
 	 */
 	public boolean isOverScreenResolution();
 	
 	/**
-	 * Verifica se está sobre o menu de Triple Buffering
+	 * Checks if hovering over the Triple Buffering menu
 	 * @return
 	 */
 	public boolean isOverEnableTripleBuffering();
 	
 	/**
-	 * Verifica se está sobre o menu de ScreenMode.
+	 * Checks if hovering over the Screen Mode menu
 	 * @return
 	 */
 	public boolean isOverScreenMode();
 	
 	/**
-	 * Verifica se está sobre o menu de DeepColor.
+	 * Checks if hovering over the Deep Color menu
 	 * @return
 	 */
 	public boolean isOverDeepColor();
 	
 	/**
-	 * Avança para o próximo screen-resolution
+	 * Advances to the next screen resolution
 	 */
 	public void nextScreenResolution();
 	
 	/**
-	 * Retrocede o screen-resolution
+	 * Returns to the previous screen resolution
 	 */
 	public void previousScreenResolution();
 	
 	/**
-	 * Habilita o Triple Buffer
+	 * Enables Triple Buffering
 	 */
 	public void enableTripleBuffer();
 	
 	/**
-	 * Desabilita o Triple Buffer
+	 * Disables Triple Buffering
 	 */
 	public void disableTripleBuffer();
 	
 	/**
-	 * Avança para o próximo screen-mode
+	 * Advances to the next screen mode
 	 */
 	public void nextScreenMode();
 	
 	/**
-	 * Retrocede o screen-mode
+	 * Returns to the previous screen mode
 	 */
 	public void previousScreenMode();
 	
 	/**
-	 * Avança para o próximo deep color
+	 * Advances to the next deep color
 	 */
 	public void nextScreenDeepColor();
 	
 	/**
-	 * Retrocede para o deep color anterior
+	 * Returns to the previous deep color
 	 */
 	public void previousScreenDeepColor();
 	
 	/**
-	 * Aplica as modificações solicitadas.
+	 * Applies the requested changes
 	 */
 	public void applyChanges();
 	

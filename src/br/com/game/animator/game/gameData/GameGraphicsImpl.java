@@ -11,7 +11,7 @@ import br.com.game.animator.game.gameData.enumerators.ScreenMode;
 public class GameGraphicsImpl implements GameGraphics {
 	
 	//------------------------------------------------------------------------//
-	//--------   PROPRIEDADES DO GAME GRAPHIC  -------------------------------//
+	//--------   GAME GRAPHIC PROPERTIES  --------------------------------//
 	//------------------------------------------------------------------------//
 	private Integer screenWidth										= null;
 	private Integer screenHeight									= null;
@@ -21,7 +21,7 @@ public class GameGraphicsImpl implements GameGraphics {
 	private Map<String, GameGraphics> availableScreenResolutions 	= null;
 	
 	/**
-	 * Construtor Clone.
+	 * Copy Constructor.
 	 */
 	public GameGraphicsImpl(GameGraphics gameGraphics) {
 		this.screenWidth			= gameGraphics.getScreenWidth();
@@ -32,7 +32,7 @@ public class GameGraphicsImpl implements GameGraphics {
 	}
 	
 	/**
-	 * Construtor padr�o.
+	 * Default Constructor.
 	 */
 	public GameGraphicsImpl(boolean fullscreen, boolean tripleBuffering) {
 		this.tripleBufferEnabled = tripleBuffering;

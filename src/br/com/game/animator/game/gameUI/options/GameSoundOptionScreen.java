@@ -8,82 +8,82 @@ import br.com.game.animator.game.gameUI.CoreGameLogic;
 public interface GameSoundOptionScreen extends CoreGameLogic {
 	
 	/**
-	 * Avança para a próxima opção do game-option
+	 * Advances to the next option
 	 */
 	public void nextOption();
 	
 	/**
-	 * Retrocede uma opção do game-option
+	 * Returns to the previous option
 	 */
 	public void previousOption();
 	
 	/**
-	 * Verifica se deve voltar para o main options menu
+	 * Checks if should return to the main options menu
 	 * @return
 	 */
 	public boolean isToBackToMainOption();
 	
 	/**
-	 * Verifica se está sobre o menu de Habilitar/Desabilitar M�sicas
+	 * Checks if hovering over the Music enable/disable menu
 	 * @return
 	 */
 	public boolean isOverEnableMusic();
 	
 	/**
-	 * Verifica se está sobre o menu de Habilitar/Desabilitar SFX
+	 * Checks if hovering over the SFX enable/disable menu
 	 * @return
 	 */
 	public boolean isOverEnableSFX();
 	
 	/**
-	 * Verifica se está sobre o menu de Volume de Músicas
+	 * Checks if hovering over the Music volume menu
 	 * @return
 	 */
 	public boolean isOverMusicVolume();
 	
 	/**
-	 * Verifica se está sobre o menu de Volume de SFX.
+	 * Checks if hovering over the SFX volume menu
 	 * @return
 	 */
 	public boolean isOverSFXVolume();
 	
 	/**
-	 * Habilita as Músicas
+	 * Enables music
 	 */
 	public void setMusicEnable();
 	
 	/**
-	 * Desabilita as Músicas
+	 * Disables music
 	 */
 	public void setMusicDisable();
 	
 	/**
-	 * Habilita os SFX
+	 * Enables SFX
 	 */
 	public void setSFXEnable();
 	
 	/**
-	 * Desabilita os SFX
+	 * Disables SFX
 	 */
 	public void setSFXDisable();
 	
 	/**
-	 * Aumenta o volume das Músicas 
+	 * Increases music volume
 	 */
 	public void increaseMusicVolume();
 	
 	/**
-	 * Diminui o volume das Músicas 
+	 * Decreases music volume
 	 */
 	public void decreaseMusicVolume();
 	
 	/**
-	 * Aumenta o volume dos SFX
+	 * Increases SFX volume
 	 */
 	public void increaseSFXVolume();
 	
 	/**
-	 * Diminui o volume dos SFXs
+	 * Decreases SFX volume
 	 */
 	public void decreaseSFXVolume();
 	

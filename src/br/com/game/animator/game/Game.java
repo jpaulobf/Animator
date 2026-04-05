@@ -21,9 +21,9 @@ import br.com.game.animator.window.Window;
 public class Game extends AbstractGame {
 
     //--- Constants ---//
-    private static final String FS_ERROR_TITLE = "Erro ao alterar o modo de tela";
-    private static final String FS_ERROR_MESSAGE = "Não foi possível inicializar em FullScreen.\n" +
-                                                   "Tente alterar o modo de vídeo em Game-Options.";
+    private static final String FS_ERROR_TITLE = "Error changing fullscreen mode";
+    private static final String FS_ERROR_MESSAGE = "Failed to initialize in FullScreen mode.\n" +
+                                                   "Try changing the video mode in Game-Options.";
 
     //--- Properties ---//
     private CoreGameLogic currentCoreGame;

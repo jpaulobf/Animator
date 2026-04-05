@@ -9,17 +9,17 @@ import br.com.game.animator.game.gameUI.CoreGameLogic;
 public interface GameExitMenu extends CoreGameLogic {
 
 	/**
-	 * Exibe o menu Exit
+	 * Displays the Exit menu
 	 */
 	public void showExitMenu();
 
 	/**
-	 * Esconde o menu Exit
+	 * Hides the Exit menu
 	 */
 	public void hideExitMenu();
 
 	/**
-	 * Verifica se o menu está sendo exibido.
+	 * Checks if the menu is being displayed.
 	 * 
 	 * @return
 	 */

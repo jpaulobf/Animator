@@ -13,7 +13,7 @@ import br.com.game.animator.util.ImageUtil;
  */
 public class GameMainMenuImpl implements GameMainMenu {
 	
-	//--------   PROPRIEDADES
+	// Properties
 	private Integer mainMenuCounter 						= 0;
 	private Integer PWIDTH									= null;
 	private Integer PHEIGHT									= null;

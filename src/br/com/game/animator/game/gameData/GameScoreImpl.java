@@ -13,7 +13,7 @@ import br.com.game.animator.util.ValueComparator;
 public class GameScoreImpl implements GameScore {
 
 	//------------------------------------------------------------------------//
-	//--------   PROPRIEDADES    ---------------------------------------------//
+	// Properties
 	//------------------------------------------------------------------------//
 	private ValueComparator valueComparator 		= null;
 	private Map<String, Long> storedScores			= null;

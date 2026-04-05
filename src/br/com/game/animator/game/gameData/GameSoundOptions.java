@@ -8,45 +8,42 @@ public interface GameSoundOptions {
 
 	/**
 	 * @return
-	 * Verifica se a m�sica est� ligada
+	 * Checks if music is enabled
 	 */
 	public boolean getMusicEnabled();
 	
 	/**
-	 * @return
-	 * Determina se a m�sica estar� ligada ou desligada
+	 * Sets whether music is enabled
 	 */
 	public void setMusicEnabled(boolean enable);
 	
 	/**
-	 * @return
-	 * Verifica se o SFX est� ligado
+	 * Checks if SFX is enabled
 	 */
 	public boolean getSFXEnabled();
 	
 	/**
-	 * @return
-	 * Determina se o SFX estar� ligado ou desligado
+	 * Sets whether SFX is enabled
 	 */
 	public void setSFXEnabled(boolean enable);
 	
 	/**
-	 * Amplia o volume das m�sicas
+	 * Gets the music volume
 	 */
 	public Integer getMusicVolume();
 	
 	/**
-	 * Reduz o volume das m�sicas
+	 * Sets the music volume
 	 */
 	public void setMusicVolume(Integer volume);
 	
 	/**
-	 * Amplia o volume dos SFX
+	 * Gets the SFX volume
 	 */
 	public Integer getSFXVolume();
 	
 	/**
-	 * Reduz o volume dos SFX
+	 * Sets the SFX volume
 	 */
 	public void setSFXVolume(Integer volume);
 	

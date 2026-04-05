@@ -9,9 +9,9 @@ import br.com.game.animator.game.core.IGame;
 public class GameEngine implements Runnable {
 
 	//--- Constants ---//
-	private static final long MAX_DELTA_TIME = 100_000_000L; // 100ms cap para delta time
-	private static final long SLEEP_BUFFER = 500_000L; // 0.5ms buffer para sleep
-	private static final int STATS_BUFFER_SIZE = 10; // Tamanho do buffer circular para estatísticas
+	private static final long MAX_DELTA_TIME = 100_000_000L; // 100ms cap for delta time
+	private static final long SLEEP_BUFFER = 500_000L; // 0.5ms sleep buffer
+	private static final int STATS_BUFFER_SIZE = 10; // Circular buffer size for statistics
 	private static final long MAX_STATS_INTERVAL = 1_000_000_000L;
 	private static final long FIRST_STATS_INTERVAL = 2_000_000_000L;
 	private static final String ENGINE_THREAD_NAME = "GameEngine-Thread";
@@ -224,7 +224,7 @@ public class GameEngine implements Runnable {
 		if (realElapsedTime >= triggerInterval) {
 			this.startStoreStats = true;
 
-			// Validação de tempo zero (edge case)
+			// Validation for zero time (edge case)
 			if (realElapsedTime <= 0) return;
 
 			// Calcula quantos quadros ocorreram APENAS neste último intervalo

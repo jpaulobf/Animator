@@ -477,7 +477,7 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 		System.out.println("Mouse Click X: " + e.getX() + " Y: " + e.getY());
 	}
 
-	// Implementações obrigatórias de interface (vazias se não usadas)
+	// Required interface implementations (empty if unused)
 	@Override
 	public void mouseDragged(MouseEvent e) {
 	}

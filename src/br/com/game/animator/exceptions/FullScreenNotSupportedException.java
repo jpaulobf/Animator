@@ -9,7 +9,7 @@ public class FullScreenNotSupportedException extends Exception {
      * Constructor
      */
     public FullScreenNotSupportedException() {
-        super("O modo de tela cheia não é suportado neste sistema.");
+        super("Full screen mode is not supported on this system.");
     }
 
     /**

@@ -43,18 +43,18 @@ public class GameScorePresentationImpl implements GameScorePresentation {
 	private Map <String, BufferedImage> mapLetters			= null;
 	
 	//----------------------------------------------------------------------//
-	//--------   Propriedades de suporte       -----------------------------//
+	// Support properties
 	//----------------------------------------------------------------------//
 	private GameScore gameScore								= null;
 
 	//----------------------------------------------------------------------//
-	//--------   Propriedades para efeito de zoom       --------------------//
+	// Zoom effect properties
 	//----------------------------------------------------------------------//
 	protected static final Integer DEFAULT_ZOOM_IN_SCALE	= 30;
 	private Integer zoomInScaleHallLogo						= DEFAULT_ZOOM_IN_SCALE;
 	
 	//----------------------------------------------------------------------//
-	//--------   Propriedades para efeito de entrada de scores -------------//
+	// Score entry effect properties
 	//----------------------------------------------------------------------//
 	private Integer maxRankToShow							= 0;
 	private Integer [] individualRankPosition				= new Integer[10];
@@ -186,23 +186,16 @@ public class GameScorePresentationImpl implements GameScorePresentation {
 					key 	= key.substring(0, key.indexOf("#"));
 					image	= this.numbers[++counter];
 					
-					//---------------------------------------------------------//
-					//--- Só executo se a imagem não for inválida.		    ---//
-					//---------------------------------------------------------//
 					if (image != null) {
 						
-						//---------------------------------------------------------//
-						//--- 'Caminho' com o ranking até sua posição final.    ---//
-						//---------------------------------------------------------//
+						
 						if (this.individualRankPosition[rankCounter] < finalRankPosition) {
 							this.individualRankPosition[rankCounter] = individualRankPosition[rankCounter] + 20;
 						} if (this.individualRankPosition[rankCounter] > finalRankPosition) {
 							this.individualRankPosition[rankCounter] = finalRankPosition;
 						}
 						
-						//---------------------------------------------------------//
-						//--- Desenho o ranking em sua posição atual.           ---//
-						//---------------------------------------------------------//
+
 						g2d.drawImage(image, 
 									  this.individualRankPosition[rankCounter], 
 									  height,
@@ -210,46 +203,29 @@ public class GameScorePresentationImpl implements GameScorePresentation {
 									  this.imageUtil.getScaledHeight(image.getHeight()),
 									  null);
 						
-						//---------------------------------------------------------//
-						//--- Quando o ranking atinge a posição final exibo o   ---//
-						//--- nick e depois o score.							---//
-						//---------------------------------------------------------//
+
 						if (this.individualRankPosition[rankCounter] > finalRankPosition / 4) {
 							
-							//---------------------------------------------------------//
-							//--- Somo 4 espaços a posição do ranking.              ---//
-							//---------------------------------------------------------//
+
 							actualScorePosition += 4 * this.imageUtil.getScaledWidth(UPPER_W);
 							
-							//---------------------------------------------------------//
-							//--- Recupero as letras e imprimo.                     ---//
-							//---------------------------------------------------------//
+
 							for (int cnt = 0; cnt < key.length(); cnt++) {
 								
-								//---------------------------------------------------------//
-								//--- Toda vez que percorreu a array até o final, 		---//
-								//--- concluiu-se um ciclo dos nicknames e pode 		---//
-								//--- continuar. 										---//
-								//---------------------------------------------------------//
+
 								if (cnt == (key.length() - 1)) {
 									this.nickDone = true;
 								} else {
 									this.nickDone = false;
 								}
 								
-								//---------------------------------------------------------//
-								//--- Recupera a imagem da letra.                     	---//
-								//---------------------------------------------------------//
+
 								image = this.mapLetters.get(String.valueOf(key.charAt(cnt)));
 								
-								//---------------------------------------------------------//
-								//--- Define a posição final da letra.                	---//
-								//---------------------------------------------------------//
+
 								int finalNickPosition = actualScorePosition;
 								
-								//---------------------------------------------------------//
-								//--- 'Caminho' com o nick até sua posição final.    	---//
-								//---------------------------------------------------------//
+
 								if (this.individualNickPosition[nickCounter] > finalNickPosition) {
 									this.individualNickPosition[nickCounter] = individualNickPosition[nickCounter] - 30;
 								} if (this.individualNickPosition[nickCounter] < finalNickPosition) {
@@ -258,9 +234,7 @@ public class GameScorePresentationImpl implements GameScorePresentation {
 									this.individualNickPosition[nickCounter] = finalNickPosition;
 								}
 								
-								//---------------------------------------------------------//
-								//--- Só desenho se a imagem não for inválida.		    ---//
-								//---------------------------------------------------------//
+
 								if (this.individualNickPosition[nickCounter] != finalNickPosition) {
 									image = this.imageUtil.getRotatedImage(image, this.individualNickPosition[nickCounter] % 360);
 								}
@@ -273,25 +247,15 @@ public class GameScorePresentationImpl implements GameScorePresentation {
 											      null);
 								}
 								
-								//---------------------------------------------------------//
-								//--- Se o nickname chegar a posição final, permito que ---//
-								//--- o próximo seja exibido.							---//
-								//---------------------------------------------------------//
+
 								if (this.individualNickPosition[nickCounter] == finalNickPosition) {
 									this.maxNickToShow = nickCounter + 1;
 								}
 
-								//---------------------------------------------------------//
-								//--- Acresce a posição para próxima letra.				---//
-								//---------------------------------------------------------//
+
 								actualScorePosition += this.imageUtil.getScaledWidth(UPPER_W);
 	
-								//---------------------------------------------------------//
-								//--- Se o contador de exibição for maior que o máximo  ---//
-								//--- que me proponho a mostrar, coibo o incremento.	---//
-								//--- Assim, a letra permanece no limite do que desejo 	---//
-								//--- exibir.											---//
-								//---------------------------------------------------------//
+
 								if (nickCounter >= this.maxNickToShow) {
 									this.nickDone = false;
 									break;
@@ -307,40 +271,28 @@ public class GameScorePresentationImpl implements GameScorePresentation {
 								
 								for (int cnt = 0; cnt < value.length(); cnt++) {
 									
-									//---------------------------------------------------------//
-									//--- Toda vez que percorreu a array até o final, 		---//
-									//--- concluiu-se um ciclo dos scores e pode-se então	---//
-									//--- continuar. 										---//
-									//---------------------------------------------------------//
+
 									if (cnt == (value.length() - 1)) {
 										this.scoreDone = true;
 									} else {
 										this.scoreDone = false;
 									}
 									
-									//---------------------------------------------------------//
-									//--- Recupera a imagem do score.                     	---//
-									//---------------------------------------------------------//
+
 									image = this.numbers[Integer.parseInt(String.valueOf(value.charAt(cnt)))];
 									
-									//---------------------------------------------------------//
-									//--- Define a posição final do score.                	---//
-									//---------------------------------------------------------//
+
 									int finalScorePosition = actualScorePosition + this.imageUtil.getScaledWidth(NAME_SCORE_SPACE);
 									int finalScorePositionY = height;
 									
-									//---------------------------------------------------------//
-									//--- 'Caminho' com o score até sua posição final.    	---//
-									//---------------------------------------------------------//
+
 									if (this.individualScorePosition[scoreCounter] > finalScorePositionY) {
 										this.individualScorePosition[scoreCounter] = individualScorePosition[scoreCounter] - 60;
 									} if (this.individualScorePosition[scoreCounter] < finalScorePositionY) {
 										this.individualScorePosition[scoreCounter] = finalScorePositionY;
 									}
 									
-									//---------------------------------------------------------//
-									//--- Só desenho se a imagem não for inválida.		    ---//
-									//---------------------------------------------------------//
+
 									if (image != null) {
 										g2d.drawImage(image, 
 													  finalScorePosition, 
@@ -350,17 +302,12 @@ public class GameScorePresentationImpl implements GameScorePresentation {
 													  null);
 									}
 									
-									//---------------------------------------------------------//
-									//--- Se o score chegar a posição final, permito que  	---//
-									//--- o próximo seja exibido.							---//
-									//---------------------------------------------------------//
+
 									if (this.individualScorePosition[scoreCounter] == finalScorePositionY) {
 										this.maxScoreToShow = scoreCounter + 1;
 									}
 									
-									//---------------------------------------------------------//
-									//--- Acresce a posição para o próximo número.			---//
-									//---------------------------------------------------------//
+
 									actualScorePosition += this.imageUtil.getScaledWidth(UPPER_W);
 									
 									//---------------------------------------------------------//

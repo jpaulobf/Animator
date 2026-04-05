@@ -9,7 +9,7 @@ import br.com.game.animator.game.gameData.enumerators.GameDifficulty;
 public class GameOptionsImpl implements GameOptions {
 	
 	//------------------------------------------------------------------------//
-	//--------   PROPRIEDADES DO GAME OPTION   -------------------------------//
+	// Game Options Properties
 	//------------------------------------------------------------------------//
 	private GameDifficulty gameDifficulty 			= null;
 	private Integer restNumber						= null;

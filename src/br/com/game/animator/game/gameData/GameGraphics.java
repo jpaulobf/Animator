@@ -12,78 +12,78 @@ public interface GameGraphics {
 
 	/**
 	 * @return
-	 * Recupera o tamanho da tela ativo.
+	 * Gets the active screen width.
 	 */
 	public Integer getScreenWidth();
 	
 	/**
 	 * @return
-	 * Recupera a altura da tela ativa.
+	 * Gets the active screen height.
 	 */
 	public Integer getScreenHeight();
 	
 	/**
 	 * @return
-	 * Recupera a profundidade de cores da tela ativo.
+	 * Gets the active screen color depth.
 	 */
 	public DeepColor getScreenDeepColor();
 	
 	/**
 	 * @return
-	 * Verifica se o Triple Buffer est� ativo.
+	 * Checks if Triple Buffer is enabled.
 	 */
 	public boolean getTripleBufferEnabled();
 	
 	/**
 	 * @return
-	 * Recupera o Modo da Tela (Fullscreen/Window)
+	 * Gets the Screen Mode (Fullscreen/Window)
 	 */
 	public ScreenMode getScreenMode();
 	
 	/**
 	 * @param screenWidth
-	 * Define o tamanho da tela.
+	 * Sets the screen width.
 	 */
 	public void setScreenWidth(Integer screenWidth);
 	
 	/**
 	 * @param screenHeight
-	 * Define a altura da tela.
+	 * Sets the screen height.
 	 */
 	public void setScreenHeight(Integer screenHeight);
 	
 	/**
 	 * @param deepColor
-	 * Define a quantidades de cores da tela.
+	 * Sets the screen color depth.
 	 */
 	public void setScreenDeepColor(DeepColor deepColor);
 	
 	/**
 	 * @param enableTripleBuffer
-	 * Habilita ou n�o o triple-buffer.
+	 * Enables or disables the triple-buffer.
 	 */
 	public void setTripleBufferEnabled(boolean enableTripleBuffer);
 	
 	/**
 	 * @param screenMode
-	 * Define o modo da tela (Fullscreen/Window)
+	 * Sets the screen mode (Fullscreen/Window)
 	 */
 	public void setScreenMode(ScreenMode screenMode);
 	
 	/**
 	 * @return
-	 * Recupera a lista de resolu��es dispon�veis.
+	 * Gets the list of available resolutions.
 	 */
 	public Map<String, GameGraphics> getAvailableScreenResolutions();
 	
 	/**
 	 * @param screenResolutionsAvailable
-	 * Armazena a lista de resolu��es dispon�veis.
+	 * Stores the list of available resolutions.
 	 */
 	public void setAvailableScreenResolutions(Map<String, GameGraphics> availableScreenResolutions);
 	
 	/**
-	 * Clona as propriedades simples (n�o listas)
+	 * Clones simple properties (non-lists)
 	 */
 	public void cloneProperties(GameGraphics gameGraphics);
 	
