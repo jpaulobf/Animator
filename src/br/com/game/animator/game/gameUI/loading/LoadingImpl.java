@@ -3,6 +3,7 @@ package br.com.game.animator.game.gameUI.loading;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import br.com.game.animator.game.Game;
 import br.com.game.animator.util.ImageUtil;
 
 /**
@@ -108,5 +109,10 @@ public class LoadingImpl implements Loading {
 
 	public boolean finished() {
 		return false;
+	}
+
+	@Override
+	public void handleInput(Game game, int keyCode, boolean isAltDown) {
+		//no input handling for loading screen
 	}
 }

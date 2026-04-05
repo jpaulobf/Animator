@@ -3,6 +3,7 @@ package br.com.game.animator.game.gameUI.menu;
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import br.com.game.animator.game.Game;
 import br.com.game.animator.util.ImageUtil;
 
 /**
@@ -161,5 +162,10 @@ public class GameExitMenuImpl implements GameExitMenu {
 	@Override
 	public boolean finished() {
 		return false;
+	}
+
+	@Override
+	public void handleInput(Game game, int keyCode, boolean isAltDown) {
+		//todo
 	}
 }
