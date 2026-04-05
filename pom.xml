@@ -18,8 +18,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>14</maven.compiler.source>
-        <maven.compiler.target>14</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
     </properties>
 
     <!-- Dependencies -->
@@ -35,6 +35,8 @@
 
     <!-- Build Configuration -->
     <build>
+        <sourceDirectory>src</sourceDirectory>
+        
         <plugins>
             <!-- Java Compiler Plugin -->
             <plugin>
@@ -42,8 +44,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>14</source>
-                    <target>14</target>
+                    <source>21</source>
+                    <target>21</target>
                 </configuration>
             </plugin>
 
@@ -83,6 +85,8 @@
                 <version>3.2.0</version>
                 <configuration>
                     <source>14</source>
+                    <failOnError>false</failOnError>
+                    <failOnWarning>false</failOnWarning>
                 </configuration>
                 <executions>
                     <execution>
@@ -110,10 +114,14 @@
         <!-- Resource Configuration -->
         <resources>
             <resource>
-                <directory>src/main/resources</directory>
+                <directory>src/res</directory>
                 <includes>
                     <include>**/*.ini</include>
                     <include>**/*.properties</include>
+                    <include>**/*.png</include>
+                    <include>**/*.jpg</include>
+                    <include>**/*.wav</include>
+                    <include>**/*.mp3</include>
                 </includes>
             </resource>
         </resources>
