@@ -1,12 +1,31 @@
 package br.com.game.animator.game.state;
 
-import br.com.game.animator.game.gameUI.CoreGameLogic;
+import java.util.Map;
 
 /**
  * Class responsable for managing the game menu, including the developer logo, intro, high score presentation, 
  * main menu, options menu, and exit menu. It handles user input to navigate through these screens and updates the game settings accordingly.
  */
 public class GameStateMachine {
+
+    //--- State Transitions Mapping
+    private static final Map<GameStates, GameStates> STATE_TRANSITIONS = Map.ofEntries(
+        Map.entry(GameStates.DEV_LOGO_SCREEN, GameStates.SUB_INTRO_SCREEN),
+        Map.entry(GameStates.SUB_INTRO_SCREEN, GameStates.INTRO_SCREEN),
+        Map.entry(GameStates.INTRO_SCREEN, GameStates.HIGH_SCORE_SCREEN),
+        Map.entry(GameStates.HIGH_SCORE_SCREEN, GameStates.SUB_INTRO_SCREEN)
+    );
+
+    //--- State Groups for Classification
+    private static final Map<GameStates, String> STATE_GROUPS = Map.ofEntries(
+        Map.entry(GameStates.SUB_INTRO_SCREEN, "INTRO"),
+        Map.entry(GameStates.INTRO_SCREEN, "INTRO"),
+        Map.entry(GameStates.HIGH_SCORE_SCREEN, "INTRO"),
+        Map.entry(GameStates.MAIN_OPTION_SCREEN, "OPTIONS"),
+        Map.entry(GameStates.GAME_OPTIONS_SCREEN, "OPTIONS"),
+        Map.entry(GameStates.SFX_CONFIG_MENU_SCREEN, "OPTIONS"),
+        Map.entry(GameStates.GFX_CONFIG_MENU_SCREEN, "OPTIONS")
+    );
 
     //--- properties
     private GameStates currentState;
@@ -21,32 +40,24 @@ public class GameStateMachine {
     }
 
     /**
-     * Checks if the current state has finished its execution, which is determined by the finished() method of the CoreGameLogic interface.
-     * @param currentStateLogic
-     * @return
+     * Transitions to the next state in the automated game flow (intro -> menu -> options).
+     * Uses centralized STATE_TRANSITIONS map to define valid transitions.
      */
-    public boolean currentStateFinished(CoreGameLogic currentStateLogic) {
-        return currentStateLogic.finished();
+    public void gotoNextState() {
+        GameStates nextState = STATE_TRANSITIONS.get(this.currentState);
+        if (nextState != null) {
+            navigateTo(nextState);
+        }
     }
 
     /**
-     * Transitions to the next state in the game flow based on the current state. The transitions are defined as follows:
-     * - DEV_LOGO_SCREEN -> SUB_INTRO_SCREEN
-     * - SUB_INTRO_SCREEN -> INTRO_SCREEN
-     * - INTRO_SCREEN -> HIGH_SCORE_SCREEN
-     * - HIGH_SCORE_SCREEN -> SUB_INTRO_SCREEN
+     * Generic method to navigate to any target state and backup the previous state.
+     * Ensures consistent state updates across all navigation calls.
+     * @param targetState The state to navigate to
      */
-    public void gotoNextState() {
-        if (this.currentState == GameStates.DEV_LOGO_SCREEN) {
-            this.currentState = GameStates.SUB_INTRO_SCREEN;
-        } else if (this.currentState == GameStates.SUB_INTRO_SCREEN) {
-            this.currentState = GameStates.INTRO_SCREEN;
-        } else if (this.currentState == GameStates.INTRO_SCREEN) {
-            this.currentState = GameStates.HIGH_SCORE_SCREEN;
-        } else if (this.currentState == GameStates.HIGH_SCORE_SCREEN) {
-            this.currentState = GameStates.SUB_INTRO_SCREEN;
-        }
+    private void navigateTo(GameStates targetState) {
         this.backupState = this.currentState;
+        this.currentState = targetState;
     }
 
     /**
@@ -65,8 +76,12 @@ public class GameStateMachine {
         this.currentState = backupState;
     }
 
+    /**
+     * Checks if the current state belongs to the INTRO group.
+     * @return true if in intro screens (sub-intro, intro, or high score)
+     */
     public boolean isInIntro() {
-        return (this.currentState == GameStates.SUB_INTRO_SCREEN || this.currentState == GameStates.INTRO_SCREEN || this.currentState == GameStates.HIGH_SCORE_SCREEN);
+        return "INTRO".equals(STATE_GROUPS.get(this.currentState));
     }
 
     public boolean isInIntroDev() {
@@ -74,7 +89,7 @@ public class GameStateMachine {
     }
 
     public void gotoMainMenu() {
-        this.currentState = GameStates.MAIN_MENU_SCREEN;
+        navigateTo(GameStates.MAIN_MENU_SCREEN);
     }
 
     public boolean isInMainMenu() {
@@ -82,23 +97,33 @@ public class GameStateMachine {
     }
 
     public void gotoMainOption() {
-        this.currentState = GameStates.MAIN_OPTION_SCREEN;
+        navigateTo(GameStates.MAIN_OPTION_SCREEN);
     }
 
     public void gotoGameOptions() {
-        this.currentState = GameStates.GAME_OPTIONS_SCREEN;
+        navigateTo(GameStates.GAME_OPTIONS_SCREEN);
     }
 
     public void gotoSFXConfigMenu() {
-        this.currentState = GameStates.SFX_CONFIG_MENU_SCREEN;
+        navigateTo(GameStates.SFX_CONFIG_MENU_SCREEN);
     }
 
     public void gotoGFXConfigMenu() {
-        this.currentState = GameStates.GFX_CONFIG_MENU_SCREEN;
+        navigateTo(GameStates.GFX_CONFIG_MENU_SCREEN);
     }
 
+    /**
+     * Navigates to the game over screen.
+     */
+    public void gotoGameOver() {
+        navigateTo(GameStates.GAME_OVER_SCREEN);
+    }
+
+    /**
+     * Checks if the current state belongs to the OPTIONS group.
+     * @return true if in options screens (main option, game options, SFX, or GFX config)
+     */
     public boolean isInOptions() {
-        return (this.currentState == GameStates.MAIN_OPTION_SCREEN || this.currentState == GameStates.GAME_OPTIONS_SCREEN || 
-                this.currentState == GameStates.SFX_CONFIG_MENU_SCREEN || this.currentState == GameStates.GFX_CONFIG_MENU_SCREEN);
+        return "OPTIONS".equals(STATE_GROUPS.get(this.currentState));
     }
 }
