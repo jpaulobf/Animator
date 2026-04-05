@@ -4,8 +4,10 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import javax.swing.JOptionPane;
 import br.com.game.animator.game.core.AbstractGame;
 import br.com.game.animator.game.factory.CoreGameFactory;
+import br.com.game.animator.game.gameData.enumerators.ScreenMode;
 import br.com.game.animator.game.gameUI.CoreGameLogic;
 import br.com.game.animator.game.gameUI.menu.GameExitMenu;
 import br.com.game.animator.game.gameUI.menu.GameExitMenuImpl;
@@ -21,39 +23,7 @@ public class Game extends AbstractGame {
     private CoreGameLogic currentCoreGame;
     private GameStateMachine gameStateMachine;
     private Window gameWindow;
-    private GameExitMenu gameExitMenu = null;
-
-   	// private Loading gameLoading = null;
-	// private DeveloperAdvertise developerAdvertise = null;
-	// private GameGraphics gameGraphics = null;
-	// private GameIntro gameIntro = null;
-	// private GameScorePresentation gameScore = null;
-	// private GameMainMenu gameMainMenu = null;
-	// private GameExitMenu gameExitMenu = null;
-	// private GameMainOptionScreen gameMainOptionScreen = null;
-	// private GameOptionScreen gameOptionScreen = null;
-	// private GameSoundOptionScreen gameSoundOptionScreen = null;
-	// private GameOptions gameOptions = null;
-	// private GameSoundOptions gameSoundOptions = null;
-	// private GameGraphicsScreen gameGraphicsScreen = null;
-
-   	// -------------------------------------------------------//
-	// public volatile boolean isDevLogoScreen = true;
-	// public volatile boolean isSubIntroScreen = false;
-	// public volatile boolean isIntroScreen = false;
-	// public volatile boolean isShowHighScoreScreen = false;
-	// public volatile boolean isMainMenuScreen = false;
-	// public volatile boolean isInGameScreen = false;
-	// private volatile boolean isInGameOptionScreen = false;
-	// public volatile boolean isInMainOptionScreen = false;
-	// public volatile boolean isInOptionGameScreen = false;
-	// private volatile boolean isInOptionKeyJoyScreen = false;
-	// private volatile boolean isInOptionKeyScreen = false;
-	// private volatile boolean isInOptionJoyScreen = false;
-	// public volatile boolean isInOptionSoundScreen = false;
-	// public volatile boolean isInOptionGFXScreen = false;
-	// private volatile boolean isInOptionTestGFXScreen = false;
-	// private volatile boolean isInOptionProfileScreen = false;
+    private GameExitMenu gameExitMenu = null; 
 
     /**
      * Constructor for the Game class.
@@ -155,191 +125,26 @@ public class Game extends AbstractGame {
     @Override
     public void keyPressed(int keyCode, boolean isAltDown) {
         if (!gameExitMenu.isShowingExitMenu()) {
-            /*
-            if (isMainMenuScreen && gameMainMenu != null) {
-                if (keyCode == KeyEvent.VK_ENTER) {
-                    if (gameMainMenu.isExitSelected()) {
+
+            if (isAltDown && (keyCode == KeyEvent.VK_F4)) {
+                if (!this.gameStateMachine.isInIntroDev() && 
+                    !this.gameStateMachine.isInOptions()) {
+                    if (gameExitMenu != null) {
                         gameExitMenu.showExitMenu();
-                    } else if (gameMainMenu.isOptionSelected()) {
-                        isMainMenuScreen = false;
-                        isInMainOptionScreen = true;
-                    }
-                } else if (keyCode == KeyEvent.VK_UP) {
-                    gameMainMenu.previousGameOption();
-                } else if (keyCode == KeyEvent.VK_DOWN) {
-                    gameMainMenu.nextGameOption();
-                }
-
-            } else if (isInMainOptionScreen && gameMainOptionScreen != null) {
-
-                if (keyCode == KeyEvent.VK_ENTER) {
-                    if (gameMainOptionScreen.isToBackToMainMenu()) {
-                        gameMainMenu.resetCounters();
-                        gameMainOptionScreen.resetCounters();
-                        isInMainOptionScreen = false;
-                        isMainMenuScreen = true;
-                    } else if (gameMainOptionScreen.isToGoToGameOptions()) {
-                        gameMainOptionScreen.resetCounters();
-                        isInMainOptionScreen = false;
-                        isInOptionGameScreen = true;
-                    } else if (gameMainOptionScreen.isToConfigSFX()) {
-                        gameMainOptionScreen.resetCounters();
-                        isInMainOptionScreen = false;
-                        isInOptionSoundScreen = true;
-                    } else if (gameMainOptionScreen.isToConfigGFX()) {
-                        gameMainOptionScreen.resetCounters();
-                        isInMainOptionScreen = false;
-                        isInOptionGFXScreen = true;
-                        gameGraphicsScreen.resetMustApplyForChanges();
-                    }
-                } else if (keyCode == KeyEvent.VK_UP) {
-                    gameMainOptionScreen.previousGameOption();
-                } else if (keyCode == KeyEvent.VK_DOWN) {
-                    gameMainOptionScreen.nextGameOption();
-                }
-
-            } else if (isInOptionGameScreen && gameOptionScreen != null) {
-
-                if (keyCode == KeyEvent.VK_ENTER) {
-                    if (gameOptionScreen.isToBackToMainOption()) {
-                        gameOptionScreen.resetCounters();
-                        gameMainOptionScreen.resetCounters();
-                        isInOptionGameScreen = false;
-                        isInMainOptionScreen = true;
-                    }
-                } else if (keyCode == KeyEvent.VK_UP) {
-
-                    gameOptionScreen.previousOption();
-
-                } else if (keyCode == KeyEvent.VK_DOWN) {
-
-                    gameOptionScreen.nextOption();
-
-                } else if (keyCode == KeyEvent.VK_LEFT) {
-
-                    if (gameOptionScreen.isOverEnableSubtitles()) {
-                        gameOptionScreen.enableSubtitles();
-                    } else if (gameOptionScreen.isOverGameDifficulty()) {
-                        gameOptionScreen.setPreviousDifficulty();
-                    } else if (gameOptionScreen.isOverRestsSelection()) {
-                        gameOptionScreen.subRest();
-                    } else if (gameOptionScreen.isOverExtraLifeSelection()) {
-                        gameOptionScreen.setPreviousExtraLifeAtPoints();
-                    } else if (gameOptionScreen.isOverContinuesSelection()) {
-                        gameOptionScreen.subContinues();
-                    }
-
-                } else if (keyCode == KeyEvent.VK_RIGHT) {
-
-                    if (gameOptionScreen.isOverEnableSubtitles()) {
-                        gameOptionScreen.disableSubtitles();
-                    } else if (gameOptionScreen.isOverGameDifficulty()) {
-                        gameOptionScreen.setNextDifficulty();
-                    } else if (gameOptionScreen.isOverRestsSelection()) {
-                        gameOptionScreen.addRest();
-                    } else if (gameOptionScreen.isOverExtraLifeSelection()) {
-                        gameOptionScreen.setNextExtraLifeAtPoints();
-                    } else if (gameOptionScreen.isOverContinuesSelection()) {
-                        gameOptionScreen.addContinues();
-                    }
-
-                }
-
-            } else if (isInOptionSoundScreen && gameSoundOptionScreen != null) {
-
-                if (keyCode == KeyEvent.VK_ENTER) {
-                    if (gameSoundOptionScreen.isToBackToMainOption()) {
-                        gameSoundOptionScreen.resetCounters();
-                        gameMainOptionScreen.resetCounters();
-                        isInOptionSoundScreen = false;
-                        isInMainOptionScreen = true;
-                    }
-                } else if (keyCode == KeyEvent.VK_UP) {
-
-                    gameSoundOptionScreen.previousOption();
-
-                } else if (keyCode == KeyEvent.VK_DOWN) {
-
-                    gameSoundOptionScreen.nextOption();
-
-                } else if (keyCode == KeyEvent.VK_LEFT) {
-
-                    if (gameSoundOptionScreen.isOverEnableMusic()) {
-                        gameSoundOptionScreen.setMusicEnable();
-                    } else if (gameSoundOptionScreen.isOverEnableSFX()) {
-                        gameSoundOptionScreen.setSFXEnable();
-                    } else if (gameSoundOptionScreen.isOverMusicVolume()) {
-                        gameSoundOptionScreen.decreaseMusicVolume();
-                    } else if (gameSoundOptionScreen.isOverSFXVolume()) {
-                        gameSoundOptionScreen.decreaseSFXVolume();
-                    }
-
-                } else if (keyCode == KeyEvent.VK_RIGHT) {
-
-                    if (gameSoundOptionScreen.isOverEnableMusic()) {
-                        gameSoundOptionScreen.setMusicDisable();
-                    } else if (gameSoundOptionScreen.isOverEnableSFX()) {
-                        gameSoundOptionScreen.setSFXDisable();
-                    } else if (gameSoundOptionScreen.isOverMusicVolume()) {
-                        gameSoundOptionScreen.increaseMusicVolume();
-                    } else if (gameSoundOptionScreen.isOverSFXVolume()) {
-                        gameSoundOptionScreen.increaseSFXVolume();
                     }
                 }
-
-            } else if (isInOptionGFXScreen && gameGraphicsScreen != null) {
-
-                if (keyCode == KeyEvent.VK_ENTER) {
-                    if (gameGraphicsScreen.isToBackToMainOption()) {
-                        gameGraphicsScreen.resetCounters();
-                        gameGraphicsScreen.cancelChanges();
-                        gameMainOptionScreen.resetCounters();
-                        isInOptionGFXScreen = false;
-                        isInMainOptionScreen = true;
-
-                    } else if (gameGraphicsScreen.isToApply()) {
-                        // todo
-                    }
-                } else if (keyCode == KeyEvent.VK_UP) {
-
-                    gameGraphicsScreen.previousOption();
-
-                } else if (keyCode == KeyEvent.VK_DOWN) {
-
-                    gameGraphicsScreen.nextOption();
-
-                } else if (keyCode == KeyEvent.VK_LEFT) {
-
-                    if (gameGraphicsScreen.isOverEnableTripleBuffering()) {
-                        gameGraphicsScreen.enableTripleBuffer();
-                    } else if (gameGraphicsScreen.isOverScreenMode()) {
-                        gameGraphicsScreen.previousScreenMode();
-                    } else if (gameGraphicsScreen.isOverDeepColor()) {
-                        gameGraphicsScreen.previousScreenDeepColor();
-                    }
-
-                } else if (keyCode == KeyEvent.VK_RIGHT) {
-
-                    if (gameGraphicsScreen.isOverEnableTripleBuffering()) {
-                        gameGraphicsScreen.disableTripleBuffer();
-                    } else if (gameGraphicsScreen.isOverScreenMode()) {
-                        gameGraphicsScreen.nextScreenMode();
-                    } else if (gameGraphicsScreen.isOverDeepColor()) {
-                        gameGraphicsScreen.nextScreenDeepColor();
-                    }
-                }
-            }
-
-            if (isAltDown && (keyCode == KeyEvent.VK_ENTER)) {
+            } else if (keyCode != KeyEvent.VK_ALT && this.gameStateMachine.isInIntro()) {
+                this.gameStateMachine.gotoMainMenu();
+                this.currentCoreGame = CoreGameFactory.getInstance(this.gameStateMachine, this.gameWindow);
+            } else if (isAltDown && (keyCode == KeyEvent.VK_ENTER)) {
                 if (!gameWindow.isFullScreen()) {
                     pauseGame();
 
                     try {
                         gameWindow.switchToFullScreen();
-                        gameGraphics.setScreenMode(ScreenMode.FULLSCREEN);
+                        CoreGameFactory.configureGameGraphics(ScreenMode.FULLSCREEN);
 
                     } catch (Exception exception) {
-
                         JOptionPane.showMessageDialog(null,
                                 "Nao foi possível inicializar em FullScreen.\n" +
                                         "Tente alterar o modo de video em Game-Options.",
@@ -347,46 +152,30 @@ public class Game extends AbstractGame {
                                 JOptionPane.ERROR_MESSAGE);
 
                         gameWindow.backToWindow();
-                        gameGraphics.setScreenMode(ScreenMode.WINDOWED);
+                        CoreGameFactory.configureGameGraphics(ScreenMode.WINDOWED);
                     }
                     resumeGame();
                 } else {
                     pauseGame();
 
                     gameWindow.backToWindow();
-                    gameGraphics.setScreenMode(ScreenMode.WINDOWED);
+                    CoreGameFactory.configureGameGraphics(ScreenMode.WINDOWED);
 
                     resumeGame();
                 }
-            } else if ((keyCode == KeyEvent.VK_P) ||
-                    (keyCode == KeyEvent.VK_PAUSE) &&
-                            isInGameScreen) {
+            } else if (!this.gameStateMachine.isInIntro() && 
+                       !this.gameStateMachine.isInOptions() && 
+                      (keyCode == KeyEvent.VK_P) || (keyCode == KeyEvent.VK_PAUSE)) {
                 if (!isPaused) {
                     pauseGame();
                 } else {
                     resumeGame();
                 }
 
-            } else if (isAltDown && (keyCode == KeyEvent.VK_F4)) {
-                if (!isDevLogoScreen &&
-                        !isInMainOptionScreen &&
-                        !isInOptionGameScreen &&
-                        !isInOptionSoundScreen &&
-                        !isInOptionGFXScreen) {
-                    if (gameExitMenu != null) {
-                        gameExitMenu.showExitMenu();
-                    }
-                }
-
-            } else if (keyCode != KeyEvent.VK_ALT) {
-                if (isSubIntroScreen || isIntroScreen || isShowHighScoreScreen) {
-                    isSubIntroScreen = false;
-                    isIntroScreen = false;
-                    isShowHighScoreScreen = false;
-                    isMainMenuScreen = true;
-                }
+            } else {
+                //handle input for the current screen based on the game state machine
+                this.currentCoreGame.handleInput(this, keyCode, isAltDown);
             }
-                */
         } else {
             if (keyCode == KeyEvent.VK_LEFT) {
                 gameExitMenu.previousGameOption();
@@ -423,4 +212,35 @@ public class Game extends AbstractGame {
         this.currentCoreGame = CoreGameFactory.getInstance(this.gameStateMachine, this.gameWindow);
 		this.loading = false;
 	}
+
+    public void showExitMenu() {
+        if (this.gameExitMenu != null) {
+            this.gameExitMenu.showExitMenu();
+        }
+    }
+
+    public void gotoMainOption() {
+        this.gameStateMachine.gotoMainOption();
+        this.currentCoreGame = CoreGameFactory.getInstance(gameStateMachine, gameWindow);
+    }
+
+    public void gotoMainMenu() {
+        this.gameStateMachine.gotoMainMenu();
+        this.currentCoreGame = CoreGameFactory.getInstance(gameStateMachine, gameWindow);
+    }
+
+    public void gotoGameOptions() {
+        this.gameStateMachine.gotoGameOptions();
+        this.currentCoreGame = CoreGameFactory.getInstance(gameStateMachine, gameWindow);
+    }
+
+    public void gotoSFXConfigMenu() {
+        this.gameStateMachine.gotoSFXConfigMenu();
+        this.currentCoreGame = CoreGameFactory.getInstance(gameStateMachine, gameWindow);
+    }
+
+    public void gotoGFXConfigMenu() {
+        this.gameStateMachine.gotoGFXConfigMenu();
+        this.currentCoreGame = CoreGameFactory.getInstance(gameStateMachine, gameWindow);
+    }
 }

@@ -1,12 +1,23 @@
 package br.com.game.animator.game.factory;
 
 import br.com.game.animator.window.Window;
+import br.com.game.animator.game.gameData.GameGraphics;
+import br.com.game.animator.game.gameData.GameGraphicsImpl;
+import br.com.game.animator.game.gameData.GameOptions;
+import br.com.game.animator.game.gameData.GameOptionsImpl;
+import br.com.game.animator.game.gameData.GameSoundOptions;
+import br.com.game.animator.game.gameData.GameSoundOptionsImpl;
+import br.com.game.animator.game.gameData.enumerators.ScreenMode;
 import br.com.game.animator.game.gameUI.CoreGameLogic;
 import br.com.game.animator.game.gameUI.advertise.DeveloperAdvertiseImpl;
 import br.com.game.animator.game.gameUI.intro.GameIntroImpl;
 import br.com.game.animator.game.gameUI.intro.LogoIntroImpl;
 import br.com.game.animator.game.gameUI.loading.LoadingImpl;
 import br.com.game.animator.game.gameUI.menu.GameMainMenuImpl;
+import br.com.game.animator.game.gameUI.options.GameGraphicsScreenImpl;
+import br.com.game.animator.game.gameUI.options.GameMainOptionScreenImpl;
+import br.com.game.animator.game.gameUI.options.GameOptionScreenImpl;
+import br.com.game.animator.game.gameUI.options.GameSoundOptionScreenImpl;
 import br.com.game.animator.game.gameUI.score.GameScorePresentationImpl;
 import br.com.game.animator.game.state.GameStateMachine;
 import br.com.game.animator.game.state.GameStates;
@@ -26,6 +37,9 @@ public class CoreGameFactory {
 
     private static CoreGameLogic coreGameLogic;
     private static GameStates currentState;
+    private static GameGraphics gameGraphics;
+    private static GameOptions gameOptions = new GameOptionsImpl();
+	private static GameSoundOptions gameSoundOptions = new GameSoundOptionsImpl();
 
     /**
      * getInstance - Factory method to create instances of CoreGameLogic based on
@@ -35,7 +49,12 @@ public class CoreGameFactory {
      * @param gameWindow
      * @return
      */
-    public static CoreGameLogic getInstance(GameStateMachine gameStateMachine, Window gameWindow) {
+    public static CoreGameLogic getInstance(GameStateMachine gameStateMachine, Window gameWindow) {    
+
+        if (gameGraphics == null) {
+            gameGraphics = new GameGraphicsImpl(gameWindow.isFullScreen(), gameWindow.isTripleBuffering());
+        }
+
         switch (gameStateMachine.getCurrentState()) {
 
             case DEV_LOGO_SCREEN:
@@ -92,6 +111,13 @@ public class CoreGameFactory {
                 }
                 break;
 
+            case GAME_OPTIONS_SCREEN:
+                if (currentState != GameStates.GAME_OPTIONS_SCREEN) {
+                    coreGameLogic = new GameOptionScreenImpl(gameOptions, gameWindow.getPanelWidth(), gameWindow.getPanelHeight(), gameWindow.getCurrentAspectRatio());
+                    currentState = GameStates.GAME_OPTIONS_SCREEN;
+                }
+                break;
+
             case IN_GAME_OPTION_SCREEN:
                 if (currentState != GameStates.IN_GAME_OPTION_SCREEN) {
                     coreGameLogic = null;
@@ -101,8 +127,23 @@ public class CoreGameFactory {
 
             case MAIN_OPTION_SCREEN:
                 if (currentState != GameStates.MAIN_OPTION_SCREEN) {
-                    coreGameLogic = null;
+                    coreGameLogic =  new GameMainOptionScreenImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(),
+                            gameWindow.getCurrentAspectRatio());
                     currentState = GameStates.MAIN_OPTION_SCREEN;
+                }
+                break;
+
+            case SFX_CONFIG_MENU_SCREEN:
+                if (currentState != GameStates.SFX_CONFIG_MENU_SCREEN) {
+                    coreGameLogic = new GameSoundOptionScreenImpl(gameSoundOptions, gameWindow.getPanelWidth(), gameWindow.getPanelHeight(), gameWindow.getCurrentAspectRatio());
+                    currentState = GameStates.SFX_CONFIG_MENU_SCREEN;
+                }
+                break;
+
+            case GFX_CONFIG_MENU_SCREEN:
+                if (currentState != GameStates.GFX_CONFIG_MENU_SCREEN) {
+                    coreGameLogic = new GameGraphicsScreenImpl(gameGraphics, gameWindow.getPanelWidth(), gameWindow.getPanelHeight(), gameWindow.getCurrentAspectRatio());
+                    currentState = GameStates.GFX_CONFIG_MENU_SCREEN;
                 }
                 break;
 
@@ -121,5 +162,11 @@ public class CoreGameFactory {
         }
 
         return coreGameLogic;
+    }
+
+    public static void configureGameGraphics(ScreenMode screenMode) {
+        if (gameGraphics != null) {
+            gameGraphics.setScreenMode(screenMode);
+        }
     }
 }
