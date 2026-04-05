@@ -16,67 +16,151 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import javax.swing.JFrame;
 import br.com.game.animator.game.core.IGame;
 import br.com.game.animator.util.GlobalProperties;
 
 /**
- * Window - Class responsible for creating and managing the game window, handling fullscreen mode, and processing user input.
- * This class extends JFrame and implements WindowListener to handle window events such as activation, deactivation, and closing.
- * It also manages the buffer strategy for rendering the game graphics and provides methods for switching between fullscreen and windowed modes.
- * The Window class interacts with the IGame interface to update the game settings when switching between fullscreen and windowed modes, and to handle key presses for game controls.
+ * Window - Class responsible for creating and managing the game window,
+ * handling fullscreen mode, and processing user input.
+ * This class extends JFrame and implements WindowListener to handle window
+ * events such as activation, deactivation, and closing.
+ * It also manages the buffer strategy for rendering the game graphics and
+ * provides methods for switching between fullscreen and windowed modes.
+ * The Window class interacts with the IGame interface to update the game
+ * settings when switching between fullscreen and windowed modes, and to handle
+ * key presses for game controls.
  */
 public class Window extends JFrame implements WindowListener, KeyListener, MouseListener, MouseMotionListener {
 
-    //--- Constants ---//
-    private static final int NUM_BUFFERS = 2;
+	// --- Enum for Window Scale ---//
+	public enum WindowScale {
+		X1(1), X2(2), X3(3), X4(4);
+
+		private final int factor;
+
+		WindowScale(int factor) {
+			this.factor = factor;
+		}
+
+		public int getFactor() {
+			return factor;
+		}
+	}
+
+	// --- Inner class for Window Dimensions ---//
+	private static class WindowDimensions {
+		final int width;
+		final int height;
+
+		WindowDimensions(int width, int height) {
+			this.width = width;
+			this.height = height;
+		}
+	}
+
+	// --- Constants ---//
+	private static final int NUM_BUFFERS = 2;
 	private static final int TRIPLE_BUFFERS = 3;
-    private static final boolean FULLSCREEN = true;
+	private static final boolean FULLSCREEN = true;
 	private static final boolean WINDOWED = false;
+	private static final int BUFFER_STRATEGY_TIMEOUT_SECONDS = 2;
+	private static final String BUFFER_INIT_ERROR = "Buffer strategy initialization timeout";
 
-    //--- Properties ---//
-    private Integer CURRENT_WINDOW_WIDTH = null;
-	private Integer CURRENT_WINDOW_HEIGHT = null;
+	// --- Properties ---//
+	private volatile Integer CURRENT_WINDOW_WIDTH = null;
+	private volatile Integer CURRENT_WINDOW_HEIGHT = null;
+	private final Object dimensionLock = new Object();
 	public volatile boolean fullScreen = FULLSCREEN;
-    private GraphicsDevice graphicsDevice = null;
-	private Integer panelWidth = null;
-    private Integer panelHeight = null;
-    private DisplayMode currentDisplayMode = null;
+	private GraphicsDevice graphicsDevice = null;
+	private volatile Integer panelWidth = null;
+	private volatile Integer panelHeight = null;
+	private DisplayMode currentDisplayMode = null;
 	private volatile boolean tripleBuffering = false;
-    private Integer currentAspectRatio = null;
-    private IGame game = null;
+	private Integer currentAspectRatio = null;
+	private IGame game = null;
 
-    /**
-     * Window Construtor
-     */
-    public Window(IGame game) {
-        super("The Game Engine");
+	// --- Window Configuration Map ---//
+	private static final Map<Integer, Map<WindowScale, WindowDimensions>> WINDOW_CONFIGS = createWindowConfigurations();
 
-        this.game = game;
+	private static Map<Integer, Map<WindowScale, WindowDimensions>> createWindowConfigurations() {
+		Map<Integer, Map<WindowScale, WindowDimensions>> configs = new HashMap<>();
 
-        //--- config rendering ---//
+		// 16:9 aspect ratio
+		Map<WindowScale, WindowDimensions> ratio169 = new HashMap<>();
+		ratio169.put(WindowScale.X1,
+				new WindowDimensions(GlobalProperties.WINDOW_WIDTH_X1_16_9, GlobalProperties.WINDOW_HEIGHT_X1_16_9));
+		ratio169.put(WindowScale.X2,
+				new WindowDimensions(GlobalProperties.WINDOW_WIDTH_X2_16_9, GlobalProperties.WINDOW_HEIGHT_X2_16_9));
+		ratio169.put(WindowScale.X3,
+				new WindowDimensions(GlobalProperties.WINDOW_WIDTH_X3_16_9, GlobalProperties.WINDOW_HEIGHT_X3_16_9));
+		ratio169.put(WindowScale.X4,
+				new WindowDimensions(GlobalProperties.WINDOW_WIDTH_X4_16_9, GlobalProperties.WINDOW_HEIGHT_X4_16_9));
+		configs.put(GlobalProperties.ASPECT_RATIO_16_9, ratio169);
+
+		// 4:3 aspect ratio
+		Map<WindowScale, WindowDimensions> ratio43 = new HashMap<>();
+		ratio43.put(WindowScale.X1,
+				new WindowDimensions(GlobalProperties.WINDOW_WIDTH_X1_4_3, GlobalProperties.WINDOW_HEIGHT_X1_4_3));
+		ratio43.put(WindowScale.X2,
+				new WindowDimensions(GlobalProperties.WINDOW_WIDTH_X2_4_3, GlobalProperties.WINDOW_HEIGHT_X2_4_3));
+		ratio43.put(WindowScale.X3,
+				new WindowDimensions(GlobalProperties.WINDOW_WIDTH_X3_4_3, GlobalProperties.WINDOW_HEIGHT_X3_4_3));
+		ratio43.put(WindowScale.X4,
+				new WindowDimensions(GlobalProperties.WINDOW_WIDTH_X4_4_3, GlobalProperties.WINDOW_HEIGHT_X4_4_3));
+		configs.put(GlobalProperties.ASPECT_RATIO_4_3, ratio43);
+
+		// 16:10 aspect ratio
+		Map<WindowScale, WindowDimensions> ratio1610 = new HashMap<>();
+		ratio1610.put(WindowScale.X1,
+				new WindowDimensions(GlobalProperties.WINDOW_WIDTH_X1_16_10, GlobalProperties.WINDOW_HEIGHT_X1_16_10));
+		ratio1610.put(WindowScale.X2,
+				new WindowDimensions(GlobalProperties.WINDOW_WIDTH_X2_16_10, GlobalProperties.WINDOW_HEIGHT_X2_16_10));
+		ratio1610.put(WindowScale.X3,
+				new WindowDimensions(GlobalProperties.WINDOW_WIDTH_X3_16_10, GlobalProperties.WINDOW_HEIGHT_X3_16_10));
+		ratio1610.put(WindowScale.X4,
+				new WindowDimensions(GlobalProperties.WINDOW_WIDTH_X4_16_10, GlobalProperties.WINDOW_HEIGHT_X4_16_10));
+		configs.put(GlobalProperties.ASPECT_RATIO_16_10, ratio1610);
+
+		return configs;
+	}
+
+	/**
+	 * Window Construtor
+	 */
+	public Window(IGame game) {
+		super("The Game Engine");
+
+		this.game = game;
+
+		// --- config rendering ---//
 		System.setProperty("sun.java2d.translaccel", "true");
 		System.setProperty("sun.java2d.ddforcevram", "true");
 		System.setProperty("sun.java2d.opengl", "true");
 
-        //--- Graphics Device ---//
-        GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		// --- Graphics Device ---//
+		GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		this.graphicsDevice = graphicsEnvironment.getDefaultScreenDevice();
 
-        //--- Initialize window ---//
-        this.currentAspectRatio = this.getCurrentAspectRatio();
+		// --- Initialize window ---//
+		this.currentAspectRatio = this.getCurrentAspectRatio();
 		this.defineCurrentGameWindow();
 
-        //--- Define window fullscreen strategy ---//
-        if (this.fullScreen) {
+		// --- Define window fullscreen strategy ---//
+		if (this.fullScreen) {
 			try {
 				super.dispose();
-			} catch (Exception e) {/*do nothing */}
+			} catch (Exception e) {
+				/* do nothing */}
 
 			super.setIgnoreRepaint(true);
 			super.setResizable(false);
 
-            //--- Set the window to fullscreen ---//
+			// --- Set the window to fullscreen ---//
 			this.setFullScreen();
 			this.addKeyListener(this);
 			this.addMouseListener(this);
@@ -90,8 +174,10 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 					Toolkit.getDefaultToolkit().getImage(getClass().getResource("/res/images/game-icon.png")));
 
 			this.setPreferredSize(new Dimension(CURRENT_WINDOW_WIDTH, CURRENT_WINDOW_HEIGHT));
-			this.setLocation((int) ((Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 2) - (CURRENT_WINDOW_WIDTH / 2)),
-					         (int) ((Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2) - (CURRENT_WINDOW_HEIGHT / 2) - 20));
+			this.setLocation(
+					(int) ((Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 2) - (CURRENT_WINDOW_WIDTH / 2)),
+					(int) ((Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2) - (CURRENT_WINDOW_HEIGHT / 2)
+							- 20));
 			this.pack();
 
 			super.addWindowListener(this);
@@ -104,44 +190,20 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 			this.panelHeight = CURRENT_WINDOW_HEIGHT;
 		}
 
-        //--- Buffer Strategy ---//
-        {
-            Thread t = null;
-            try {
-                t = new Thread(new Runnable() {
-                    public void run() {
-                        if (graphicsDevice.getDefaultConfiguration().getBufferCapabilities().isMultiBufferAvailable()) {
-                            createBufferStrategy(TRIPLE_BUFFERS);
-                            System.out.println("Triple buffering active");
-                        } else {
-                            createBufferStrategy(NUM_BUFFERS);
-                            System.err.println("Triple buffering not supported by the GPU");
-                            System.out.println("Double buffering active");
-                        }
-                    }
-                });
-                t.start();
-            } catch (Exception e) {
-                System.out.println("Error while creating buffer strategy");
-                System.exit(0);
-            }
+		// --- Buffer Strategy ---//
+		this.initializeBufferStrategy();
 
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException ex) {}
-        }
-
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		super.setFocusable(true);
 		super.requestFocus();
 
-        //--- Finalize window ---//
-        this.getCurrentAspectRatio();
-        this.currentDisplayMode = this.getGraphicsConfiguration().getDevice().getDisplayMode();
+		// --- Finalize window ---//
+		this.getCurrentAspectRatio();
+		this.currentDisplayMode = this.getGraphicsConfiguration().getDevice().getDisplayMode();
 		this.hideMouseCursor();
-    }
+	}
 
-    public DisplayMode[] getAvailableScreenResolutions() {
+	public DisplayMode[] getAvailableScreenResolutions() {
 		return (this.getGraphicsConfiguration().getDevice().getDisplayModes());
 	}
 
@@ -150,25 +212,24 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 		this.currentDisplayMode = this.getGraphicsConfiguration().getDevice().getDisplayMode();
 	}
 
-	private boolean isScreenX2Available() {
-		return (this.getGraphicsConfiguration()
-				.getDevice()
-				.getDisplayMode()
-				.getWidth() >= GlobalProperties.WINDOW_WIDTH_X2_4_3);
+	private boolean isScreenScaleAvailable(WindowScale scale) {
+		int requiredWidth = switch (scale) {
+			case X2 -> GlobalProperties.WINDOW_WIDTH_X2_4_3;
+			case X3 -> GlobalProperties.WINDOW_WIDTH_X3_4_3;
+			case X4 -> GlobalProperties.WINDOW_WIDTH_X4_4_3;
+			default -> 0;
+		};
+		return this.getGraphicsConfiguration().getDevice().getDisplayMode().getWidth() >= requiredWidth;
 	}
 
-	private boolean isScreenX3Available() {
-		return (this.getGraphicsConfiguration()
-				.getDevice()
-				.getDisplayMode()
-				.getWidth() >= GlobalProperties.WINDOW_WIDTH_X3_4_3);
-	}
-
-	private boolean isScreenX4Available() {
-		return (this.getGraphicsConfiguration()
-				.getDevice()
-				.getDisplayMode()
-				.getWidth() >= GlobalProperties.WINDOW_WIDTH_X4_4_3);
+	private WindowScale getMaxAvailableScale() {
+		if (isScreenScaleAvailable(WindowScale.X4))
+			return WindowScale.X4;
+		if (isScreenScaleAvailable(WindowScale.X3))
+			return WindowScale.X3;
+		if (isScreenScaleAvailable(WindowScale.X2))
+			return WindowScale.X2;
+		return WindowScale.X1;
 	}
 
 	public Integer getCurrentAspectRatio() {
@@ -187,109 +248,27 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 	}
 
 	private void defineCurrentGameWindow() {
-		if (this.currentAspectRatio == GlobalProperties.ASPECT_RATIO_4_3) {
-			if (this.isScreenX4Available()) {
-				CURRENT_WINDOW_WIDTH = GlobalProperties.WINDOW_WIDTH_X4_4_3;
-				CURRENT_WINDOW_HEIGHT = GlobalProperties.WINDOW_HEIGHT_X4_4_3;
-			} else if (this.isScreenX3Available()) {
-				CURRENT_WINDOW_WIDTH = GlobalProperties.WINDOW_WIDTH_X3_4_3;
-				CURRENT_WINDOW_HEIGHT = GlobalProperties.WINDOW_HEIGHT_X3_4_3;
-			} else if (this.isScreenX2Available()) {
-				CURRENT_WINDOW_WIDTH = GlobalProperties.WINDOW_WIDTH_X2_4_3;
-				CURRENT_WINDOW_HEIGHT = GlobalProperties.WINDOW_HEIGHT_X2_4_3;
-			} else {
-				CURRENT_WINDOW_WIDTH = GlobalProperties.WINDOW_WIDTH_X1_4_3;
-				CURRENT_WINDOW_HEIGHT = GlobalProperties.WINDOW_HEIGHT_X1_4_3;
-			}
-		} else if (this.currentAspectRatio == GlobalProperties.ASPECT_RATIO_16_10) {
-			if (this.isScreenX4Available()) {
-				CURRENT_WINDOW_WIDTH = GlobalProperties.WINDOW_WIDTH_X4_16_10;
-				CURRENT_WINDOW_HEIGHT = GlobalProperties.WINDOW_HEIGHT_X4_16_10;
-			} else if (this.isScreenX3Available()) {
-				CURRENT_WINDOW_WIDTH = GlobalProperties.WINDOW_WIDTH_X3_16_10;
-				CURRENT_WINDOW_HEIGHT = GlobalProperties.WINDOW_HEIGHT_X3_16_10;
-			} else if (this.isScreenX2Available()) {
-				CURRENT_WINDOW_WIDTH = GlobalProperties.WINDOW_WIDTH_X2_16_10;
-				CURRENT_WINDOW_HEIGHT = GlobalProperties.WINDOW_HEIGHT_X2_16_10;
-			} else {
-				CURRENT_WINDOW_WIDTH = GlobalProperties.WINDOW_WIDTH_X1_16_10;
-				CURRENT_WINDOW_HEIGHT = GlobalProperties.WINDOW_HEIGHT_X1_16_10;
-			}
-		} else {
-			if (this.isScreenX4Available()) {
-				CURRENT_WINDOW_WIDTH = GlobalProperties.WINDOW_WIDTH_X4_16_9;
-				CURRENT_WINDOW_HEIGHT = GlobalProperties.WINDOW_HEIGHT_X4_16_9;
-			} else if (this.isScreenX3Available()) {
-				CURRENT_WINDOW_WIDTH = GlobalProperties.WINDOW_WIDTH_X3_16_9;
-				CURRENT_WINDOW_HEIGHT = GlobalProperties.WINDOW_HEIGHT_X3_16_9;
-			} else if (this.isScreenX2Available()) {
-				CURRENT_WINDOW_WIDTH = GlobalProperties.WINDOW_WIDTH_X2_16_9;
-				CURRENT_WINDOW_HEIGHT = GlobalProperties.WINDOW_HEIGHT_X2_16_9;
-			} else {
-				CURRENT_WINDOW_WIDTH = GlobalProperties.WINDOW_WIDTH_X1_16_9;
-				CURRENT_WINDOW_HEIGHT = GlobalProperties.WINDOW_HEIGHT_X1_16_9;
-			}
+		WindowScale scale = getMaxAvailableScale();
+		setWindowSize(this.currentAspectRatio, scale);
+	}
+
+	/**
+	 * Sets the window size based on aspect ratio and scale factor.
+	 * 
+	 * @param aspectRatio The aspect ratio (from GlobalProperties)
+	 * @param scale       The scale factor (X1, X2, X3, X4)
+	 */
+	public void setWindowSize(Integer aspectRatio, WindowScale scale) {
+		Map<WindowScale, WindowDimensions> ratioConfig = WINDOW_CONFIGS.getOrDefault(aspectRatio,
+				WINDOW_CONFIGS.get(GlobalProperties.ASPECT_RATIO_16_9));
+
+		WindowDimensions dims = ratioConfig.getOrDefault(scale,
+				ratioConfig.get(WindowScale.X1));
+
+		synchronized (dimensionLock) {
+			this.CURRENT_WINDOW_WIDTH = dims.width;
+			this.CURRENT_WINDOW_HEIGHT = dims.height;
 		}
-	}
-
-	public void setWindowSizeX1_16X9() {
-		CURRENT_WINDOW_WIDTH = GlobalProperties.WINDOW_WIDTH_X1_16_9;
-		CURRENT_WINDOW_HEIGHT = GlobalProperties.WINDOW_HEIGHT_X1_16_9;
-	}
-
-	public void setWindowSizeX2_16X9() {
-		CURRENT_WINDOW_WIDTH = GlobalProperties.WINDOW_WIDTH_X2_16_9;
-		CURRENT_WINDOW_HEIGHT = GlobalProperties.WINDOW_HEIGHT_X2_16_9;
-	}
-
-	public void setWindowSizeX3_16X9() {
-		CURRENT_WINDOW_WIDTH = GlobalProperties.WINDOW_WIDTH_X3_16_9;
-		CURRENT_WINDOW_HEIGHT = GlobalProperties.WINDOW_HEIGHT_X3_16_9;
-	}
-
-	public void setWindowSizeX4_16X9() {
-		CURRENT_WINDOW_WIDTH = GlobalProperties.WINDOW_WIDTH_X4_16_9;
-		CURRENT_WINDOW_HEIGHT = GlobalProperties.WINDOW_HEIGHT_X4_16_9;
-	}
-
-	public void setWindowSizeX1_4X3() {
-		CURRENT_WINDOW_WIDTH = GlobalProperties.WINDOW_WIDTH_X1_4_3;
-		CURRENT_WINDOW_HEIGHT = GlobalProperties.WINDOW_HEIGHT_X1_4_3;
-	}
-
-	public void setWindowSizeX2_4X3() {
-		CURRENT_WINDOW_WIDTH = GlobalProperties.WINDOW_WIDTH_X2_4_3;
-		CURRENT_WINDOW_HEIGHT = GlobalProperties.WINDOW_HEIGHT_X2_4_3;
-	}
-
-	public void setWindowSizeX3_4X3() {
-		CURRENT_WINDOW_WIDTH = GlobalProperties.WINDOW_WIDTH_X3_4_3;
-		CURRENT_WINDOW_HEIGHT = GlobalProperties.WINDOW_HEIGHT_X3_4_3;
-	}
-
-	public void setWindowSizeX4_4X3() {
-		CURRENT_WINDOW_WIDTH = GlobalProperties.WINDOW_WIDTH_X4_4_3;
-		CURRENT_WINDOW_HEIGHT = GlobalProperties.WINDOW_HEIGHT_X4_4_3;
-	}
-
-	public void setWindowSizeX1_16X10() {
-		CURRENT_WINDOW_WIDTH = GlobalProperties.WINDOW_WIDTH_X1_16_10;
-		CURRENT_WINDOW_HEIGHT = GlobalProperties.WINDOW_HEIGHT_X1_16_10;
-	}
-
-	public void setWindowSizeX2_16X10() {
-		CURRENT_WINDOW_WIDTH = GlobalProperties.WINDOW_WIDTH_X2_16_10;
-		CURRENT_WINDOW_HEIGHT = GlobalProperties.WINDOW_HEIGHT_X2_16_10;
-	}
-
-	public void setWindowSizeX3_16X10() {
-		CURRENT_WINDOW_WIDTH = GlobalProperties.WINDOW_WIDTH_X3_16_10;
-		CURRENT_WINDOW_HEIGHT = GlobalProperties.WINDOW_HEIGHT_X3_16_10;
-	}
-
-	public void setWindowSizeX4_16X10() {
-		CURRENT_WINDOW_WIDTH = GlobalProperties.WINDOW_WIDTH_X4_16_10;
-		CURRENT_WINDOW_HEIGHT = GlobalProperties.WINDOW_HEIGHT_X4_16_10;
 	}
 
 	public DisplayMode getCurrentDisplayModes() {
@@ -307,23 +286,66 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 		this.setCursor(toolkit.createCustomCursor(cursorImg, new Point(0, 0), "hiddenCursor"));
 	}
 
-    private void restoreScreen() {
+	/**
+	 * Initializes the buffer strategy in a background thread with proper timeout
+	 * handling.
+	 */
+	private void initializeBufferStrategy() {
+		CountDownLatch bufferReady = new CountDownLatch(1);
+
+		Thread bufferThread = new Thread(() -> {
+			try {
+				boolean multiBufferAvailable = graphicsDevice.getDefaultConfiguration()
+						.getBufferCapabilities().isMultiBufferAvailable();
+
+				int buffers = multiBufferAvailable ? TRIPLE_BUFFERS : NUM_BUFFERS;
+				createBufferStrategy(buffers);
+
+				String bufferType = multiBufferAvailable ? "Triple" : "Double";
+				System.out.println(bufferType + " buffering active");
+
+				if (!multiBufferAvailable) {
+					System.err.println("Triple buffering not supported by the GPU");
+				}
+			} catch (Exception e) {
+				System.err.println("Error creating buffer strategy: " + e.getMessage());
+			} finally {
+				bufferReady.countDown();
+			}
+		}, "BufferStrategy-Initializer");
+
+		bufferThread.setDaemon(false);
+		bufferThread.start();
+
+		try {
+			if (!bufferReady.await(BUFFER_STRATEGY_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
+				System.err.println(BUFFER_INIT_ERROR);
+			}
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			System.err.println("Buffer strategy initialization interrupted: " + e.getMessage());
+		}
+	}
+
+	private void restoreScreen() {
 		this.fullScreen = WINDOWED;
 		java.awt.Window window = this.graphicsDevice.getFullScreenWindow();
 		try {
 			if (window != null) {
+				this.graphicsDevice.setFullScreenWindow(null);
 			}
-			this.graphicsDevice.setFullScreenWindow(null);
-		} catch (IllegalArgumentException ex) {
+		} catch (IllegalArgumentException e) {
+			System.err.println("Failed to restore screen from fullscreen: " + e.getMessage());
 		} catch (Exception e) {
+			System.err.println("Unexpected error restoring screen: " + e.getMessage());
 		}
 	}
 
-    public void switchWindowFullScreenMode(boolean isFullScreen, Integer pWIDTH, Integer pHEIGHT) {
+	public void switchWindowFullScreenMode(boolean isFullScreen, Integer pWIDTH, Integer pHEIGHT) {
 		this.fullScreen = isFullScreen;
 		this.panelWidth = pWIDTH;
 		this.panelHeight = pHEIGHT;
-        this.game.updateGameSettings(isFullScreen, pWIDTH, pHEIGHT);
+		this.game.updateGameSettings(isFullScreen, pWIDTH, pHEIGHT);
 	}
 
 	public void setFullScreen() {
@@ -346,7 +368,7 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 				this.getBounds().height);
 	}
 
-    public void backToWindow() {
+	public void backToWindow() {
 		this.switchWindowFullScreenMode(WINDOWED, CURRENT_WINDOW_WIDTH, CURRENT_WINDOW_HEIGHT);
 
 		this.restoreScreen();
@@ -354,7 +376,8 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 		this.setPreferredSize(new Dimension(CURRENT_WINDOW_WIDTH, CURRENT_WINDOW_HEIGHT));
 		this.setLocation(
 				(int) ((Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 2) - (CURRENT_WINDOW_WIDTH / 2)),
-				(int) ((Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2) - (CURRENT_WINDOW_HEIGHT / 2) - 20));
+				(int) ((Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2) - (CURRENT_WINDOW_HEIGHT / 2)
+						- 20));
 
 		super.addWindowListener(this);
 
@@ -369,8 +392,8 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 		this.setVisible(true);
 	}
 
-    //--- Window Listener ---//
-    public void windowActivated(WindowEvent arg0) {
+	// --- Window Listener ---//
+	public void windowActivated(WindowEvent arg0) {
 		game.resumeGame();
 	}
 
@@ -396,24 +419,40 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 	public void windowClosed(WindowEvent arg0) {
 	}
 
-    //--- Acessors ---//
-    public Integer getPanelWidth() {
-        return panelWidth;
-    }
+	// --- Accessors (Thread-safe) ---//
+	public Integer getPanelWidth() {
+		synchronized (dimensionLock) {
+			return panelWidth;
+		}
+	}
 
-    public Integer getPanelHeight() {
-        return panelHeight;
-    }
+	public Integer getPanelHeight() {
+		synchronized (dimensionLock) {
+			return panelHeight;
+		}
+	}
 
-    public boolean isTripleBuffering() {
-        return tripleBuffering;
-    }
+	/**
+	 * Gets the current window dimensions in a thread-safe manner.
+	 * 
+	 * @return Dimension object with current width and height
+	 */
+	public Dimension getWindowDimensions() {
+		synchronized (dimensionLock) {
+			return new Dimension(CURRENT_WINDOW_WIDTH != null ? CURRENT_WINDOW_WIDTH : 0,
+					CURRENT_WINDOW_HEIGHT != null ? CURRENT_WINDOW_HEIGHT : 0);
+		}
+	}
 
-    public boolean isFullScreen() {
-        return fullScreen;
-    }
+	public boolean isTripleBuffering() {
+		return tripleBuffering;
+	}
 
-	//--- Key Listener ---//
+	public boolean isFullScreen() {
+		return fullScreen;
+	}
+
+	// --- Key Listener ---//
 	@Override
 	public void keyTyped(KeyEvent e) {
 	}
@@ -427,21 +466,35 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 	public void keyReleased(KeyEvent e) {
 	}
 
-	//--- Mouse Listener ---//
+	// --- Mouse Listener ---//
 	@Override
-    public void mouseMoved(MouseEvent e) {
-    }
+	public void mouseMoved(MouseEvent e) {
+	}
 
-    @Override
-    public void mousePressed(MouseEvent e) {
-        // Equivalente ao antigo testPress() da GameEngine
-        System.out.println("Mouse Click X: " + e.getX() + " Y: " + e.getY());
-    }
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// Equivalente ao antigo testPress() da GameEngine
+		System.out.println("Mouse Click X: " + e.getX() + " Y: " + e.getY());
+	}
 
-    // Implementações obrigatórias de interface (vazias se não usadas)
-    @Override public void mouseDragged(MouseEvent e) {}
-    @Override public void mouseClicked(MouseEvent e) {}
-    @Override public void mouseReleased(MouseEvent e) {}
-    @Override public void mouseEntered(MouseEvent e) {}
-    @Override public void mouseExited(MouseEvent e) {}
+	// Implementações obrigatórias de interface (vazias se não usadas)
+	@Override
+	public void mouseDragged(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+	}
 }
