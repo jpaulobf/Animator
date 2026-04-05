@@ -232,38 +232,38 @@ public class GameEngine implements Runnable {
 			if (realElapsedTime <= 0)
 				return;
 
-			// Calcula quantos quadros ocorreram APENAS neste último intervalo
+			// Calculate how many frames occurred ONLY in this previous interval
 			long framesInInterval = this.frameCount - this.lastFrameCount;
 			this.lastFrameCount = this.frameCount;
 
-			// FPS e UPS baseados no tempo real decorrido no intervalo
+			// FPS and UPS based on real elapsed time in the interval
 			double actualFPS = (framesInInterval * 1_000_000_000.0) / realElapsedTime;
 			double actualUPS = ((framesInInterval + this.framesSkipped) * 1_000_000_000.0) / realElapsedTime;
 
 			this.totalFramesSkipped += this.framesSkipped;
 
-			// Sistema de buffer circular com acumulador eficiente O(1)
+			// Circular buffer system with efficient O(1) accumulator
 			int index = (int) (this.statsCount % STATS_BUFFER_SIZE);
 
-			// Remove valor antigo do acumulador se buffer está cheio
+			// Remove old value from accumulator if buffer is full
 			if (this.statsCount >= STATS_BUFFER_SIZE) {
 				this.totalFPSStore -= this.fpsStore[index];
 				this.totalUPSStore -= this.upsStore[index];
 			}
 
-			// Adiciona novo valor
+			// Add new value
 			this.fpsStore[index] = actualFPS;
 			this.upsStore[index] = actualUPS;
 			this.totalFPSStore += actualFPS;
 			this.totalUPSStore += actualUPS;
 			this.statsCount++;
 
-			// Calcula média em O(1) ao invés de O(n)
+			// Calculate average in O(1) instead of O(n)
 			int activeSamples = (int) Math.min(this.statsCount, STATS_BUFFER_SIZE);
 			this.averageFPS = this.totalFPSStore / activeSamples;
 			this.averageUPS = this.totalUPSStore / activeSamples;
 
-			// Reseta dados do intervalo
+			// Reset interval data
 			this.framesSkipped = 0;
 			this.prevStatsTime = timeNow;
 		}

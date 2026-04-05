@@ -106,10 +106,10 @@ public class GameIntroImpl implements GameIntro {
 		g2d.fillRect(0, 0, this.PWIDTH, this.PHEIGHT);
 
 		g2d.drawImage(this.introText1,
-				this.introText1PositionX, // destino X0
-				0, // destino Y0
-				this.introText1PositionX + this.introText1.getWidth(), // destino X1
-				this.PHEIGHT, // destino Y1
+				this.introText1PositionX, // destination X0
+				0, // destination Y0
+				this.introText1PositionX + this.introText1.getWidth(), // destination X1
+				this.PHEIGHT, // destination Y1
 				0, // source X0
 				(int) this.calcText1y, // source Y0
 				this.introText1.getWidth(), // source X1
@@ -118,10 +118,10 @@ public class GameIntroImpl implements GameIntro {
 
 		if (this.calcText1y >= (this.introText1PositionY - (this.PHEIGHT / 2))) {
 			g2d.drawImage(this.introText2,
-					this.introText2PositionX, // destino X0
-					0, // destino Y0
-					this.introText2PositionX + this.introText2.getWidth(), // destino X1
-					this.PHEIGHT, // destino Y1
+					this.introText2PositionX, // destination X0
+					0, // destination Y0
+					this.introText2PositionX + this.introText2.getWidth(), // destination X1
+					this.PHEIGHT, // destination Y1
 					0, // source X0
 					(int) this.calcText2y, // source Y0
 					this.introText2.getWidth(), // source X1

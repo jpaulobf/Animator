@@ -26,16 +26,17 @@ public interface GameExitMenu extends CoreGameLogic {
 	public boolean isShowingExitMenu();
 
 	/**
-	 * 
+	 * Go to the next game option
 	 */
 	public void nextGameOption();
 
 	/**
-	 * 
+	 * Return to the previous game option
 	 */
 	public void previousGameOption();
 
 	/**
+	 * Exits the game
 	 * @return
 	 */
 	public boolean isToExit();
