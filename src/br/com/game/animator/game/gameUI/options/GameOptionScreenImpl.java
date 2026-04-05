@@ -1,7 +1,9 @@
 package br.com.game.animator.game.gameUI.options;
 
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import br.com.game.animator.game.Game;
 import br.com.game.animator.game.gameData.GameOptions;
 import br.com.game.animator.game.gameData.enumerators.GameDifficulty;
 import br.com.game.animator.util.ImageUtil;
@@ -770,5 +772,46 @@ public class GameOptionScreenImpl implements GameOptionScreen {
 	@Override
 	public boolean finished() {
 		return false;
+	}
+
+	@Override
+	public void handleInput(Game game, int keyCode, boolean isAltDown) {
+		if (keyCode == KeyEvent.VK_ENTER) {
+			if (this.isToBackToMainOption()) {
+				this.resetCounters();
+				game.gotoMainOption();
+			}
+		} else if (keyCode == KeyEvent.VK_UP) {
+			this.previousOption();
+
+		} else if (keyCode == KeyEvent.VK_DOWN) {
+			this.nextOption();
+
+		} else if (keyCode == KeyEvent.VK_LEFT) {
+			if (this.isOverEnableSubtitles()) {
+				this.enableSubtitles();
+			} else if (this.isOverGameDifficulty()) {
+				this.setPreviousDifficulty();
+			} else if (this.isOverRestsSelection()) {
+				this.subRest();
+			} else if (this.isOverExtraLifeSelection()) {
+				this.setPreviousExtraLifeAtPoints();
+			} else if (this.isOverContinuesSelection()) {
+				this.subContinues();
+			}
+
+		} else if (keyCode == KeyEvent.VK_RIGHT) {
+			if (this.isOverEnableSubtitles()) {
+				this.disableSubtitles();
+			} else if (this.isOverGameDifficulty()) {
+				this.setNextDifficulty();
+			} else if (this.isOverRestsSelection()) {
+				this.addRest();
+			} else if (this.isOverExtraLifeSelection()) {
+				this.setNextExtraLifeAtPoints();
+			} else if (this.isOverContinuesSelection()) {
+				this.addContinues();
+			}
+		}
 	}
 }

@@ -1,8 +1,9 @@
 package br.com.game.animator.game.gameUI.options;
 
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-
+import br.com.game.animator.game.Game;
 import br.com.game.animator.util.ImageUtil;
 
 /**
@@ -42,6 +43,7 @@ public class GameMainOptionScreenImpl implements GameMainOptionScreen {
 
 	/**
 	 * Constructor
+	 * 
 	 * @param pwidth
 	 * @param pheight
 	 * @param currentAspectRatio
@@ -174,5 +176,28 @@ public class GameMainOptionScreenImpl implements GameMainOptionScreen {
 	@Override
 	public boolean finished() {
 		return false;
+	}
+
+	@Override
+	public void handleInput(Game game, int keyCode, boolean isAltDown) {
+		if (keyCode == KeyEvent.VK_ENTER) {
+			if (this.isToBackToMainMenu()) {
+				this.resetCounters();
+				game.gotoMainMenu();
+			} else if (this.isToGoToGameOptions()) {
+				this.resetCounters();
+				game.gotoGameOptions();
+			} else if (this.isToConfigSFX()) {
+				this.resetCounters();
+				game.gotoSFXConfigMenu();
+			} else if (this.isToConfigGFX()) {
+				this.resetCounters();
+				game.gotoGFXConfigMenu();
+			}
+		} else if (keyCode == KeyEvent.VK_UP) {
+			this.previousGameOption();
+		} else if (keyCode == KeyEvent.VK_DOWN) {
+			this.nextGameOption();
+		}
 	}
 }
