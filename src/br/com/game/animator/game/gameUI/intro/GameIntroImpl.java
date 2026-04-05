@@ -3,6 +3,7 @@ package br.com.game.animator.game.gameUI.intro;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import br.com.game.animator.game.Game;
 import br.com.game.animator.util.ImageUtil;
 
 /**
@@ -187,5 +188,10 @@ public class GameIntroImpl implements GameIntro {
 		this.introFinished = false;
 		this.calcText1y = -this.PHEIGHT;
 		this.calcText2y = -this.PHEIGHT;
+	}
+
+	@Override
+	public void handleInput(Game game, int keyCode, boolean isAltDown) {
+		//todo
 	}
 }
