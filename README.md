@@ -56,10 +56,10 @@
 - Resource caching and optimization
 
 ### 🎵 Audio System
-- Sound effects and background music support
-- Volume control (configurable)
-- Mute/unmute functionality
-- Easy audio asset management
+- **Hardware-accelerated OGG support** via LWJGL (OpenAL & STB)
+- Real-time volume control (0% to 100%)
+- Mute/unmute and Looping functionality
+- High-performance decoding for Music and SFX
 
 ### 🎮 Input Handling
 - Configurable keyboard input
@@ -136,6 +136,7 @@
 ```bash
 # Required
 Java 14 or higher
+OpenGL compatible drivers (for OpenAL)
 Maven 3.6 or higher
 
 # Verify installation

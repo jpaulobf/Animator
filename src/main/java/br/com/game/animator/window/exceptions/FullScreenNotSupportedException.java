@@ -1,4 +1,4 @@
-package br.com.game.animator.exceptions;
+package br.com.game.animator.window.exceptions;
 
 /**
  * Exception thrown when the system does not support full screen mode.
