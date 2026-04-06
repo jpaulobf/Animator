@@ -38,6 +38,7 @@ public class GameConfig {
         properties.put("dev_logo_enabled", "true");
         properties.put("intro_screen_enabled", "true");
         properties.put("high_score_screen_enabled", "true");
+        properties.put("render_mode", "native");
 
         // Try to load from file
         try {
@@ -107,6 +108,19 @@ public class GameConfig {
         }
         return value.equalsIgnoreCase("true") || value.equalsIgnoreCase("yes") || 
                value.equalsIgnoreCase("1") || value.equalsIgnoreCase("enabled");
+    }
+
+    /**
+     * Gets the render mode from configuration (native or opengl).
+     * Defaults to "native" if not specified or invalid.
+     * @return The render mode: "native" or "opengl"
+     */
+    public String getRenderMode() {
+        String mode = properties.get("render_mode");
+        if ("opengl".equalsIgnoreCase(mode)) {
+            return "opengl";
+        }
+        return "native";
     }
 
     /**
