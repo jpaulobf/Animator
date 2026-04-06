@@ -5,9 +5,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
-
-import br.com.game.animator.audio.OggAudio;
-import br.com.game.animator.audio.OggAudio.AudioType;
 import br.com.game.animator.game.core.AbstractGame;
 import br.com.game.animator.game.factory.CoreGameFactory;
 import br.com.game.animator.game.gameData.enumerators.ScreenMode;
