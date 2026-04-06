@@ -13,6 +13,7 @@ public class Java2DRenderer implements Renderer {
 
     private Window window;
     private boolean ready = false;
+    protected Graphics2D graphics2D = null;
 
     @Override
     public void init(Window window) {
@@ -27,34 +28,16 @@ public class Java2DRenderer implements Renderer {
 
     @Override
     public void render(Graphics2D graphics2D) {
-        if (!ready || window == null) {
-            return;
-        }
-
         try {
             BufferStrategy strategy = window.getBufferStrategy();
-            if (strategy == null) {
-                return;
-            }
-
-            // Get graphics from strategy
-            Graphics2D g2d = (Graphics2D) strategy.getDrawGraphics();
-            if (g2d == null) {
-                return;
-            }
-
-            // Dispose of the graphics object
-            g2d.dispose();
-
-            // Show the buffer
-            if (!strategy.contentsLost()) {
-                strategy.show();
-            } else {
-                System.out.println("BufferStrategy contents lost");
-            }
-
-            // Sync with system toolkit
-            Toolkit.getDefaultToolkit().sync();
+			this.graphics2D = (Graphics2D) strategy.getDrawGraphics();
+			this.graphics2D.dispose();
+			if (!strategy.contentsLost()) {
+				strategy.show();
+			} else {
+				System.out.println("Contents Lost");
+			}
+			Toolkit.getDefaultToolkit().sync();
         } catch (Exception e) {
             System.err.println("Java2DRenderer error during rendering: " + e.getMessage());
             ready = false;
