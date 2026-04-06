@@ -2,6 +2,7 @@ package br.com.animator.window.renderer;
 
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
 import java.awt.image.BufferStrategy;
 
 import br.com.animator.window.Window;
@@ -31,8 +32,11 @@ public class Java2DRenderer implements Renderer {
     public void render(Graphics2D graphics2D) {
         try {
             BufferStrategy strategy = window.getBufferStrategy();
-			this.graphics2D = (Graphics2D) strategy.getDrawGraphics();
-			this.graphics2D.dispose();
+            if (strategy == null) return;
+
+            // No modo nativo, o AbstractGame chama o render(delta) passando o G2D da tela
+            // Portanto, o paintScreen() apenas finaliza a estratégia de buffer
+
 			if (!strategy.contentsLost()) {
 				strategy.show();
 			} else {

@@ -1,5 +1,6 @@
 package br.com.animator.window;
 
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.DisplayMode;
@@ -15,6 +16,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,6 +52,7 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 	private volatile boolean isTransitioning = false;
 	private volatile FullscreenType fullscreenType = FullscreenType.BORDERLESS_FULLSCREEN;
 	private GraphicsDevice graphicsDevice = null;
+	private Canvas gameCanvas = null;
 	private volatile Integer panelWidth = null;
 	private volatile Integer panelHeight = null;
 	private DisplayMode currentDisplayMode = null;
@@ -123,6 +126,15 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 		this.currentAspectRatio = this.getCurrentAspectRatio();
 		this.defineCurrentGameWindow();
 
+		// Define as dimensões iniciais baseadas no modo (Fullscreen ou Janela)
+		this.panelWidth = this.fullScreen ? graphicsDevice.getDisplayMode().getWidth() : CURRENT_WINDOW_WIDTH;
+		this.panelHeight = this.fullScreen ? graphicsDevice.getDisplayMode().getHeight() : CURRENT_WINDOW_HEIGHT;
+
+		// --- Canvas for Rendering --- //
+		this.gameCanvas = new Canvas();
+		this.gameCanvas.setBackground(Color.BLACK);
+		this.gameCanvas.setSize(new Dimension(panelWidth, panelHeight));
+
 		// --- Define window fullscreen strategy ---//
 		if (this.fullScreen) {
 			try {
@@ -133,15 +145,11 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 			super.setIgnoreRepaint(true);
 			super.setResizable(false);
 
+			this.add(gameCanvas);
 			// --- Set the window to fullscreen ---//
-			this.setFullScreen();
 			this.addKeyListener(this);
 			this.addMouseListener(this);
 			this.addMouseMotionListener(this);
-
-			this.panelWidth = this.getBounds().width;
-			this.panelHeight = this.getBounds().height;
-
 		} else {
 			this.setIconImage(
 					Toolkit.getDefaultToolkit().getImage(getClass().getResource("/images/game-icon.png")));
@@ -152,19 +160,14 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 					(int) ((Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2) - (CURRENT_WINDOW_HEIGHT / 2)
 							- 20));
 			this.pack();
+			this.add(gameCanvas);
 
 			super.addWindowListener(this);
 			this.addKeyListener(this);
 			this.addMouseListener(this);
 			this.addMouseMotionListener(this);
 			this.setResizable(false);
-			this.setVisible(true);
-			this.panelWidth = CURRENT_WINDOW_WIDTH;
-			this.panelHeight = CURRENT_WINDOW_HEIGHT;
 		}
-
-		// --- Buffer Strategy ---//
-		this.initializeBufferStrategy();
 
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		super.setFocusable(true);
@@ -263,19 +266,25 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 	 * Initializes the buffer strategy in a background thread with proper timeout
 	 * handling.
 	 */
-	public void initializeBufferStrategy() {
+	public void initializeCanvasBufferStrategy() {
+		if (!this.gameCanvas.isDisplayable()) {
+			return; // Evita "Component must have a valid peer"
+		}
 		try {
-			boolean multiBufferAvailable = graphicsDevice.getDefaultConfiguration()
-					.getBufferCapabilities().isMultiBufferAvailable();
-
-			int buffers = multiBufferAvailable ? TRIPLE_BUFFERS : NUM_BUFFERS;
-			this.createBufferStrategy(buffers);
+			boolean multiBufferAvailable = true;
+			int buffers = TRIPLE_BUFFERS;
+			this.gameCanvas.createBufferStrategy(buffers);
 
 			String bufferType = multiBufferAvailable ? "Triple" : "Double";
 			System.out.println(bufferType + " buffering active");
 		} catch (Exception e) {
 			System.err.println("Error creating buffer strategy: " + e.getMessage());
 		}
+	}
+
+	@Override
+	public BufferStrategy getBufferStrategy() {
+		return gameCanvas.getBufferStrategy();
 	}
 
 	private void restoreScreen() {
@@ -306,7 +315,7 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 		if (fullscreenType == FullscreenType.EXCLUSIVE_FULLSCREEN) {
 			if (this.graphicsDevice.isFullScreenSupported()) {
 				this.graphicsDevice.setFullScreenWindow(this);
-				this.initializeBufferStrategy();
+				this.initializeCanvasBufferStrategy();
 				this.isTransitioning = false;
 				return;
 			}
@@ -334,7 +343,7 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 			java.awt.Rectangle screenBounds = this.graphicsDevice.getDefaultConfiguration().getBounds();
 			this.setBounds(screenBounds);
 			this.setVisible(true);
-			this.initializeBufferStrategy();
+			this.initializeCanvasBufferStrategy();
 		}
 		this.isTransitioning = false;
 	}
@@ -374,7 +383,7 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 		super.addWindowListener(this);
 		super.setIgnoreRepaint(false);
 		this.setVisible(true);
-		this.initializeBufferStrategy();
+		this.initializeCanvasBufferStrategy();
 		this.isTransitioning = false;
 	}
 
@@ -450,6 +459,14 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 
 	public boolean isFullScreen() {
 		return fullScreen;
+	}
+
+	public IGame getGame() {
+		return game;
+	}
+
+	public Canvas getCanvas() {
+		return gameCanvas;
 	}
 
 	// --- Key Listener ---//

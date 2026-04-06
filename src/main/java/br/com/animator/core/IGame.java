@@ -1,5 +1,7 @@
 package br.com.animator.core;
 
+import java.awt.image.BufferedImage;
+
 /**
  * Interface that defines the basic structure of a game. It includes methods for
  * updating the game state, rendering graphics, handling user input, and
@@ -91,4 +93,11 @@ public interface IGame {
      * @param fps
      */
     public void startGame(int fps);
+
+    /**
+     * Get the main draw buffer where Java2D rendering occurs.
+     * 
+     * @return The BufferedImage used as a backbuffer
+     */
+    public BufferedImage getMainBuffer();
 }

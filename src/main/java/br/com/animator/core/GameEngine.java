@@ -22,6 +22,7 @@ public class GameEngine implements Runnable {
 	private final int targetFPS;
 	private final long targetFrametime;
 	private volatile boolean running = false;
+
 	private volatile boolean storeStats = true;
 	private long frameCount = 0;
 	private long lastFrameCount = 0L;
@@ -277,6 +278,10 @@ public class GameEngine implements Runnable {
 
 	public boolean isRunning() {
 		return running;
+	}
+
+	public void setRunning(boolean running) {
+		this.running = running;
 	}
 
 	public void stop() {

@@ -81,22 +81,22 @@ public class Game extends AbstractGame {
      */
     @Override
     public void render(long delta) {
-        if (!gameWindow.isReadyToRender()) {
-            return;
+        Graphics2D g2d = null;
+        boolean isOpenGL = (this.renderer instanceof br.com.animator.window.renderer.LWJGLRenderer);
+
+        if (isOpenGL) {
+            // Modo OpenGL: Usa o buffer fixo
+            g2d = this.graphics2D;
+        } else {
+            // Modo Native: Pega direto da tela para performance máxima (2000 FPS)
+            if (!gameWindow.isReadyToRender()) return;
+            g2d = (Graphics2D) gameWindow.getBufferStrategy().getDrawGraphics();
         }
 
-        Graphics2D g2d = (Graphics2D) gameWindow.getBufferStrategy().getDrawGraphics();
-        if (g2d == null) {
-            return;
-        }
+        if (g2d == null) return;
 
         try {
-            // Apply window insets if windowed
-            if (!gameWindow.isFullScreen()) {
-                g2d.translate(0, gameWindow.getInsets().top);
-            }
-
-            // Clear background
+            // Limpa o fundo do buffer
             g2d.setColor(Color.BLACK);
             g2d.fillRect(0, 0, gameWindow.getPanelWidth(), gameWindow.getPanelHeight());
 
@@ -112,8 +112,13 @@ public class Game extends AbstractGame {
             if (this.gameExitMenu.isShowingExitMenu()) {
                 this.gameExitMenu.draw(g2d);
             }
+        } catch (Exception e) {
+            System.err.println("Error during game rendering: " + e.getMessage());
         } finally {
-            this.graphics2D = g2d;
+            // No modo native, precisamos liberar o context do BufferStrategy
+            if (!isOpenGL && g2d != null) {
+                g2d.dispose();
+            }
         }
     }
 
