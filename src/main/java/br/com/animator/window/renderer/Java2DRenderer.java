@@ -40,7 +40,6 @@ public class Java2DRenderer implements Renderer {
 			}
 			Toolkit.getDefaultToolkit().sync();
         } catch (Exception e) {
-            System.err.println("Java2DRenderer error during rendering: " + e.getMessage());
             ready = false;
         }
     }
