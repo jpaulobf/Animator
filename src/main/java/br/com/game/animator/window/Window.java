@@ -18,8 +18,6 @@ import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import javax.swing.JFrame;
 import br.com.game.animator.game.core.IGame;
 import br.com.game.animator.util.GlobalProperties;
@@ -42,14 +40,14 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 	private static final int TRIPLE_BUFFERS = 3;
 	private static final boolean FULLSCREEN = true;
 	private static final boolean WINDOWED = false;
-	private static final int BUFFER_STRATEGY_TIMEOUT_SECONDS = 2;
-	private static final String BUFFER_INIT_ERROR = "Buffer strategy initialization timeout";
 
 	// --- Properties ---//
 	private volatile Integer CURRENT_WINDOW_WIDTH = null;
 	private volatile Integer CURRENT_WINDOW_HEIGHT = null;
 	private final Object dimensionLock = new Object();
-	public volatile boolean fullScreen = FULLSCREEN;
+	private volatile boolean fullScreen = FULLSCREEN;
+	private volatile boolean isTransitioning = false;
+	private volatile FullscreenType fullscreenType = FullscreenType.EXCLUSIVE_FULLSCREEN;
 	private GraphicsDevice graphicsDevice = null;
 	private volatile Integer panelWidth = null;
 	private volatile Integer panelHeight = null;
@@ -264,40 +262,18 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 	 * Initializes the buffer strategy in a background thread with proper timeout
 	 * handling.
 	 */
-	private void initializeBufferStrategy() {
-		CountDownLatch bufferReady = new CountDownLatch(1);
-
-		Thread bufferThread = new Thread(() -> {
-			try {
-				boolean multiBufferAvailable = graphicsDevice.getDefaultConfiguration()
-						.getBufferCapabilities().isMultiBufferAvailable();
-
-				int buffers = multiBufferAvailable ? TRIPLE_BUFFERS : NUM_BUFFERS;
-				createBufferStrategy(buffers);
-
-				String bufferType = multiBufferAvailable ? "Triple" : "Double";
-				System.out.println(bufferType + " buffering active");
-
-				if (!multiBufferAvailable) {
-					System.err.println("Triple buffering not supported by the GPU");
-				}
-			} catch (Exception e) {
-				System.err.println("Error creating buffer strategy: " + e.getMessage());
-			} finally {
-				bufferReady.countDown();
-			}
-		}, "BufferStrategy-Initializer");
-
-		bufferThread.setDaemon(false);
-		bufferThread.start();
-
+	public void initializeBufferStrategy() {
 		try {
-			if (!bufferReady.await(BUFFER_STRATEGY_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
-				System.err.println(BUFFER_INIT_ERROR);
-			}
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			System.err.println("Buffer strategy initialization interrupted: " + e.getMessage());
+			boolean multiBufferAvailable = graphicsDevice.getDefaultConfiguration()
+					.getBufferCapabilities().isMultiBufferAvailable();
+
+			int buffers = multiBufferAvailable ? TRIPLE_BUFFERS : NUM_BUFFERS;
+			this.createBufferStrategy(buffers);
+
+			String bufferType = multiBufferAvailable ? "Triple" : "Double";
+			System.out.println(bufferType + " buffering active");
+		} catch (Exception e) {
+			System.err.println("Error creating buffer strategy: " + e.getMessage());
 		}
 	}
 
@@ -324,14 +300,42 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 
 	public void setFullScreen() {
 		this.fullScreen = FULLSCREEN;
+		this.isTransitioning = true;
 
-		if (!this.graphicsDevice.isFullScreenSupported()) {
-			System.out.println("Full-screen exclusive mode not supported");
-			super.setUndecorated(false);
-			this.fullScreen = WINDOWED;
+		if (fullscreenType == FullscreenType.EXCLUSIVE_FULLSCREEN) {
+			if (this.graphicsDevice.isFullScreenSupported()) {
+				this.graphicsDevice.setFullScreenWindow(this);
+				this.initializeBufferStrategy();
+				this.isTransitioning = false;
+				return;
+			}
+			System.err.println("Exclusive Fullscreen not supported, falling back to Borderless");
+			this.fullscreenType = FullscreenType.BORDERLESS_FULLSCREEN;
 		}
 
-		this.graphicsDevice.setFullScreenWindow(this);
+		if (fullscreenType == FullscreenType.BORDERLESS_FULLSCREEN) {
+			if (this.graphicsDevice.getFullScreenWindow() != null) {
+				this.graphicsDevice.setFullScreenWindow(null);
+			}
+
+			if (this.isDisplayable()) {
+				this.dispose();
+			}
+
+			try {
+				this.setUndecorated(true);
+			} catch (Exception e) {
+				System.err.println("Error setting undecorated: " + e.getMessage());
+			}
+
+			this.setResizable(false);
+
+			java.awt.Rectangle screenBounds = this.graphicsDevice.getDefaultConfiguration().getBounds();
+			this.setBounds(screenBounds);
+			this.setVisible(true);
+			this.initializeBufferStrategy();
+		}
+		this.isTransitioning = false;
 	}
 
 	public void switchToFullScreen() {
@@ -343,27 +347,34 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 	}
 
 	public void backToWindow() {
+		this.isTransitioning = true;
 		this.switchWindowFullScreenMode(WINDOWED, CURRENT_WINDOW_WIDTH, CURRENT_WINDOW_HEIGHT);
 
 		this.restoreScreen();
 
+		if (this.isDisplayable()) {
+			this.dispose();
+		}
+
+		try {
+			this.setUndecorated(false);
+		} catch (Exception e) {
+			System.err.println("Error restoring window decorations: " + e.getMessage());
+		}
+
 		this.setPreferredSize(new Dimension(CURRENT_WINDOW_WIDTH, CURRENT_WINDOW_HEIGHT));
+		this.setResizable(false);
+		this.pack();
 		this.setLocation(
 				(int) ((Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 2) - (CURRENT_WINDOW_WIDTH / 2)),
 				(int) ((Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2) - (CURRENT_WINDOW_HEIGHT / 2)
 						- 20));
 
 		super.addWindowListener(this);
-
-		try {
-			super.setUndecorated(false);
-		} catch (Exception e) {
-		}
 		super.setIgnoreRepaint(false);
-
-		this.setResizable(false);
-		this.pack();
 		this.setVisible(true);
+		this.initializeBufferStrategy();
+		this.isTransitioning = false;
 	}
 
 	// --- Window Listener ---//
@@ -394,6 +405,20 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 	}
 
 	// --- Accessors (Thread-safe) ---//
+	/**
+	 * Checks if the window is ready for rendering.
+	 * Call this in your Game Loop to prevent IllegalStateException during transitions.
+	 * 
+	 * @return true if a BufferStrategy exists and the window is visible
+	 */
+	public boolean isReadyToRender() {
+		try {
+			return !isTransitioning && isDisplayable() && isShowing() && getBufferStrategy() != null;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 	public Integer getPanelWidth() {
 		synchronized (dimensionLock) {
 			return panelWidth;
@@ -447,7 +472,6 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// Equivalente ao antigo testPress() da GameEngine
 		System.out.println("Mouse Click X: " + e.getX() + " Y: " + e.getY());
 	}
 

@@ -81,6 +81,10 @@ public class Game extends AbstractGame {
      */
     @Override
     public void render(long delta) {
+        if (!gameWindow.isReadyToRender()) {
+            return;
+        }
+
         Graphics2D g2d = (Graphics2D) gameWindow.getBufferStrategy().getDrawGraphics();
         if (g2d == null) {
             return;
