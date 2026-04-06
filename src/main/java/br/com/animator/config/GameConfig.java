@@ -1,9 +1,9 @@
 package br.com.animator.config;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public class GameConfig {
 
-    private static final String CONFIG_FILE = "src/main/resources/config/config.ini";
+    private static final String CONFIG_FILE = "/config/config.ini";
     private static final GameConfig INSTANCE = new GameConfig();
 
     private final Map<String, String> properties = new HashMap<>();
@@ -32,8 +32,6 @@ public class GameConfig {
      * Properties are case-insensitive.
      */
     private void loadConfig() {
-        Path configPath = Paths.get(CONFIG_FILE);
-
         // Set defaults
         properties.put("dev_logo_enabled", "true");
         properties.put("intro_screen_enabled", "true");
@@ -41,9 +39,9 @@ public class GameConfig {
         properties.put("render_mode", "native");
 
         // Try to load from file
-        try {
-            if (Files.exists(configPath)) {
-                Files.lines(configPath)
+        try (InputStream is = getClass().getResourceAsStream(CONFIG_FILE)) {
+            if (is != null) {
+                new BufferedReader(new InputStreamReader(is)).lines()
                     .filter(line -> !line.trim().startsWith("#") && !line.trim().startsWith("[") && !line.trim().isEmpty())
                     .forEach(line -> {
                         String[] parts = line.split("=", 2);
@@ -53,9 +51,9 @@ public class GameConfig {
                             properties.put(key, value);
                         }
                     });
-                System.out.println("GameConfig: Loaded from " + configPath.toAbsolutePath());
+                System.out.println("GameConfig: Loaded from classpath: " + CONFIG_FILE);
             } else {
-                System.out.println("GameConfig: config.ini not found at " + configPath.toAbsolutePath() + ", using defaults");
+                System.out.println("GameConfig: " + CONFIG_FILE + " not found in classpath, using defaults");
             }
         } catch (IOException e) {
             System.err.println("GameConfig: Failed to load config.ini: " + e.getMessage());
