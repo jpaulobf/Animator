@@ -5,14 +5,13 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
-
-import br.com.animator.game.core.AbstractGame;
+import br.com.animator.core.AbstractGame;
+import br.com.animator.game.data.enumerators.ScreenMode;
 import br.com.animator.game.factory.CoreGameFactory;
-import br.com.animator.game.gameData.enumerators.ScreenMode;
-import br.com.animator.game.gameUI.CoreGameLogic;
-import br.com.animator.game.gameUI.menu.GameExitMenu;
-import br.com.animator.game.gameUI.menu.GameExitMenuImpl;
-import br.com.animator.game.state.GameStateMachine;
+import br.com.animator.game.ui.menu.GameExitMenu;
+import br.com.animator.state.GameStateMachine;
+import br.com.animator.ui.CoreGameLogic;
+import br.com.animator.ui.menu.GameExitMenuImpl;
 import br.com.animator.window.Window;
 
 /**

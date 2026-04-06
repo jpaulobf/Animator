@@ -1,6 +1,6 @@
 package br.com.animator.window.renderer;
 
-import br.com.animator.util.GameConfig;
+import br.com.animator.config.GameConfig;
 
 /**
  * Factory for creating Renderer instances based on configuration.

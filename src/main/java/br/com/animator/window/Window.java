@@ -20,8 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JFrame;
 
-import br.com.animator.game.core.IGame;
-import br.com.animator.util.GlobalProperties;
+import br.com.animator.config.GlobalProperties;
+import br.com.animator.core.IGame;
 
 /**
  * Window - Class responsible for creating and managing the game window,

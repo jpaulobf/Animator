@@ -1,25 +1,25 @@
 package br.com.animator.game.factory;
 
-import br.com.animator.game.gameData.GameGraphics;
-import br.com.animator.game.gameData.GameGraphicsImpl;
-import br.com.animator.game.gameData.GameOptions;
-import br.com.animator.game.gameData.GameOptionsImpl;
-import br.com.animator.game.gameData.GameSoundOptions;
-import br.com.animator.game.gameData.GameSoundOptionsImpl;
-import br.com.animator.game.gameData.enumerators.ScreenMode;
-import br.com.animator.game.gameUI.CoreGameLogic;
-import br.com.animator.game.gameUI.advertise.DeveloperAdvertiseImpl;
-import br.com.animator.game.gameUI.intro.GameIntroImpl;
-import br.com.animator.game.gameUI.intro.LogoIntroImpl;
-import br.com.animator.game.gameUI.loading.LoadingImpl;
-import br.com.animator.game.gameUI.menu.GameMainMenuImpl;
-import br.com.animator.game.gameUI.options.GameGraphicsScreenImpl;
-import br.com.animator.game.gameUI.options.GameMainOptionScreenImpl;
-import br.com.animator.game.gameUI.options.GameOptionScreenImpl;
-import br.com.animator.game.gameUI.options.GameSoundOptionScreenImpl;
-import br.com.animator.game.gameUI.score.GameScorePresentationImpl;
-import br.com.animator.game.state.GameStateMachine;
-import br.com.animator.game.state.GameStates;
+import br.com.animator.game.data.GameGraphics;
+import br.com.animator.game.data.GameGraphicsImpl;
+import br.com.animator.game.data.GameOptions;
+import br.com.animator.game.data.GameOptionsImpl;
+import br.com.animator.game.data.GameSoundOptions;
+import br.com.animator.game.data.GameSoundOptionsImpl;
+import br.com.animator.game.data.enumerators.ScreenMode;
+import br.com.animator.state.GameStateMachine;
+import br.com.animator.state.GameStates;
+import br.com.animator.ui.CoreGameLogic;
+import br.com.animator.ui.advertise.DeveloperAdvertiseImpl;
+import br.com.animator.ui.intro.GameIntroImpl;
+import br.com.animator.ui.intro.LogoIntroImpl;
+import br.com.animator.ui.loading.LoadingImpl;
+import br.com.animator.ui.menu.GameMainMenuImpl;
+import br.com.animator.ui.options.GameGraphicsScreenImpl;
+import br.com.animator.ui.options.GameMainOptionScreenImpl;
+import br.com.animator.ui.options.GameOptionScreenImpl;
+import br.com.animator.ui.options.GameSoundOptionScreenImpl;
+import br.com.animator.ui.score.GameScorePresentationImpl;
 import br.com.animator.window.Window;
 
 /**

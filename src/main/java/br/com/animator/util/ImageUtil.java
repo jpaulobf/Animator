@@ -15,6 +15,8 @@ import java.awt.image.ImageFilter;
 import java.awt.image.RGBImageFilter;
 import javax.imageio.ImageIO;
 
+import br.com.animator.config.GlobalProperties;
+
 /**
  * ImageUtil is a utility class for loading, copying, rotating, and manipulating
  * images in various ways, such as converting to grayscale or applying a red
