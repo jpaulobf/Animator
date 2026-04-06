@@ -1,4 +1,4 @@
-package br.com.game.animator.engine.renderer;
+package br.com.game.animator.window.renderer;
 
 import java.awt.Graphics2D;
 import java.awt.Toolkit;

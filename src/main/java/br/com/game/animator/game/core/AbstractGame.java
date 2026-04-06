@@ -1,10 +1,13 @@
 package br.com.game.animator.game.core;
 
 import java.awt.Graphics2D;
+import java.awt.Toolkit;
+import java.awt.image.BufferStrategy;
+
 import br.com.game.animator.engine.GameEngine;
-import br.com.game.animator.engine.renderer.Renderer;
-import br.com.game.animator.engine.renderer.RendererFactory;
 import br.com.game.animator.window.Window;
+import br.com.game.animator.window.renderer.Renderer;
+import br.com.game.animator.window.renderer.RendererFactory;
 
 /**
  * AbstractGame - Abstract class that implements the IGame interface and
@@ -55,7 +58,7 @@ public abstract class AbstractGame implements IGame {
 
 	/**
 	 * paintScreen - Paint the buffer to the screen using the configured renderer.
-	 */
+	 *
 	public void paintScreen() {
 		if (renderer == null || !renderer.isReady()) {
 			// Just skip the frame if renderer isn't initialized yet 
@@ -68,6 +71,22 @@ public abstract class AbstractGame implements IGame {
 			renderer.render(this.graphics2D);
 		} catch (Exception e) {
 			System.err.println("Error during rendering: " + e.getMessage());
+			this.running = false;
+		}
+	}*/
+
+	public void paintScreen() {
+		try {
+			BufferStrategy strategy = gameWindow.getBufferStrategy();
+			this.graphics2D = (Graphics2D) strategy.getDrawGraphics();
+			this.graphics2D.dispose();
+			if (!strategy.contentsLost()) {
+				strategy.show();
+			} else {
+				System.out.println("Contents Lost");
+			}
+			Toolkit.getDefaultToolkit().sync();
+		} catch (Exception e) {
 			this.running = false;
 		}
 	}

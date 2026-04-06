@@ -1,4 +1,4 @@
-package br.com.game.animator.engine.renderer;
+package br.com.game.animator.window.renderer;
 
 import br.com.game.animator.util.GameConfig;
 
