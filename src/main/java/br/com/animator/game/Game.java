@@ -82,15 +82,12 @@ public class Game extends AbstractGame {
     @Override
     public void render(long delta) {
         Graphics2D g2d = null;
-        boolean isOpenGL = (this.renderer instanceof br.com.animator.window.renderer.LWJGLRenderer);
 
-        if (isOpenGL) {
-            // Modo OpenGL: Usa o buffer fixo
-            g2d = this.graphics2D;
-        } else {
-            // Modo Native: Pega direto da tela para performance máxima (2000 FPS)
+        if (this.renderer.isNative()) {
             if (!gameWindow.isReadyToRender()) return;
             g2d = (Graphics2D) gameWindow.getBufferStrategy().getDrawGraphics();
+        } else {
+            g2d = this.graphics2D;
         }
 
         if (g2d == null) return;
@@ -116,7 +113,7 @@ public class Game extends AbstractGame {
             System.err.println("Error during game rendering: " + e.getMessage());
         } finally {
             // No modo native, precisamos liberar o context do BufferStrategy
-            if (!isOpenGL && g2d != null) {
+            if (this.renderer.isNative() && g2d != null) {
                 g2d.dispose();
             }
         }
