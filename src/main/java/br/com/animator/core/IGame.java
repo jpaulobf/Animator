@@ -100,4 +100,11 @@ public interface IGame {
      * @return The BufferedImage used as a backbuffer
      */
     public BufferedImage getMainBuffer();
+
+    /**
+     * Detect the Joystick pressed button
+     * @param bid
+     * @return
+     */
+    public void joystickButtonPressed(int bid);
 }
