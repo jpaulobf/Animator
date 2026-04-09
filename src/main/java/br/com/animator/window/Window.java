@@ -58,7 +58,7 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 	private volatile boolean tripleBuffering = false;
 	private Integer currentAspectRatio = null;
 	private IGame game = null;
-	private JoystickHandler joystickDetector;
+	private JoystickHandler joystickHandler;
 
 	// --- Window Configuration Map ---//
 	private static final Map<Integer, Map<WindowScale, WindowDimensions>> WINDOW_CONFIGS = createWindowConfigurations();
@@ -127,10 +127,10 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 		this.defineCurrentGameWindow();
 
 		// --- Joystick Initialization ---//
-		this.joystickDetector = new JoystickHandler();
-		if (this.joystickDetector.initialize()) {
+		this.joystickHandler = new JoystickHandler();
+		if (this.joystickHandler.initialize()) {
 			// Conecta o evento do detector ao método do jogo
-			this.joystickDetector.setJoystickListener((jid, bid) -> game.joystickButtonPressed(bid));
+			this.joystickHandler.setJoystickListener((jid, bid) -> game.joystickButtonPressed(bid));
 		}
 
 		// Define as dimensões iniciais baseadas no modo (Fullscreen ou Janela)
@@ -294,7 +294,7 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 	 * Deve ser chamado no loop principal (Game.update).
 	 */
 	public void pollJoysticks() {
-		this.joystickDetector.update();
+		this.joystickHandler.update();
 	}
 
 	@Override
