@@ -45,4 +45,10 @@ public interface Renderer {
      * @return true if the renderer is initialized and ready to render
      */
     boolean isReady();
+
+    /**
+     * Check if the render is Nativa Java
+     * @return
+     */
+    boolean isNative();
 }
