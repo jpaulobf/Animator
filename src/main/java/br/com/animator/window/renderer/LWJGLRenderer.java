@@ -154,11 +154,13 @@ public class LWJGLRenderer implements Renderer {
 
         // 2. Upload via PBO (Asynchronous)
         GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, pboId);
-        // Orphaning: tell the driver we no longer need the previous content, avoiding waits
+
+        // Orphaning: tell the driver we no longer need the previous content, avoiding
+        // waits
         GL15.glBufferData(GL21.GL_PIXEL_UNPACK_BUFFER, (long) width * height * 4, GL15.GL_STREAM_DRAW);
         GL15.glBufferSubData(GL21.GL_PIXEL_UNPACK_BUFFER, 0, pixelBuffer);
-
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureId);
+
         // When a PBO is bound, the last argument is the offset (0) and not the pointer
         GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, width, height, GL12.GL_BGRA, GL11.GL_UNSIGNED_BYTE, 0);
         GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, 0);
@@ -169,7 +171,9 @@ public class LWJGLRenderer implements Renderer {
         GL11.glDisable(GL11.GL_LIGHTING); // Ensure that lights do not darken the screen
         GL11.glColor3f(1.0f, 1.0f, 1.0f);
         GL11.glBegin(GL11.GL_QUADS);
-        // Mapping adjustment: Binding the top of the texture (0,0) to the top of the screen (0,0)
+
+        // Mapping adjustment: Binding the top of the texture (0,0) to the top of the
+        // screen (0,0)
         GL11.glTexCoord2f(0, 0);
         GL11.glVertex2f(0, 0);
         GL11.glTexCoord2f(1, 0);
@@ -355,5 +359,10 @@ public class LWJGLRenderer implements Renderer {
      */
     public long getGlfwWindow() {
         return glfwWindow;
+    }
+
+    @Override
+    public boolean isNative() {
+        return false;
     }
 }
