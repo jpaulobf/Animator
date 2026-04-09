@@ -67,6 +67,9 @@ public class Game extends AbstractGame {
      */
     @Override
     public void update(long frametime) {
+        // Polling de Joystick (GLFW exige ser chamado constantemente)
+        this.gameWindow.pollJoysticks();
+
         if (!this.loading && this.currentCoreGame.finished()) {
             this.currentCoreGame.resetCounters();
             this.gameStateMachine.gotoNextState();
@@ -182,6 +185,16 @@ public class Game extends AbstractGame {
                 }
                 break;
         }
+    }
+
+    /**
+     * Trata o pressionamento de botões do Joystick.
+     * @param buttonCode O código do botão pressionado.
+     */
+    public void joystickButtonPressed(int buttonCode) {
+        System.out.println("Joystick Button Pressed: " + buttonCode);
+        // Aqui você pode replicar a lógica de keyPressed ou criar um mapeamento específico
+        this.keyPressed(buttonCode, false); 
     }
 
     /**
