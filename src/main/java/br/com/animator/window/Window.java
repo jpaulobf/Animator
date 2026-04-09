@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JFrame;
 import br.com.animator.config.GlobalProperties;
+import br.com.animator.input.JoystickHandler;
 import br.com.animator.core.IGame;
 
 /**
@@ -57,6 +58,7 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 	private volatile boolean tripleBuffering = false;
 	private Integer currentAspectRatio = null;
 	private IGame game = null;
+	private JoystickHandler joystickDetector;
 
 	// --- Window Configuration Map ---//
 	private static final Map<Integer, Map<WindowScale, WindowDimensions>> WINDOW_CONFIGS = createWindowConfigurations();
@@ -123,6 +125,13 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 		// --- Initialize window ---//
 		this.currentAspectRatio = this.getCurrentAspectRatio();
 		this.defineCurrentGameWindow();
+
+		// --- Joystick Initialization ---//
+		this.joystickDetector = new JoystickHandler();
+		if (this.joystickDetector.initialize()) {
+			// Conecta o evento do detector ao método do jogo
+			this.joystickDetector.setJoystickListener((jid, bid) -> game.joystickButtonPressed(bid));
+		}
 
 		// Define as dimensões iniciais baseadas no modo (Fullscreen ou Janela)
 		this.panelWidth = this.fullScreen ? graphicsDevice.getDisplayMode().getWidth() : CURRENT_WINDOW_WIDTH;
@@ -278,6 +287,14 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 		} catch (Exception e) {
 			System.err.println("Error creating buffer strategy: " + e.getMessage());
 		}
+	}
+
+	/**
+	 * Realiza o polling dos eventos de Joystick. 
+	 * Deve ser chamado no loop principal (Game.update).
+	 */
+	public void pollJoysticks() {
+		this.joystickDetector.update();
 	}
 
 	@Override
