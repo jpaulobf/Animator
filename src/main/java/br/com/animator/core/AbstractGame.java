@@ -2,7 +2,6 @@ package br.com.animator.core;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-
 import br.com.animator.window.Window;
 import br.com.animator.window.renderer.Renderer;
 import br.com.animator.window.renderer.RendererFactory;
@@ -47,19 +46,15 @@ public abstract class AbstractGame implements IGame {
 		// Initialize the renderer based on configuration
 		this.renderer = RendererFactory.createRenderer();
 
-		// Configura visibilidade e peer nativo ANTES do init para garantir dimensões
-		if (!(this.renderer instanceof br.com.animator.window.renderer.LWJGLRenderer)) {
+		// Configure visibility and native peer before init
+		if (this.renderer.isNative()) {
 			if (this.gameWindow.isFullScreen()) {
 				this.gameWindow.setFullScreen();
 			} else {
 				this.gameWindow.setVisible(true);
 			}
 		} else {
-			this.gameWindow.addNotify(); // Cria o peer nativo sem mostrar a janela (evita flicker)
-		}
-
-		// Inicializa o buffer de desenho apenas se for usar OpenGL
-		if (this.renderer instanceof br.com.animator.window.renderer.LWJGLRenderer) {
+			this.gameWindow.addNotify();
 			int w = gameWindow.getPanelWidth();
 			int h = gameWindow.getPanelHeight();
 			this.mainBuffer = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
