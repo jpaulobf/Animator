@@ -1,5 +1,6 @@
 package br.com.animator.game.factory;
 
+import br.com.animator.core.CoreGameLogic;
 import br.com.animator.game.data.GameGraphics;
 import br.com.animator.game.data.GameGraphicsImpl;
 import br.com.animator.game.data.GameOptions;
@@ -19,7 +20,6 @@ import br.com.animator.game.ui.options.GameSoundOptionScreenImpl;
 import br.com.animator.game.ui.score.GameScorePresentationImpl;
 import br.com.animator.state.GameStateMachine;
 import br.com.animator.state.GameStates;
-import br.com.animator.ui.CoreGameLogic;
 import br.com.animator.window.Window;
 
 /**

@@ -1,6 +1,6 @@
 package br.com.animator.ui.advertise;
 
-import br.com.animator.ui.CoreGameLogic;
+import br.com.animator.core.CoreGameLogic;
 
 /**
  * Interface that represents the logic of the developer advertisement in the game.

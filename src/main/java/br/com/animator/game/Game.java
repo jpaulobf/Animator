@@ -6,11 +6,11 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
 import br.com.animator.core.AbstractGame;
+import br.com.animator.core.CoreGameLogic;
 import br.com.animator.game.data.enumerators.ScreenMode;
 import br.com.animator.game.factory.CoreGameFactory;
 import br.com.animator.game.ui.menu.GameExitMenuImpl;
 import br.com.animator.state.GameStateMachine;
-import br.com.animator.ui.CoreGameLogic;
 import br.com.animator.ui.menu.GameExitMenu;
 import br.com.animator.window.Window;
 

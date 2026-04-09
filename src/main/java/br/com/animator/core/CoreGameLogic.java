@@ -1,4 +1,4 @@
-package br.com.animator.ui;
+package br.com.animator.core;
 
 import java.awt.Graphics2D;
 
