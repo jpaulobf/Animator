@@ -1,4 +1,4 @@
-package br.com.animator.game.ui.options;
+package br.com.animator.ui.options;
 
 import br.com.animator.ui.CoreGameLogic;
 

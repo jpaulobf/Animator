@@ -1,4 +1,4 @@
-package br.com.animator.ui.options;
+package br.com.animator.game.ui.options;
 
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 
 import br.com.animator.game.Game;
 import br.com.animator.game.data.GameSoundOptions;
-import br.com.animator.game.ui.options.GameSoundOptionScreen;
+import br.com.animator.ui.options.GameSoundOptionScreen;
 import br.com.animator.util.ImageUtil;
 
 /**

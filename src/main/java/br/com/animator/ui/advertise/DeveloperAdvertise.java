@@ -1,4 +1,4 @@
-package br.com.animator.game.ui.advertise;
+package br.com.animator.ui.advertise;
 
 import br.com.animator.ui.CoreGameLogic;
 

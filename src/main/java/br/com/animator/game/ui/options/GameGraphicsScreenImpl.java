@@ -1,4 +1,4 @@
-package br.com.animator.ui.options;
+package br.com.animator.game.ui.options;
 
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -9,7 +9,7 @@ import br.com.animator.game.data.GameGraphics;
 import br.com.animator.game.data.GameGraphicsImpl;
 import br.com.animator.game.data.enumerators.DeepColor;
 import br.com.animator.game.data.enumerators.ScreenMode;
-import br.com.animator.game.ui.options.GameGraphicsScreen;
+import br.com.animator.ui.options.GameGraphicsScreen;
 import br.com.animator.util.ImageUtil;
 
 /**

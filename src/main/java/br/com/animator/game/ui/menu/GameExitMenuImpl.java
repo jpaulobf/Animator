@@ -1,11 +1,11 @@
-package br.com.animator.ui.menu;
+package br.com.animator.game.ui.menu;
 
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import br.com.animator.game.Game;
-import br.com.animator.game.ui.menu.GameExitMenu;
+import br.com.animator.ui.menu.GameExitMenu;
 import br.com.animator.util.ImageUtil;
 
 /**

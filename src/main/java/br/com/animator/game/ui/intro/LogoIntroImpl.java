@@ -1,4 +1,4 @@
-package br.com.animator.ui.intro;
+package br.com.animator.game.ui.intro;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -6,7 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import br.com.animator.game.Game;
-import br.com.animator.game.ui.intro.LogoIntro;
+import br.com.animator.ui.intro.LogoIntro;
 import br.com.animator.util.ImageUtil;
 
 /**

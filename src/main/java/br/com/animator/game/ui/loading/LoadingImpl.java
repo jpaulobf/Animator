@@ -1,11 +1,11 @@
-package br.com.animator.ui.loading;
+package br.com.animator.game.ui.loading;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import br.com.animator.game.Game;
-import br.com.animator.game.ui.loading.Loading;
+import br.com.animator.ui.loading.Loading;
 import br.com.animator.util.ImageUtil;
 
 /**

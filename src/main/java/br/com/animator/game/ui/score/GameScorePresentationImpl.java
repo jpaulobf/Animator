@@ -1,4 +1,4 @@
-package br.com.animator.ui.score;
+package br.com.animator.game.ui.score;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -11,7 +11,7 @@ import java.util.Map;
 import br.com.animator.game.Game;
 import br.com.animator.game.data.GameScore;
 import br.com.animator.game.data.GameScoreImpl;
-import br.com.animator.game.ui.score.GameScorePresentation;
+import br.com.animator.ui.score.GameScorePresentation;
 import br.com.animator.util.ImageUtil;
 
 /**

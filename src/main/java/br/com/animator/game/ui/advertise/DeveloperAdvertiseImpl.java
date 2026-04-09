@@ -1,12 +1,11 @@
-package br.com.animator.ui.advertise;
+package br.com.animator.game.ui.advertise;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-
 import br.com.animator.game.Game;
-import br.com.animator.game.ui.advertise.DeveloperAdvertise;
+import br.com.animator.ui.advertise.DeveloperAdvertise;
 import br.com.animator.util.ImageUtil;
 
 /**

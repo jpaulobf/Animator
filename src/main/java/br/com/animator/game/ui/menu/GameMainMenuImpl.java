@@ -1,4 +1,4 @@
-package br.com.animator.ui.menu;
+package br.com.animator.game.ui.menu;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 import br.com.animator.audio.OggAudio;
 import br.com.animator.audio.OggAudio.AudioType;
 import br.com.animator.game.Game;
-import br.com.animator.game.ui.menu.GameMainMenu;
+import br.com.animator.ui.menu.GameMainMenu;
 import br.com.animator.util.ImageUtil;
 
 /**

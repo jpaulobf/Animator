@@ -1,4 +1,4 @@
-package br.com.animator.game.ui.score;
+package br.com.animator.ui.score;
 
 import br.com.animator.ui.CoreGameLogic;
 
