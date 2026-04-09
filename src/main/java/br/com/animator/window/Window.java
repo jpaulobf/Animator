@@ -21,7 +21,6 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JFrame;
-
 import br.com.animator.config.GlobalProperties;
 import br.com.animator.core.IGame;
 
@@ -39,7 +38,6 @@ import br.com.animator.core.IGame;
 public class Window extends JFrame implements WindowListener, KeyListener, MouseListener, MouseMotionListener {
 
 	// --- Constants ---//
-	private static final int NUM_BUFFERS = 2;
 	private static final int TRIPLE_BUFFERS = 3;
 	private static final boolean FULLSCREEN = true;
 	private static final boolean WINDOWED = false;
@@ -417,7 +415,8 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 	// --- Accessors (Thread-safe) ---//
 	/**
 	 * Checks if the window is ready for rendering.
-	 * Call this in your Game Loop to prevent IllegalStateException during transitions.
+	 * Call this in your Game Loop to prevent IllegalStateException during
+	 * transitions.
 	 * 
 	 * @return true if a BufferStrategy exists and the window is visible
 	 */
