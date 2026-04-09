@@ -20,13 +20,6 @@ public class JoystickHandler {
     private final byte[][] hatHistory = new byte[GLFW.GLFW_JOYSTICK_LAST + 1][64];
     private JoystickListener listener;
 
-    /**
-     * Interface to listen for Joystick button press events.
-     */
-    public interface JoystickListener {
-        void onButtonPressed(int joystickId, int buttonId);
-    }
-
     public void setJoystickListener(JoystickListener listener) {
         this.listener = listener;
     }
@@ -197,5 +190,12 @@ public class JoystickHandler {
                 hatHistory[jid][h] = currentHat;
             }
         }
+    }
+
+    /**
+     * Interface to listen for Joystick button press events.
+     */
+    public interface JoystickListener {
+        void onButtonPressed(int joystickId, int buttonId);
     }
 }
