@@ -7,10 +7,10 @@ import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
-
-import br.com.animator.game.Game;
+import br.com.animator.core.IGame;
 import br.com.animator.game.data.GameScore;
 import br.com.animator.game.data.GameScoreImpl;
+import br.com.animator.input.GameAction;
 import br.com.animator.ui.score.GameScorePresentation;
 import br.com.animator.util.ImageUtil;
 
@@ -396,7 +396,7 @@ public class GameScorePresentationImpl implements GameScorePresentation {
 	}
 
 	@Override
-	public void handleInput(Game game, int keyCode, boolean isAltDown) {
+	public void handleInput(IGame game, GameAction action) {
 		//todo
 	}
 }
