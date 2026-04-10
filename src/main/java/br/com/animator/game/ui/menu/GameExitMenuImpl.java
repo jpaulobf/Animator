@@ -3,8 +3,8 @@ package br.com.animator.game.ui.menu;
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-
-import br.com.animator.game.Game;
+import br.com.animator.core.IGame;
+import br.com.animator.input.GameAction;
 import br.com.animator.ui.menu.GameExitMenu;
 import br.com.animator.util.ImageUtil;
 
@@ -165,7 +165,23 @@ public class GameExitMenuImpl implements GameExitMenu {
 	}
 
 	@Override
-	public void handleInput(Game game, int keyCode, boolean isAltDown) {
-		//todo
+	public void handleInput(IGame game, GameAction action) {
+		switch (action) {
+            case LEFT:
+                this.previousGameOption();
+                break;
+            case RIGHT:
+                this.nextGameOption();
+                break;
+            case START:
+            case BUTTON_1: // Enter maps to Start or B1
+                if (this.isToExit()) {
+                    game.stopGame();
+                } else {
+                    this.hideExitMenu();
+                }
+                break;
+            default: break;
+        }
 	}
 }
