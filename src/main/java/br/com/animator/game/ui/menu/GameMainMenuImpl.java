@@ -2,12 +2,12 @@ package br.com.animator.game.ui.menu;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-
 import br.com.animator.audio.OggAudio;
 import br.com.animator.audio.OggAudio.AudioType;
+import br.com.animator.core.IGame;
 import br.com.animator.game.Game;
+import br.com.animator.input.GameAction;
 import br.com.animator.ui.menu.GameMainMenu;
 import br.com.animator.util.ImageUtil;
 
@@ -394,17 +394,17 @@ public class GameMainMenuImpl implements GameMainMenu {
 	}
 
 	@Override
-	public void handleInput(Game game, int keyCode, boolean isAltDown) {
-		if (keyCode == KeyEvent.VK_ENTER) {
+	public void handleInput(IGame game, GameAction action) {
+		if (action == GameAction.START || action == GameAction.BUTTON_1) {
 			if (this.isExitSelected()) {
-				game.showExitMenu();
+				((Game)game).showExitMenu();
 			} else if (this.isOptionSelected()) {
-				game.gotoMainOption();
+				((Game)game).gotoMainOption();
 			}
-		} else if (keyCode == KeyEvent.VK_UP) {
+		} else if (action == GameAction.UP) {
 			this.menuSound.play();
 			this.previousGameOption();
-		} else if (keyCode == KeyEvent.VK_DOWN) {
+		} else if (action == GameAction.DOWN) {
 			this.menuSound.play();
 			this.nextGameOption();
 		}
