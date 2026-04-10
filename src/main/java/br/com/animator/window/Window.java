@@ -129,8 +129,17 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 		// --- Joystick Initialization ---//
 		this.joystickHandler = new JoystickHandler();
 		if (this.joystickHandler.initialize()) {
-			// Conecta o evento do detector ao método do jogo
-			this.joystickHandler.setJoystickListener((jid, bid) -> game.joystickButtonPressed(bid));
+			this.joystickHandler.setJoystickListener(new JoystickHandler.JoystickListener() {
+				@Override
+				public void onButtonPressed(int joystickId, int buttonId) {
+					game.joystickButtonPressed(joystickId, buttonId);
+				}
+
+				@Override
+				public void onHatChanged(int joystickId, int hatId, byte state) {
+					game.joystickHatMoved(joystickId, hatId, state);
+				}
+			});
 		}
 
 		// Define as dimensões iniciais baseadas no modo (Fullscreen ou Janela)
