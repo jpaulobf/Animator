@@ -1,7 +1,17 @@
 package br.com.animator.core;
 
+import java.awt.AlphaComposite;
+import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import javax.swing.JOptionPane;
+import br.com.animator.game.data.enumerators.ScreenMode;
+import br.com.animator.game.factory.CoreGameFactory;
+import br.com.animator.input.ButtonMapper;
+import br.com.animator.input.GameAction;
+import br.com.animator.state.GameStateMachine;
+import br.com.animator.ui.menu.GameExitMenu;
 import br.com.animator.window.Window;
 import br.com.animator.window.renderer.Renderer;
 import br.com.animator.window.renderer.RendererFactory;
@@ -17,6 +27,11 @@ import br.com.animator.window.renderer.RendererFactory;
  */
 public abstract class AbstractGame implements IGame {
 
+	//--- Constants ---//
+    private static final String FS_ERROR_TITLE = "Error changing fullscreen mode";
+    private static final String FS_ERROR_MESSAGE = "Failed to initialize in FullScreen mode.\n" +
+                                                   "Try changing the video mode in Game-Options.";
+
 	// --- Properties ---//
 	protected Graphics2D graphics2D = null;
 	protected BufferedImage mainBuffer = null;
@@ -28,6 +43,11 @@ public abstract class AbstractGame implements IGame {
 	protected volatile boolean isPaused = false;
 	protected volatile boolean loading = false;
 	protected volatile boolean isToShowFPS = true;
+
+	//--- Properties ---//
+    protected CoreGameLogic currentCoreGame;
+    protected GameStateMachine gameStateMachine;
+    protected GameExitMenu gameExitMenu;
 
 	/**
 	 * Constructor
@@ -128,10 +148,216 @@ public abstract class AbstractGame implements IGame {
 		return renderer;
 	}
 
+
+	/**
+     * Updates the current core game instance based on state machine.
+     * Centralizes the factory call to reduce duplication.
+     */
+    protected void updateCurrentCoreGame() {
+        this.currentCoreGame = CoreGameFactory.getInstance(this.gameStateMachine, this.gameWindow);
+    }
+
+	/**
+     * Draws the FPS/UPS overlay on the screen.
+     */
+    protected void drawFPSOverlay(Graphics2D g2d) {
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
+        g2d.setColor(Color.RED);
+        String fpsText = String.format("Média de FPS / UPS: %d / %d", 
+            (int) gameEngine.getAverageFPS(), 
+            (int) gameEngine.getAverageUPS());
+        g2d.drawString(fpsText, 10, 20);
+    }
+
+	/**
+     * Updates the game settings based on the current state of the game window.
+     */
+    public void updateGameSettings(boolean isFullScreen, Integer pWIDTH, Integer pHEIGHT) {
+        // Validate parameters
+        if (pWIDTH == null || pWIDTH <= 0 || pHEIGHT == null || pHEIGHT <= 0) {
+            System.err.println("Invalid window dimensions: " + pWIDTH + "x" + pHEIGHT);
+            return;
+        }
+
+        this.loading();
+        try {
+            Integer currentAspectRatio = gameWindow.getCurrentAspectRatio();
+            this.currentCoreGame.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
+            this.gameExitMenu.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
+        } finally {
+            this.loadingDone();
+        }
+    }
+
+	/**
+     * Toggles the pause state.
+     */
+    protected void togglePause() {
+        if (!isPaused) {
+            pauseGame();
+        } else {
+            resumeGame();
+        }
+    }
+
+	/**
+     * Handles fullscreen toggle via Alt+Enter.
+     */
+    protected void handleFullscreenToggle() {
+        pauseGame();
+        try {
+            if (!gameWindow.isFullScreen()) {
+                gameWindow.switchToFullScreen();
+                CoreGameFactory.configureGameGraphics(ScreenMode.FULLSCREEN);
+            } else {
+                gameWindow.backToWindow();
+                CoreGameFactory.configureGameGraphics(ScreenMode.WINDOWED);
+            }
+        } catch (Exception e) {
+            System.err.println("Fullscreen toggle failed: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, FS_ERROR_MESSAGE, FS_ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+            gameWindow.backToWindow();
+            CoreGameFactory.configureGameGraphics(ScreenMode.WINDOWED);
+        } finally {
+            resumeGame();
+        }
+    }
+
+	/**
+	 * Handle with the System Shortcuts
+	 * @param keyCode
+	 * @param isAltDown
+	 * @return
+	 */
+	protected boolean handleSystemShortcuts(int keyCode, boolean isAltDown) {
+        if (isAltDown && keyCode == KeyEvent.VK_F4 && canShowExitMenu()) {
+            gameExitMenu.showExitMenu();
+            return true;
+        }
+        if (isAltDown && keyCode == KeyEvent.VK_ENTER) {
+            handleFullscreenToggle();
+            return true;
+        }
+        return false;
+    }
+
+	/**
+     * Checks if the exit menu can be shown.
+     */
+    private boolean canShowExitMenu() {
+        return !gameStateMachine.isInIntroDev() && !gameStateMachine.isInOptions();
+    }
+
+	/**
+     * loading - Set the loading flag to true, indicating that the game is currently
+     * loading resources or performing some initialization tasks.
+     */
+    public void loading() {
+        gameStateMachine.setLoadingState();
+        updateCurrentCoreGame();
+        this.loading = true;
+    }
+
+    /**
+     * loadingDone - Set the loading flag to false, indicating that the game has
+     * finished loading resources or initialization tasks.
+     */
+    public void loadingDone() {
+        gameStateMachine.unloadState();
+        updateCurrentCoreGame();
+        this.loading = false;
+    }
+
+    /**
+     * Shows the exit menu.
+     */
+    public void showExitMenu() {
+        gameExitMenu.showExitMenu();
+    }
+
+	/**
+     * Trata o pressionamento de botões do Joystick.
+     * @param buttonCode O código do botão pressionado.
+     */
+    public void joystickButtonPressed(int joystickId, int buttonCode) {
+        GameAction action = ButtonMapper.getJoystickAction(buttonCode);
+        if (action != null) {
+            if (gameExitMenu.isShowingExitMenu()) { // O joystickId não é usado aqui, mas pode ser no futuro
+                handleExitMenuAction(action);
+            } else {
+                handleGameAction(action);
+            }
+        }
+    }
+
+    /**
+     * Trata a mudança de estado do DPAD/Hat.
+     */
+    public void joystickHatMoved(int joystickId, int hatId, byte state) {
+        if (state == 0) return;
+
+        GameAction action = ButtonMapper.getHatAction(state);
+        if (action != null) {
+            if (gameExitMenu.isShowingExitMenu()) {
+                handleExitMenuAction(action);
+            } else {
+                handleGameAction(action);
+            }
+        }
+    }
+
+	/**
+     * Handles logical actions when exit menu is visible.
+     */
+    protected void handleExitMenuAction(GameAction action) {
+        switch (action) {
+            case LEFT:
+                gameExitMenu.previousGameOption();
+                break;
+            case RIGHT:
+                gameExitMenu.nextGameOption();
+                break;
+            case START:
+            case BUTTON_1: // Enter maps to Start or B1
+                if (gameExitMenu.isToExit()) {
+                    stopGame();
+                } else {
+                    gameExitMenu.hideExitMenu();
+                }
+                break;
+            default: break;
+        }
+    }
+
+	/**
+     * Handles logical actions during normal gameplay.
+     */
+    protected void handleGameAction(GameAction action) {
+        // Any action in intro: Go to main menu
+        if (gameStateMachine.isInIntro()) {
+            gotoMainMenu();
+            return;
+        }
+
+        // Default: Handle input for current screen
+        currentCoreGame.handleInput(this, action);
+    }
+
 	// --- Abstract Methods ---//
 	public abstract void update(long frametime);
 
 	public abstract void render(long delta);
 
-	public abstract void keyPressed(int keyCode, boolean isAltDown);
+	//public abstract void keyPressed(int keyCode, boolean isAltDown);
+
+	public void keyPressed(int keyCode, boolean isAltDown) {
+		if (gameExitMenu.isShowingExitMenu()) {
+            GameAction action = ButtonMapper.getKeyboardAction(keyCode);
+            if (action != null) handleExitMenuAction(action);
+            return;
+        }
+
+        // Atalhos de Sistema (Não mapeados em GameAction)
+        if (handleSystemShortcuts(keyCode, isAltDown)) return;
+	}
 }
