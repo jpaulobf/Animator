@@ -186,7 +186,10 @@ public class JoystickHandler {
         for (int h = 0; h < hats.limit() && h < 64; h++) {
             byte currentHat = hats.get(h);
             if (currentHat != hatHistory[jid][h]) {
-                System.out.printf("[%s] DPAD/Hat Changed: %d | State: %d%n", controller.getName(), h, currentHat);
+                // Notifica o listener sobre a mudança de estado do DPAD
+                if (listener != null) {
+                    listener.onHatChanged(jid, h, currentHat);
+                }
                 hatHistory[jid][h] = currentHat;
             }
         }
@@ -197,5 +200,6 @@ public class JoystickHandler {
      */
     public interface JoystickListener {
         void onButtonPressed(int joystickId, int buttonId);
+        void onHatChanged(int joystickId, int hatId, byte state);
     }
 }
