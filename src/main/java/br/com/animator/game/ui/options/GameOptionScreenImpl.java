@@ -1,12 +1,13 @@
 package br.com.animator.game.ui.options;
 
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 
+import br.com.animator.core.IGame;
 import br.com.animator.game.Game;
 import br.com.animator.game.data.GameOptions;
 import br.com.animator.game.data.enumerators.GameDifficulty;
+import br.com.animator.input.GameAction;
 import br.com.animator.ui.options.GameOptionScreen;
 import br.com.animator.util.ImageUtil;
 
@@ -777,19 +778,19 @@ public class GameOptionScreenImpl implements GameOptionScreen {
 	}
 
 	@Override
-	public void handleInput(Game game, int keyCode, boolean isAltDown) {
-		if (keyCode == KeyEvent.VK_ENTER) {
+	public void handleInput(IGame game, GameAction action) {
+		if (action == GameAction.START || action == GameAction.BUTTON_1) {
 			if (this.isToBackToMainOption()) {
 				this.resetCounters();
-				game.gotoMainOption();
+				((Game)game).gotoMainOption();
 			}
-		} else if (keyCode == KeyEvent.VK_UP) {
+		} else if (action == GameAction.UP) {
 			this.previousOption();
 
-		} else if (keyCode == KeyEvent.VK_DOWN) {
+		} else if (action == GameAction.DOWN) {
 			this.nextOption();
 
-		} else if (keyCode == KeyEvent.VK_LEFT) {
+		} else if (action == GameAction.LEFT) {
 			if (this.isOverEnableSubtitles()) {
 				this.enableSubtitles();
 			} else if (this.isOverGameDifficulty()) {
@@ -802,7 +803,7 @@ public class GameOptionScreenImpl implements GameOptionScreen {
 				this.subContinues();
 			}
 
-		} else if (keyCode == KeyEvent.VK_RIGHT) {
+		} else if (action == GameAction.RIGHT) {
 			if (this.isOverEnableSubtitles()) {
 				this.disableSubtitles();
 			} else if (this.isOverGameDifficulty()) {
