@@ -1,8 +1,7 @@
 package br.com.animator.core;
 
 import java.awt.Graphics2D;
-
-import br.com.animator.game.Game;
+import br.com.animator.input.GameAction;
 
 public interface CoreGameLogic {
 
@@ -16,5 +15,5 @@ public interface CoreGameLogic {
 
 	public boolean finished();
 
-	public void handleInput(Game game, int keyCode, boolean isAltDown);
+	public void handleInput(IGame game, GameAction action);
 }
