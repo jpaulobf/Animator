@@ -106,5 +106,15 @@ public interface IGame {
      * @param bid
      * @return
      */
-    public void joystickButtonPressed(int bid);
+    public void joystickButtonPressed(int joystickId, int buttonId);
+
+    /**
+     * Detect the Joystick hat moved
+     * @param joystickId
+     * @param hatId
+     * @param state
+     */
+    public void joystickHatMoved(int joystickId, int hatId, byte state);
+
+    public void gotoMainMenu();
 }
