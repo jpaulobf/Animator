@@ -1,10 +1,11 @@
 package br.com.animator.game.ui.options;
 
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 
+import br.com.animator.core.IGame;
 import br.com.animator.game.Game;
+import br.com.animator.input.GameAction;
 import br.com.animator.ui.options.GameMainOptionScreen;
 import br.com.animator.util.ImageUtil;
 
@@ -181,24 +182,24 @@ public class GameMainOptionScreenImpl implements GameMainOptionScreen {
 	}
 
 	@Override
-	public void handleInput(Game game, int keyCode, boolean isAltDown) {
-		if (keyCode == KeyEvent.VK_ENTER) {
+	public void handleInput(IGame game, GameAction action) {
+		if (action == GameAction.START || action == GameAction.BUTTON_1) {
 			if (this.isToBackToMainMenu()) {
 				this.resetCounters();
 				game.gotoMainMenu();
 			} else if (this.isToGoToGameOptions()) {
 				this.resetCounters();
-				game.gotoGameOptions();
+				((Game)game).gotoGameOptions();
 			} else if (this.isToConfigSFX()) {
 				this.resetCounters();
-				game.gotoSFXConfigMenu();
+				((Game)game).gotoSFXConfigMenu();
 			} else if (this.isToConfigGFX()) {
 				this.resetCounters();
-				game.gotoGFXConfigMenu();
+				((Game)game).gotoGFXConfigMenu();
 			}
-		} else if (keyCode == KeyEvent.VK_UP) {
+		} else if (action == GameAction.UP) {
 			this.previousGameOption();
-		} else if (keyCode == KeyEvent.VK_DOWN) {
+		} else if (action == GameAction.DOWN) {
 			this.nextGameOption();
 		}
 	}
