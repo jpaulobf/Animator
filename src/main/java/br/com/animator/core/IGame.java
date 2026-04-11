@@ -80,7 +80,7 @@ public interface IGame {
      * 
      * @param isAltDown
      */
-    public void keyPressed(int keyCode, boolean isAltDown);
+    public void processKey(int keyCode, boolean isAltDown);
 
     /**
      * Starts the game.
@@ -106,7 +106,7 @@ public interface IGame {
      * @param bid
      * @return
      */
-    public void joystickButtonPressed(int joystickId, int buttonId);
+    public void processJoystickButton(int joystickId, int buttonId);
 
     /**
      * Detect the Joystick hat moved
@@ -114,7 +114,5 @@ public interface IGame {
      * @param hatId
      * @param state
      */
-    public void joystickHatMoved(int joystickId, int hatId, byte state);
-
-    public void gotoMainMenu();
+    public void processJoystickHat(int joystickId, int hatId, byte state);
 }
