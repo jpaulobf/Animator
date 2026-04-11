@@ -102,14 +102,14 @@ public class GameEngine implements Runnable {
 					elapsed = MAX_DELTA_TIME;
 
 				this.gameUpdate(elapsed);
-				this.paint();
 				this.gameRender(elapsed);
+				this.paint();
 
 				// Yield to prevent CPU starvation
 				Thread.yield();
 
 				if (this.storeStats) {
-					this.storeStats();
+					this.storeStats(now);
 				}
 			}
 		} else {
@@ -120,8 +120,8 @@ public class GameEngine implements Runnable {
 				lastTime = now;
 
 				this.gameUpdate(elapsed);
-				this.paint();
 				this.gameRender(elapsed);
+				this.paint();
 
 				// Calculate time taken for this frame
 				long workTime = System.nanoTime() - now;
@@ -162,7 +162,7 @@ public class GameEngine implements Runnable {
 					this.framesSkipped += skipsThisCycle;
 				}
 				if (this.storeStats) {
-					this.storeStats();
+					this.storeStats(now);
 				}
 			}
 		}
@@ -204,10 +204,10 @@ public class GameEngine implements Runnable {
 	/**
 	 * Store the game statistics in the Stats Store to calculate the average FPS and
 	 * UPS.
+	 * @param timeNow The current time in nanoseconds already captured in the loop.
 	 */
-	private void storeStats() {
+	private void storeStats(long timeNow) {
 		this.frameCount++;
-		long timeNow = System.nanoTime();
 		long realElapsedTime = timeNow - this.prevStatsTime;
 
 		// Uses initial intervals or the max_stats

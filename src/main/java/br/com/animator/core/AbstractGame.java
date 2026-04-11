@@ -184,6 +184,7 @@ public abstract class AbstractGame implements IGame {
         this.loading();
         try {
             Integer currentAspectRatio = gameWindow.getCurrentAspectRatio();
+            CoreGameFactory.clearCache();
             this.currentCoreGame.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
             this.gameExitMenu.updateGraphics(isFullScreen, pWIDTH, pHEIGHT, currentAspectRatio);
         } finally {
