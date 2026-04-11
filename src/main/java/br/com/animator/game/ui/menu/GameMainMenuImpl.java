@@ -102,6 +102,7 @@ public class GameMainMenuImpl implements GameMainMenu {
 	private Integer quitGameButtonWidth = null;
 	private Integer quitGameButtonHeight = null;
 	private OggAudio menuSound;
+	private OggAudio menuMusic;
 
 	/**
 	 * Construtor
@@ -173,7 +174,9 @@ public class GameMainMenuImpl implements GameMainMenu {
 		this.optionsButtonHeight = this.optionsButton.getHeight();
 		this.quitGameButtonWidth = this.quitGameButton.getWidth();
 		this.quitGameButtonHeight = this.quitGameButton.getHeight();
-		this.menuSound = new OggAudio("/audio/menu.ogg", AudioType.SFX);
+		this.menuSound = new OggAudio("/audio/menu1.ogg", AudioType.SFX);
+		this.menuMusic = new OggAudio("/audio/menumusic.ogg", AudioType.MUSIC);
+		menuMusic.play();
 	}
 
 	/*
@@ -397,6 +400,7 @@ public class GameMainMenuImpl implements GameMainMenu {
 	public void handleInput(IGame game, GameAction action) {
 		if (action == GameAction.START || action == GameAction.BUTTON_1) {
 			if (this.isExitSelected()) {
+				menuMusic.stop();
 				((Game)game).showExitMenu();
 			} else if (this.isOptionSelected()) {
 				((Game)game).gotoMainOption();
