@@ -19,8 +19,8 @@ public class GameEngine implements Runnable {
 
 	// --- Properties ---//
 	private final IGame game;
-	private final int targetFPS;
-	private final long targetFrametime;
+	private volatile int targetFPS;
+	private volatile long targetFrametime;
 	private volatile boolean running = false;
 
 	private volatile boolean storeStats = true;
@@ -67,6 +67,15 @@ public class GameEngine implements Runnable {
 	}
 
 	/**
+	 * Dynamically updates the target FPS.
+	 * @param fps The new target FPS (0 or negative for unlimited)
+	 */
+	public void setTargetFPS(int fps) {
+		this.targetFPS = fps;
+		this.targetFrametime = getTargetFrametime(fps);
+	}
+
+	/**
 	 * startEngine - Starts the game loop in a new thread with appropriate priority.
 	 */
 	protected void startEngine() {
@@ -89,32 +98,26 @@ public class GameEngine implements Runnable {
 		this.running = true;
 		this.prevStatsTime = lastTime;
 
-		if (this.targetFrametime < 0) {
-			// Unlimited FPS mode
-			System.out.println("Running in UNLIMITED FPS mode.");
-			while (running) {
+		while (running) {
+			// Capture target frametime locally to ensure consistency during this iteration
+			long currentTarget = this.targetFrametime;
+
+			if (currentTarget <= 0) {
+				// --- UNLIMITED MODE ---
 				now = System.nanoTime();
 				elapsed = now - lastTime;
 				lastTime = now;
 
-				// Cap delta time to avoid huge jumps
-				if (elapsed > MAX_DELTA_TIME)
-					elapsed = MAX_DELTA_TIME;
+				if (elapsed > MAX_DELTA_TIME) elapsed = MAX_DELTA_TIME;
 
 				this.gameUpdate(elapsed);
 				this.gameRender(elapsed);
 				this.paint();
 
-				// Yield to prevent CPU starvation
 				Thread.yield();
-
-				if (this.storeStats) {
-					this.storeStats(now);
-				}
-			}
-		} else {
-			// Fixed FPS mode
-			while (running) {
+				overSleep = 0; // Reset compensation when in unlimited
+			} else {
+				// --- FIXED FPS MODE ---
 				now = System.nanoTime();
 				elapsed = now - lastTime;
 				lastTime = now;
@@ -127,12 +130,10 @@ public class GameEngine implements Runnable {
 				long workTime = System.nanoTime() - now;
 
 				// Calculate wait time, compensating for previous over-sleep/lag
-				wait = this.targetFrametime - workTime - overSleep;
+				wait = currentTarget - workTime - overSleep;
 
 				if (wait > 0) {
 					try {
-						// Hybrid Sleep Strategy with dynamic buffer:
-						// Use dynamic buffer or fixed minimum, then spin-wait for precision
 						long sleepBuffer = Math.max(SLEEP_BUFFER, wait / 10); // Adaptive buffer
 						long sleepMs = (wait - sleepBuffer) / 1_000_000;
 
@@ -140,8 +141,7 @@ public class GameEngine implements Runnable {
 							Thread.sleep(sleepMs);
 						}
 
-						// Busy-wait for the remaining nanoseconds with yield for other threads
-						while (System.nanoTime() < now + this.targetFrametime - overSleep) {
+						while (System.nanoTime() < now + currentTarget - overSleep) {
 							Thread.yield();
 						}
 						overSleep = 0;
@@ -154,16 +154,17 @@ public class GameEngine implements Runnable {
 
 					// Frame Skipping: Limit skips per cycle to prevent extreme lag recovery
 					int skipsThisCycle = 0;
-					while ((overSleep >= this.targetFrametime) && (skipsThisCycle < 2)) {
-						this.gameUpdate(this.targetFrametime);
-						overSleep -= this.targetFrametime;
+					while ((overSleep >= currentTarget) && (skipsThisCycle < 2)) {
+						this.gameUpdate(currentTarget);
+						overSleep -= currentTarget;
 						skipsThisCycle++;
 					}
 					this.framesSkipped += skipsThisCycle;
 				}
-				if (this.storeStats) {
-					this.storeStats(now);
-				}
+			}
+
+			if (this.storeStats) {
+				this.storeStats(now);
 			}
 		}
 

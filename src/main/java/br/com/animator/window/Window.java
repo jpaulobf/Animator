@@ -146,10 +146,14 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 		this.panelWidth = this.fullScreen ? graphicsDevice.getDisplayMode().getWidth() : CURRENT_WINDOW_WIDTH;
 		this.panelHeight = this.fullScreen ? graphicsDevice.getDisplayMode().getHeight() : CURRENT_WINDOW_HEIGHT;
 
+		// Desabilita as teclas de navegação de foco (como o TAB) para que o KeyListener possa capturá-las
+		this.setFocusTraversalKeysEnabled(false);
+
 		// --- Canvas for Rendering --- //
 		this.gameCanvas = new Canvas();
 		this.gameCanvas.setBackground(Color.BLACK);
 		this.gameCanvas.setSize(new Dimension(panelWidth, panelHeight));
+		this.gameCanvas.setFocusTraversalKeysEnabled(false);
 
 		// --- Define window fullscreen strategy ---//
 		if (this.fullScreen) {
@@ -501,11 +505,17 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 
 	@Override
 	public void keyPressed(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_TAB) {
+			game.toggleFastForward(true);
+		}
 		game.processKey(e.getKeyCode(), e.isAltDown());
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_TAB) {
+			game.toggleFastForward(false);
+		}
 	}
 
 	// --- Mouse Listener ---//

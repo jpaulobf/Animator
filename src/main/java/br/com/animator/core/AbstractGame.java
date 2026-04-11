@@ -44,6 +44,7 @@ public abstract class AbstractGame implements IGame {
 	protected volatile boolean isPaused = false;
 	protected volatile boolean loading = false;
 	protected volatile boolean isToShowFPS = true;
+	protected int originalFPS = 60;
 
 	//--- Properties ---//
     protected CoreGameLogic currentCoreGame;
@@ -62,6 +63,7 @@ public abstract class AbstractGame implements IGame {
 	}
 
 	public void startGame(int fps) {
+		this.originalFPS = fps;
 		this.gameWindow = new Window(this);
 
 		// Initialize the renderer based on configuration
@@ -105,6 +107,18 @@ public abstract class AbstractGame implements IGame {
 		} catch (Exception e) {
 			this.running = false;
 		}
+	}
+
+	@Override
+	public void setTargetFPS(int fps) {
+		if (this.gameEngine != null) {
+			this.gameEngine.setTargetFPS(fps);
+		}
+	}
+
+	@Override
+	public void toggleFastForward(boolean active) {
+		this.setTargetFPS(active ? 0 : this.originalFPS);
 	}
 
 	/**

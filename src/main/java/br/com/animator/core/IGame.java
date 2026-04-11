@@ -115,4 +115,16 @@ public interface IGame {
      * @param state
      */
     public void processJoystickHat(int joystickId, int hatId, byte state);
+
+    /**
+     * Toggles Fast Forward mode (Unlimited FPS).
+     * @param active true to enable fast forward, false to return to normal speed.
+     */
+    public void toggleFastForward(boolean active);
+
+    /**
+     * Sets the target frames per second dynamically.
+     * @param fps
+     */
+    public void setTargetFPS(int fps);
 }
