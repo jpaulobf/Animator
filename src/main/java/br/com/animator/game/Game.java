@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import br.com.animator.core.AbstractGame;
 import br.com.animator.game.ui.menu.GameExitMenuImpl;
-import br.com.animator.input.ButtonMapper;
 import br.com.animator.input.GameAction;
 import br.com.animator.state.GameStateMachine;
 
@@ -100,14 +99,39 @@ public class Game extends AbstractGame {
      * Handles key press events to navigate through the game menu and update settings based on user input.
      */
     @Override
-    public void keyPressed(int keyCode, boolean isAltDown) {
-        //super.keyPressed(keyCode, isAltDown);
+    public void keyPressed(GameAction action) {
+        handleGameAction(action);
+    }
 
-        // Tradução de Teclado para Ação
-        GameAction action = ButtonMapper.getKeyboardAction(keyCode);
-        if (action != null) {
-            handleGameAction(action);
+    /**
+     * Trata o pressionamento de botões do Joystick.
+     * @param buttonCode O código do botão pressionado.
+     */
+    @Override
+    public void joystickButtonPressed(GameAction action) {
+        handleGameAction(action);
+    }
+
+    /**
+     * Trata a mudança de estado do DPAD/Hat.
+     */
+    @Override
+    public void joystickHatMoved(GameAction action) {
+        handleGameAction(action);
+    }
+
+    /**
+     * Handles logical actions during normal gameplay.
+     */
+    protected void handleGameAction(GameAction action) {
+        // Any action in intro: Go to main menu
+        if (gameStateMachine.isInIntro()) {
+            gotoMainMenu();
+            return;
         }
+
+        // Default: Handle input for current screen
+        currentCoreGame.handleInput(this, action);
     }
 
     /**
