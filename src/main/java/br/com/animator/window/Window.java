@@ -132,12 +132,12 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 			this.joystickHandler.setJoystickListener(new JoystickHandler.JoystickListener() {
 				@Override
 				public void onButtonPressed(int joystickId, int buttonId) {
-					game.joystickButtonPressed(joystickId, buttonId);
+					game.processJoystickButton(joystickId, buttonId);
 				}
 
 				@Override
 				public void onHatChanged(int joystickId, int hatId, byte state) {
-					game.joystickHatMoved(joystickId, hatId, state);
+					game.processJoystickHat(joystickId, hatId, state);
 				}
 			});
 		}
@@ -501,7 +501,7 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		game.keyPressed(e.getKeyCode(), e.isAltDown());
+		game.processKey(e.getKeyCode(), e.isAltDown());
 	}
 
 	@Override
