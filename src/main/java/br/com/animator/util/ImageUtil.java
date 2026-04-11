@@ -13,8 +13,6 @@ import java.awt.image.ColorConvertOp;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
 import java.awt.image.RGBImageFilter;
-import javax.imageio.ImageIO;
-
 import br.com.animator.config.GlobalProperties;
 
 /**
@@ -29,15 +27,15 @@ public class ImageUtil {
 	private GraphicsConfiguration gc = null;
 	private ColorConvertOp colorConvertOpGray = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
 	private BufferedImage imageGray = null;
-	private final static Integer SCALE_X_16 = 1920;
-	private final static Integer SCALE_Y_9 = 1080;
-	private final static Integer SCALE_X_16a = 1728;
-	private final static Integer SCALE_Y_10 = 1080;
-	private final static Integer SCALE_X_4 = 1440;
-	private final static Integer SCALE_Y_3 = 1080;
-	private Integer currentCanvasWidth = null;
-	private Integer currentCanvasHeight = null;
-	private Integer currentAspectRatio = null;
+	private static final int SCALE_X_16 = 1920;
+	private static final int SCALE_Y_9 = 1080;
+	private static final int SCALE_X_16a = 1728;
+	private static final int SCALE_Y_10 = 1080;
+	private static final int SCALE_X_4 = 1440;
+	private static final int SCALE_Y_3 = 1080;
+	private int currentCanvasWidth;
+	private int currentCanvasHeight;
+	private int currentAspectRatio;
 
 	/**
 	 * Default constructor. Initializes graphics environment and configuration.
@@ -67,20 +65,7 @@ public class ImageUtil {
 	 * @return
 	 */
 	public BufferedImage loadImage(String imagePath) {
-		try {
-			BufferedImage bi = ImageIO.read(getClass().getResource(imagePath));
-			int transparency = bi.getColorModel().getTransparency();
-			BufferedImage copy = this.gc.createCompatibleImage(bi.getWidth(), bi.getHeight(), transparency);
-
-			Graphics2D g2d = (Graphics2D) copy.getGraphics();
-			g2d.drawImage(bi, 0, 0, null);
-			g2d.dispose();
-			return (copy);
-
-		} catch (Exception e) {
-			System.out.println("Error loading image: " + imagePath + ":\n" + e);
-		}
-		return (null);
+		return ImageManager.getImage(imagePath);
 	}
 
 	/**
@@ -90,45 +75,7 @@ public class ImageUtil {
 	 * @return
 	 */
 	public BufferedImage loadScaledImage(String imagePath) {
-
-		try {
-			BufferedImage bi = ImageIO.read(getClass().getResource(imagePath));
-			int transparency = bi.getColorModel().getTransparency();
-
-			Integer originalImageWidth = bi.getWidth();
-			Integer originalImageHeight = bi.getHeight();
-			Integer finalImageWidth = 0;
-			Integer finalImageHeight = 0;
-
-			if (this.currentAspectRatio == GlobalProperties.ASPECT_RATIO_4_3) {
-				finalImageWidth = (int) ((float) originalImageWidth / SCALE_X_4 * this.currentCanvasWidth);
-			} else if (this.currentAspectRatio == GlobalProperties.ASPECT_RATIO_16_9) {
-				finalImageWidth = (int) ((float) originalImageWidth / SCALE_X_16 * this.currentCanvasWidth);
-			} else {
-				finalImageWidth = (int) ((float) originalImageWidth / SCALE_X_16a * this.currentCanvasWidth);
-			}
-
-			if (this.currentAspectRatio == GlobalProperties.ASPECT_RATIO_4_3) {
-				finalImageHeight = (int) ((float) originalImageHeight / SCALE_Y_3 * this.currentCanvasHeight);
-			} else if (this.currentAspectRatio == GlobalProperties.ASPECT_RATIO_16_9) {
-				finalImageHeight = (int) ((float) originalImageHeight / SCALE_Y_9 * this.currentCanvasHeight);
-			} else {
-				finalImageHeight = (int) ((float) originalImageHeight / SCALE_Y_10 * this.currentCanvasHeight);
-			}
-
-			BufferedImage copy = this.gc.createCompatibleImage(finalImageWidth, finalImageHeight, transparency);
-
-			Graphics2D g2d = (Graphics2D) copy.getGraphics();
-			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-			g2d.drawImage(bi, 0, 0, finalImageWidth, finalImageHeight, 0, 0, bi.getWidth(), bi.getHeight(), null);
-			g2d.dispose();
-			return (copy);
-
-		} catch (Exception e) {
-			System.out.println("Error loading image: " + imagePath + ":\n" + e);
-		}
-		return (null);
+		return loadScaledImage(ImageManager.getImage(imagePath));
 	}
 
 	/**
@@ -143,37 +90,39 @@ public class ImageUtil {
 			return null;
 		}
 
-		int transparency = bi.getColorModel().getTransparency();
+		int[] dims = calculateScaledDimensions(bi.getWidth(), bi.getHeight());
+		int finalWidth = dims[0];
+		int finalHeight = dims[1];
 
-		Integer originalImageWidth = bi.getWidth();
-		Integer originalImageHeight = bi.getHeight();
-		Integer finalImageWidth = 0;
-		Integer finalImageHeight = 0;
-
-		if (this.currentAspectRatio == GlobalProperties.ASPECT_RATIO_4_3) {
-			finalImageWidth = (int) ((float) originalImageWidth / SCALE_X_4 * this.currentCanvasWidth);
-		} else if (this.currentAspectRatio == GlobalProperties.ASPECT_RATIO_16_9) {
-			finalImageWidth = (int) ((float) originalImageWidth / SCALE_X_16 * this.currentCanvasWidth);
-		} else {
-			finalImageWidth = (int) ((float) originalImageWidth / SCALE_X_16a * this.currentCanvasWidth);
-		}
-
-		if (this.currentAspectRatio == GlobalProperties.ASPECT_RATIO_4_3) {
-			finalImageHeight = (int) ((float) originalImageHeight / SCALE_Y_3 * this.currentCanvasHeight);
-		} else if (this.currentAspectRatio == GlobalProperties.ASPECT_RATIO_16_9) {
-			finalImageHeight = (int) ((float) originalImageHeight / SCALE_Y_9 * this.currentCanvasHeight);
-		} else {
-			finalImageHeight = (int) ((float) originalImageHeight / SCALE_Y_10 * this.currentCanvasHeight);
-		}
-
-		BufferedImage copy = this.gc.createCompatibleImage(finalImageWidth, finalImageHeight, transparency);
+		BufferedImage copy = this.gc.createCompatibleImage(finalWidth, finalHeight, bi.getTransparency());
 
 		Graphics2D g2d = (Graphics2D) copy.getGraphics();
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-		g2d.drawImage(bi, 0, 0, finalImageWidth, finalImageHeight, 0, 0, bi.getWidth(), bi.getHeight(), null);
+		g2d.drawImage(bi, 0, 0, finalWidth, finalHeight, 0, 0, bi.getWidth(), bi.getHeight(), null);
 		g2d.dispose();
 		return (copy);
+	}
+
+	/**
+	 * Calculates the target dimensions for scaling based on the current aspect ratio and canvas size.
+	 */
+	private int[] calculateScaledDimensions(int originalWidth, int originalHeight) {
+		int finalWidth;
+		int finalHeight;
+
+		if (this.currentAspectRatio == GlobalProperties.ASPECT_RATIO_4_3) {
+			finalWidth = (int) ((float) originalWidth / SCALE_X_4 * this.currentCanvasWidth);
+			finalHeight = (int) ((float) originalHeight / SCALE_Y_3 * this.currentCanvasHeight);
+		} else if (this.currentAspectRatio == GlobalProperties.ASPECT_RATIO_16_9) {
+			finalWidth = (int) ((float) originalWidth / SCALE_X_16 * this.currentCanvasWidth);
+			finalHeight = (int) ((float) originalHeight / SCALE_Y_9 * this.currentCanvasHeight);
+		} else {
+			finalWidth = (int) ((float) originalWidth / SCALE_X_16a * this.currentCanvasWidth);
+			finalHeight = (int) ((float) originalHeight / SCALE_Y_10 * this.currentCanvasHeight);
+		}
+
+		return new int[] { finalWidth, finalHeight };
 	}
 
 	/**
