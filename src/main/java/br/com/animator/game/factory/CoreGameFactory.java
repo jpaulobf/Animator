@@ -21,6 +21,8 @@ import br.com.animator.game.ui.score.GameScorePresentationImpl;
 import br.com.animator.state.GameStateMachine;
 import br.com.animator.state.GameStates;
 import br.com.animator.window.Window;
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * CoreGameFactory - Factory class responsible for creating instances of
@@ -35,8 +37,7 @@ import br.com.animator.window.Window;
  */
 public class CoreGameFactory {
 
-    private static CoreGameLogic coreGameLogic;
-    private static GameStates currentState;
+    private static final Map<GameStates, CoreGameLogic> screenCache = new EnumMap<>(GameStates.class);
     private static GameGraphics gameGraphics;
     private static GameOptions gameOptions = new GameOptionsImpl();
 	private static GameSoundOptions gameSoundOptions = new GameSoundOptionsImpl();
@@ -55,113 +56,99 @@ public class CoreGameFactory {
             gameGraphics = new GameGraphicsImpl(gameWindow.isFullScreen(), gameWindow.isTripleBuffering());
         }
 
-        switch (gameStateMachine.getCurrentState()) {
+        GameStates state = gameStateMachine.getCurrentState();
 
+        // Se o estado já estiver no cache, retornamos ele (exceto estados que exigem reinicialização)
+        if (screenCache.containsKey(state) && isCacheable(state)) {
+            return screenCache.get(state);
+        }
+
+        CoreGameLogic logic = null;
+
+        switch (state) {
             case DEV_LOGO_SCREEN:
-                if (currentState != GameStates.DEV_LOGO_SCREEN) {
-                    coreGameLogic = new DeveloperAdvertiseImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(),
-                                                                gameWindow.getCurrentAspectRatio());
-                    currentState = GameStates.DEV_LOGO_SCREEN;
-                }
+                logic = new DeveloperAdvertiseImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(),
+                        gameWindow.getCurrentAspectRatio());
                 break;
 
             case SUB_INTRO_SCREEN:
-                if (currentState != GameStates.SUB_INTRO_SCREEN) {
-                    coreGameLogic = new LogoIntroImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(),
-                                                         gameWindow.getCurrentAspectRatio());
-                    currentState = GameStates.SUB_INTRO_SCREEN;
-                }
+                logic = new LogoIntroImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(),
+                        gameWindow.getCurrentAspectRatio());
                 break;
 
             case INTRO_SCREEN:
-                if (currentState != GameStates.INTRO_SCREEN) {
-                    coreGameLogic = new GameIntroImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(),
+                logic = new GameIntroImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(),
                         gameWindow.getCurrentAspectRatio());
-                    currentState = GameStates.INTRO_SCREEN;
-                }
                 break;
 
             case HIGH_SCORE_SCREEN:
-                if (currentState != GameStates.HIGH_SCORE_SCREEN) {
-                    coreGameLogic = new GameScorePresentationImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(),
+                logic = new GameScorePresentationImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(),
                         gameWindow.getCurrentAspectRatio());
-                    currentState = GameStates.HIGH_SCORE_SCREEN;
-                }
                 break;
 
             case MAIN_MENU_SCREEN:
-                if (currentState != GameStates.MAIN_MENU_SCREEN) {
-                    coreGameLogic = new GameMainMenuImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(),
-                            gameWindow.getCurrentAspectRatio());
-                    currentState = GameStates.MAIN_MENU_SCREEN;
-                }
-                break;
-
-            case GAME_OVER_SCREEN:
-                if (currentState != GameStates.GAME_OVER_SCREEN) {
-                    coreGameLogic = null;
-                    currentState = GameStates.GAME_OVER_SCREEN;
-                }
-                break;
-
-            case IN_GAME_SCREEN:
-                if (currentState != GameStates.IN_GAME_SCREEN) {
-                    coreGameLogic = null;
-                    currentState = GameStates.IN_GAME_SCREEN;
-                }
+                logic = new GameMainMenuImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(),
+                        gameWindow.getCurrentAspectRatio());
                 break;
 
             case GAME_OPTIONS_SCREEN:
-                if (currentState != GameStates.GAME_OPTIONS_SCREEN) {
-                    coreGameLogic = new GameOptionScreenImpl(gameOptions, gameWindow.getPanelWidth(), gameWindow.getPanelHeight(), gameWindow.getCurrentAspectRatio());
-                    currentState = GameStates.GAME_OPTIONS_SCREEN;
-                }
-                break;
-
-            case IN_GAME_OPTION_SCREEN:
-                if (currentState != GameStates.IN_GAME_OPTION_SCREEN) {
-                    coreGameLogic = null;
-                    currentState = GameStates.IN_GAME_OPTION_SCREEN;
-                }
+                logic = new GameOptionScreenImpl(gameOptions, gameWindow.getPanelWidth(), gameWindow.getPanelHeight(),
+                        gameWindow.getCurrentAspectRatio());
                 break;
 
             case MAIN_OPTION_SCREEN:
-                if (currentState != GameStates.MAIN_OPTION_SCREEN) {
-                    coreGameLogic =  new GameMainOptionScreenImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(),
-                            gameWindow.getCurrentAspectRatio());
-                    currentState = GameStates.MAIN_OPTION_SCREEN;
-                }
+                logic = new GameMainOptionScreenImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(),
+                        gameWindow.getCurrentAspectRatio());
                 break;
 
             case SFX_CONFIG_MENU_SCREEN:
-                if (currentState != GameStates.SFX_CONFIG_MENU_SCREEN) {
-                    coreGameLogic = new GameSoundOptionScreenImpl(gameSoundOptions, gameWindow.getPanelWidth(), gameWindow.getPanelHeight(), gameWindow.getCurrentAspectRatio());
-                    currentState = GameStates.SFX_CONFIG_MENU_SCREEN;
-                }
+                logic = new GameSoundOptionScreenImpl(gameSoundOptions, gameWindow.getPanelWidth(),
+                        gameWindow.getPanelHeight(), gameWindow.getCurrentAspectRatio());
                 break;
 
             case GFX_CONFIG_MENU_SCREEN:
-                if (currentState != GameStates.GFX_CONFIG_MENU_SCREEN) {
-                    coreGameLogic = new GameGraphicsScreenImpl(gameGraphics, gameWindow.getPanelWidth(), gameWindow.getPanelHeight(), gameWindow.getCurrentAspectRatio());
-                    currentState = GameStates.GFX_CONFIG_MENU_SCREEN;
-                }
+                logic = new GameGraphicsScreenImpl(gameGraphics, gameWindow.getPanelWidth(), gameWindow.getPanelHeight(),
+                        gameWindow.getCurrentAspectRatio());
                 break;
 
             case LOADING:
-                if (currentState != GameStates.LOADING) {
-                    coreGameLogic = new LoadingImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(),
-                            gameWindow.getCurrentAspectRatio());
-                    currentState = GameStates.LOADING;
-                }
+                logic = new LoadingImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(),
+                        gameWindow.getCurrentAspectRatio());
+                break;
+                
+            case GAME_OVER_SCREEN:
+            case IN_GAME_SCREEN:
+            case IN_GAME_OPTION_SCREEN:
+                logic = null;
                 break;
 
             default:
-                System.out
-                        .println("CoreGameFactory: No matching state found for " + gameStateMachine.getCurrentState());
-                coreGameLogic = null;
+                System.out.println("CoreGameFactory: No matching state found for " + state);
         }
 
-        return coreGameLogic;
+        if (logic != null && isCacheable(state)) {
+            screenCache.put(state, logic);
+        }
+
+        return logic;
+    }
+
+    /**
+     * Defines which states should be cached. 
+     * Screens like LOADING or IN_GAME usually should be fresh instances.
+     */
+    private static boolean isCacheable(GameStates state) {
+        return switch (state) {
+            case LOADING, IN_GAME_SCREEN, GAME_OVER_SCREEN -> false;
+            default -> true;
+        };
+    }
+
+    /**
+     * Clears the screen cache. Should be called when resolution or aspect ratio changes.
+     */
+    public static void clearCache() {
+        screenCache.clear();
     }
 
     public static void configureGameGraphics(ScreenMode screenMode) {
