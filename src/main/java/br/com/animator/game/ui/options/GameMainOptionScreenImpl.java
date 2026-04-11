@@ -186,7 +186,7 @@ public class GameMainOptionScreenImpl implements GameMainOptionScreen {
 		if (action == GameAction.START || action == GameAction.BUTTON_1) {
 			if (this.isToBackToMainMenu()) {
 				this.resetCounters();
-				game.gotoMainMenu();
+				((Game)game).gotoMainMenu();
 			} else if (this.isToGoToGameOptions()) {
 				this.resetCounters();
 				((Game)game).gotoGameOptions();
