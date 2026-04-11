@@ -43,6 +43,7 @@
 ## ✨ Key Features
 
 ### 🎮 Core Game Loop
+- **Fast Forward Mode**: Toggle unlimited FPS instantly by holding the **TAB** key for rapid testing or gameplay acceleration.
 - Professional game engine with configurable frame rates
 - Fixed timestep physics support
 - Input handling (keyboard + mouse)
@@ -241,7 +242,7 @@ public class GameEngine {
     public GameEngine(Game game, Window window) { }
     public void startGameEngine() { }  // Start the loop
     public void stopGameEngine() { }   // Stop the loop
-    // Frame rate: ~60 FPS
+    public void setTargetFPS(int fps) { } // Dynamic FPS control
 }
 ```
 
