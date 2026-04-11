@@ -276,37 +276,6 @@ public abstract class AbstractGame implements IGame {
     }
 
 	/**
-     * Trata o pressionamento de botões do Joystick.
-     * @param buttonCode O código do botão pressionado.
-     */
-    public void joystickButtonPressed(int joystickId, int buttonCode) {
-        GameAction action = ButtonMapper.getJoystickAction(buttonCode);
-        if (action != null) {
-            if (gameExitMenu.isShowingExitMenu()) { // O joystickId não é usado aqui, mas pode ser no futuro
-                handleExitMenuAction(action);
-            } else {
-                handleGameAction(action);
-            }
-        }
-    }
-
-    /**
-     * Trata a mudança de estado do DPAD/Hat.
-     */
-    public void joystickHatMoved(int joystickId, int hatId, byte state) {
-        if (state == 0) return;
-
-        GameAction action = ButtonMapper.getHatAction(state);
-        if (action != null) {
-            if (gameExitMenu.isShowingExitMenu()) {
-                handleExitMenuAction(action);
-            } else {
-                handleGameAction(action);
-            }
-        }
-    }
-
-	/**
      * Handles logical actions when exit menu is visible.
      */
     protected void handleExitMenuAction(GameAction action) {
@@ -329,35 +298,63 @@ public abstract class AbstractGame implements IGame {
         }
     }
 
-	/**
-     * Handles logical actions during normal gameplay.
+    /**
+     * Process Keyboards keys-pressed
+     * @param keyCode
+     * @param isAltDown
      */
-    protected void handleGameAction(GameAction action) {
-        // Any action in intro: Go to main menu
-        if (gameStateMachine.isInIntro()) {
-            gotoMainMenu();
-            return;
-        }
-
-        // Default: Handle input for current screen
-        currentCoreGame.handleInput(this, action);
-    }
-
-	// --- Abstract Methods ---//
-	public abstract void update(long frametime);
-
-	public abstract void render(long delta);
-
-	//public abstract void keyPressed(int keyCode, boolean isAltDown);
-
-	public void keyPressed(int keyCode, boolean isAltDown) {
-		if (gameExitMenu.isShowingExitMenu()) {
-            GameAction action = ButtonMapper.getKeyboardAction(keyCode);
+	public void processKey(int keyCode, boolean isAltDown) {
+        GameAction action = ButtonMapper.getKeyboardAction(keyCode);
+        if (gameExitMenu.isShowingExitMenu()) {
             if (action != null) handleExitMenuAction(action);
             return;
         }
 
         // Atalhos de Sistema (Não mapeados em GameAction)
         if (handleSystemShortcuts(keyCode, isAltDown)) return;
+
+        if (action != null)
+            this.keyPressed(action);
 	}
+
+    /**
+     * Process Joystick buttons-pressed
+     * @param joystickId
+     * @param buttonCode
+     */
+    public void processJoystickButton(int joystickId, int buttonCode) {
+        GameAction action = ButtonMapper.getJoystickAction(buttonCode);
+        if (gameExitMenu.isShowingExitMenu()) {
+            if (action != null) handleExitMenuAction(action);
+            return;
+        }
+
+        if (action != null)
+            this.joystickButtonPressed(action);
+    }
+
+    /**
+     * Process Joystick hat-moved
+     * @param joystickId
+     * @param hatId
+     * @param state
+     */
+    public void processJoystickHat(int joystickId, int hatId, byte state) {
+        if (state == 0) return;
+        GameAction action = ButtonMapper.getHatAction(state);
+        if (gameExitMenu.isShowingExitMenu()) {
+            if (action != null) handleExitMenuAction(action);
+            return;
+        }
+
+        if (action != null)
+            this.joystickHatMoved(action);
+    }
+
+    // --- Abstract Methods ---//
+	public abstract void update(long frametime);
+	public abstract void render(long delta);
+    public abstract void joystickButtonPressed(GameAction action);
+    public abstract void joystickHatMoved(GameAction action);
+    public abstract void keyPressed(GameAction action);
 }
