@@ -237,7 +237,7 @@ public class LWJGLRenderer implements Renderer {
             if (action == GLFW.GLFW_PRESS || action == GLFW.GLFW_REPEAT) {
                 int awtKeyCode = mapGlfwToAwtKey(key);
                 boolean isAltDown = (mods & GLFW.GLFW_MOD_ALT) != 0;
-                window.getGame().keyPressed(awtKeyCode, isAltDown);
+                window.getGame().processKey(awtKeyCode, isAltDown);
             }
         });
 
