@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import javax.swing.JOptionPane;
+import br.com.animator.audio.AudioManager;
 import br.com.animator.game.data.enumerators.ScreenMode;
 import br.com.animator.game.factory.CoreGameFactory;
 import br.com.animator.input.ButtonMapper;
@@ -127,6 +128,7 @@ public abstract class AbstractGame implements IGame {
 		if (renderer != null) {
 			renderer.dispose();
 		}
+		AudioManager.cleanup();
 		gameEngine.stop();
 	}
 
