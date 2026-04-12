@@ -54,6 +54,9 @@ public class CoreGameFactory extends AbstractCoreGameFactory {
         CoreGameLogic logic = AbstractCoreGameFactory.getChachedInstance(gameStateMachine, state, isCacheable(state));
         if (logic != null) return logic;
         
+        if (gameGraphics == null) {
+            gameGraphics = new GameGraphicsImpl(gameWindow.isFullScreen(), gameWindow.isTripleBuffering());
+        }
         switch (state) {
             case DEV_LOGO_SCREEN:
                 logic = new DeveloperAdvertiseImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(),
@@ -81,9 +84,6 @@ public class CoreGameFactory extends AbstractCoreGameFactory {
                 break;
 
             case GAME_OPTIONS_SCREEN:
-                if (gameGraphics == null) {
-                    gameGraphics = new GameGraphicsImpl(gameWindow.isFullScreen(), gameWindow.isTripleBuffering());
-                }
                 logic = new GameOptionScreenImpl(gameOptions, gameWindow.getPanelWidth(), gameWindow.getPanelHeight(),
                         gameWindow.getCurrentAspectRatio());
                 break;

@@ -55,13 +55,13 @@ public class GameMainOptionScreenImpl implements GameMainOptionScreen {
 		this.PWIDTH = pwidth;
 		this.PHEIGHT = pheight;
 		this.imageUtil = new ImageUtil(pwidth, pheight, currentAspectRatio);
-		this.backgroundGameOptions = this.imageUtil.loadImage("/images/bg_option_screen.png");
-		this.btGameOptions = this.imageUtil.loadImage("/images/opt_game_option_button.png");
-		this.btConfigKeys = this.imageUtil.loadImage("/images/opt_configure_keys_button.png");
-		this.btConfigGFX = this.imageUtil.loadImage("/images/opt_gfx_settings_button.png");
-		this.btConfigSFX = this.imageUtil.loadImage("/images/opt_sfx_settings_button.png");
-		this.btBackMainMenu = this.imageUtil.loadImage("/images/opt_back_mainmenu_button.png");
-		this.highlightButton = this.imageUtil.loadImage("/images/opt_mainoption_selector.png");
+		this.backgroundGameOptions = this.imageUtil.loadImage("GameMainOption.1");
+		this.btGameOptions = this.imageUtil.loadImage("GameMainOption.2");
+		this.btConfigKeys = this.imageUtil.loadImage("GameMainOption.3");
+		this.btConfigGFX = this.imageUtil.loadImage("GameMainOption.4");
+		this.btConfigSFX = this.imageUtil.loadImage("GameMainOption.5");
+		this.btBackMainMenu = this.imageUtil.loadImage("GameMainOption.6");
+		this.highlightButton = this.imageUtil.loadImage("GameMainOption.7");
 	}
 
 	public void update(long frametime) {

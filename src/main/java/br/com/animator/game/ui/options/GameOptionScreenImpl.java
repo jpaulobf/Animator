@@ -143,28 +143,32 @@ public class GameOptionScreenImpl implements GameOptionScreen {
 		this.PHEIGHT 						= pheight;
 		this.imageUtil 						= new ImageUtil(pwidth, pheight, currentAspectRatio);
 		this.parentGameOption				= parentGameOption;
-		this.backgroundGameOptions			= this.imageUtil.loadImage("/images/bg_option_screen2.png");
-		this.gameOptionsLogo				= this.imageUtil.loadImage("/images/logo_game_options.png");
-		this.highlightButton				= this.imageUtil.loadImage("/images/optg_gameoption_selector.png");
-		this.labelGameDifficulty			= this.imageUtil.loadImage("/images/optg_game_difficulty_label.png");
-		this.labelRests						= this.imageUtil.loadImage("/images/optg_rest_label.png");
-		this.labelExtraLifeAt				= this.imageUtil.loadImage("/images/optg_extra_life_label.png");
-		this.labelContinues					= this.imageUtil.loadImage("/images/optg_continues_label.png");
-		this.labelEnableSubtitles			= this.imageUtil.loadImage("/images/optg_game_subtitles_label.png");
-		this.labelBack						= this.imageUtil.loadImage("/images/optg_back.png");
-		this.buttonArrowLeft				= this.imageUtil.loadImage("/images/bt_arrow_left.png");
-		this.buttonArrowRight				= this.imageUtil.loadImage("/images/bt_arrow_right.png");
-		this.buttonArrowLeftWhite			= this.imageUtil.loadImage("/images/bt_arrow_left_white.png");
-		this.buttonArrowRightWhite			= this.imageUtil.loadImage("/images/bt_arrow_right_white.png");
-		this.checked						= this.imageUtil.loadImage("/images/optg_check.png");
-		this.unchecked						= this.imageUtil.loadImage("/images/optg_uncheck.png");
-		this.labelYes						= this.imageUtil.loadImage("/images/optg_yes.png");
-		this.labelNo						= this.imageUtil.loadImage("/images/optg_no.png");
-		this.imageGameDifficulty			= this.imageUtil.loadImage("/images/optg_easy_normal_hard_label.png");
+		this.backgroundGameOptions			= this.imageUtil.loadImage("GameOptionsConfig.1");
+		this.gameOptionsLogo				= this.imageUtil.loadImage("GameOptionsConfig.2");
+		this.highlightButton				= this.imageUtil.loadImage("GameOptionsConfig.3");
+		this.labelGameDifficulty			= this.imageUtil.loadImage("GameOptionsConfig.4");
+		this.labelRests						= this.imageUtil.loadImage("GameOptionsConfig.5");
+		this.labelExtraLifeAt				= this.imageUtil.loadImage("GameOptionsConfig.6");
+		this.labelContinues					= this.imageUtil.loadImage("GameOptionsConfig.7");
+		this.labelEnableSubtitles			= this.imageUtil.loadImage("GameOptionsConfig.8");
+		this.labelBack						= this.imageUtil.loadImage("GameOptionsConfig.9");
+		this.buttonArrowLeft				= this.imageUtil.loadImage("GameOptionsConfig.10");
+		this.buttonArrowRight				= this.imageUtil.loadImage("GameOptionsConfig.11");
+		this.buttonArrowLeftWhite			= this.imageUtil.loadImage("GameOptionsConfig.12");
+		this.buttonArrowRightWhite			= this.imageUtil.loadImage("GameOptionsConfig.13");
+		this.checked						= this.imageUtil.loadImage("GameOptionsConfig.14");
+		this.unchecked						= this.imageUtil.loadImage("GameOptionsConfig.15");
+		this.labelYes						= this.imageUtil.loadImage("GameOptionsConfig.16");
+		this.labelNo						= this.imageUtil.loadImage("GameOptionsConfig.17");
+		this.imageGameDifficulty			= this.imageUtil.loadImage("GameOptionsConfig.18");
+		this.imageGameRestsStrip			= this.imageUtil.loadImage("GameOptionsConfig.19");
+		this.imageGameContinuesStrip		= this.imageUtil.loadImage("GameOptionsConfig.20");
+		this.imageGameExtraLifeStrip		= this.imageUtil.loadImage("GameOptionsConfig.21");
+
 		this.imageDifficultyEasy			= this.imageUtil.copyImage(this.imageGameDifficulty, 0, 0, 68, 33);
 		this.imageDifficultyNormal			= this.imageUtil.copyImage(this.imageGameDifficulty, 78, 0, 114, 33);
 		this.imageDifficultyHard			= this.imageUtil.copyImage(this.imageGameDifficulty, 205, 0, 72, 33);
-		this.imageGameRestsStrip			= this.imageUtil.loadImage("/images/optg_rest_values_label.png");
+		
 		this.imageGameRests					= new BufferedImage[6];
 		this.imageGameRests[0]				= this.imageUtil.copyImage(this.imageGameRestsStrip, 0, 0, 37, 26);
 		this.imageGameRests[1]				= this.imageUtil.copyImage(this.imageGameRestsStrip, 70, 0, 36, 26);
@@ -172,7 +176,7 @@ public class GameOptionScreenImpl implements GameOptionScreen {
 		this.imageGameRests[3]				= this.imageUtil.copyImage(this.imageGameRestsStrip, 209, 0, 37, 26);
 		this.imageGameRests[4]				= this.imageUtil.copyImage(this.imageGameRestsStrip, 278, 0, 37, 26);
 		this.imageGameRests[5]				= this.imageUtil.copyImage(this.imageGameRestsStrip, 348, 0, 37, 26);
-		this.imageGameContinuesStrip		= this.imageUtil.loadImage("/images/optg_continue_values_label.png");
+		
 		this.imageGameContinues				= new BufferedImage[7];
 		this.imageGameContinues[0]			= this.imageUtil.copyImage(this.imageGameContinuesStrip, 0, 0, 46, 26);
 		this.imageGameContinues[1]			= this.imageUtil.copyImage(this.imageGameContinuesStrip, 52, 0, 38, 26);
@@ -181,7 +185,7 @@ public class GameOptionScreenImpl implements GameOptionScreen {
 		this.imageGameContinues[4]			= this.imageUtil.copyImage(this.imageGameContinuesStrip, 182, 0, 37, 26);
 		this.imageGameContinues[5]			= this.imageUtil.copyImage(this.imageGameContinuesStrip, 225, 0, 37, 26);
 		this.imageGameContinues[6]			= this.imageUtil.copyImage(this.imageGameContinuesStrip, 268, 0, 37, 26);
-		this.imageGameExtraLifeStrip		= this.imageUtil.loadImage("/images/optg_extra_life_values_label.png");
+		
 		this.imageGameExtraLife				= new BufferedImage[3];
 		this.imageGameExtraLife[0]			= this.imageUtil.copyImage(this.imageGameExtraLifeStrip, 0, 0, 246, 33);
 		this.imageGameExtraLife[1]			= this.imageUtil.copyImage(this.imageGameExtraLifeStrip, 302, 0, 246, 33);

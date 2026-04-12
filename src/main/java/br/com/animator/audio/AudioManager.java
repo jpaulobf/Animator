@@ -26,6 +26,9 @@ public class AudioManager {
     private static long device;
     private static long context;
     private static final Map<String, Integer> bufferCache = new HashMap<>();
+    private static final Map<String, String> keyPathMap = new HashMap<>();
+    private static final Map<String, OggAudio.AudioType> keyTypeMap = new HashMap<>();
+    private static final Map<String, OggAudio> audioCache = new HashMap<>();
 
     public static void init() {
         if (context != 0) return;
@@ -35,6 +38,32 @@ public class AudioManager {
         alcMakeContextCurrent(context);
         AL.createCapabilities(alcCapabilities);
         System.out.println("OpenAL Initialized");
+    }
+
+    public static void loadSFX(String key, String path) {
+        init();
+        keyPathMap.put(key, path);
+        keyTypeMap.put(key, OggAudio.AudioType.SFX);
+        getBuffer(path); // Pré-carrega o buffer
+    }
+
+    public static void loadMusic(String key, String path) {
+        init();
+        keyPathMap.put(key, path);
+        keyTypeMap.put(key, OggAudio.AudioType.MUSIC);
+        getBuffer(path); // Pré-carrega o buffer
+    }
+
+    public static OggAudio getAudio(String key) {
+        return audioCache.computeIfAbsent(key, k -> new OggAudio(k));
+    }
+
+    public static String getAudioPath(String key) {
+        return keyPathMap.get(key);
+    }
+
+    public static OggAudio.AudioType getAudioType(String key) {
+        return keyTypeMap.get(key);
     }
 
     public static int getBuffer(String resourcePath) {
@@ -97,6 +126,14 @@ public class AudioManager {
     public static void cleanup() {
         if (context == 0) return;
         
+        // Cleanup OggAudio instances (Sources)
+        for (OggAudio audio : audioCache.values()) {
+            audio.cleanup();
+        }
+        audioCache.clear();
+        keyPathMap.clear();
+        keyTypeMap.clear();
+
         // Clear all cached buffers
         for (int bufferId : bufferCache.values()) {
             alDeleteBuffers(bufferId);

@@ -52,10 +52,10 @@ public class GameIntroImpl implements GameIntro {
 		this.imageUtil = new ImageUtil(pwidth, pheight, currentAspectRatio);
 
 		// -------- INTRO ------------------------------------//
-		this.transparenceTop = this.imageUtil.loadScaledImage("/images/transparence_intro_top.png");
-		this.transparenceBase = this.imageUtil.loadScaledImage("/images/transparence_intro_bottom.png");
-		this.introText1 = this.imageUtil.loadScaledImage("/images/text_intro_1.png");
-		this.introText2 = this.imageUtil.loadScaledImage("/images/text_intro_2.png");
+		this.transparenceTop = this.imageUtil.loadScaledImage("GameIntro.1");
+		this.transparenceBase = this.imageUtil.loadScaledImage("GameIntro.2");
+		this.introText1 = this.imageUtil.loadScaledImage("GameIntro.3");
+		this.introText2 = this.imageUtil.loadScaledImage("GameIntro.4");
 		this.calcText1y = -this.PHEIGHT;
 		this.calcText2y = -this.PHEIGHT;
 		this.introText1PositionX = (int) ((this.PWIDTH / 2) - (this.introText1.getWidth() / 2));
@@ -164,10 +164,10 @@ public class GameIntroImpl implements GameIntro {
 		this.PHEIGHT = pheight;
 		this.imageUtil.updateCanvasProperties(pwidth, pheight, currentAspectRatio);
 
-		this.transparenceTop = this.imageUtil.loadScaledImage("/images/transparence_intro_top.png");
-		this.transparenceBase = this.imageUtil.loadScaledImage("/images/transparence_intro_bottom.png");
-		this.introText1 = this.imageUtil.loadScaledImage("/images/text_intro_1.png");
-		this.introText2 = this.imageUtil.loadScaledImage("/images/text_intro_2.png");
+		this.transparenceTop = this.imageUtil.loadScaledImage("GameIntro.1");
+		this.transparenceBase = this.imageUtil.loadScaledImage("GameIntro.2");
+		this.introText1 = this.imageUtil.loadScaledImage("GameIntro.3");
+		this.introText2 = this.imageUtil.loadScaledImage("GameIntro.4");
 
 		this.introText1PositionX = (int) ((this.PWIDTH / 2) - (this.introText1.getWidth() / 2));
 		this.introText1PositionY = this.introText1.getHeight();

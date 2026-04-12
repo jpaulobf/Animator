@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import br.com.animator.audio.OggAudio;
-import br.com.animator.audio.OggAudio.AudioType;
 import br.com.animator.core.game.IGame;
 import br.com.animator.game.Game;
 import br.com.animator.input.GameAction;
@@ -119,15 +118,15 @@ public class GameMainMenuImpl implements GameMainMenu {
 		this.PHEIGHT = pheight;
 		this.imageUtil = new ImageUtil(pwidth, pheight, currentAspectRatio);
 
-		this.logoPart1 = this.imageUtil.loadScaledImage("/images/logo_p1.png");
-		this.logoPart2 = this.imageUtil.loadScaledImage("/images/logo_p2.png");
-		this.logoPart3 = this.imageUtil.loadScaledImage("/images/logo_p3.png");
-		this.logoPart4 = this.imageUtil.loadScaledImage("/images/logo_p4.png");
-		this.logoPart5 = this.imageUtil.loadScaledImage("/images/logo_p5.png");
-		this.startGameButton = this.imageUtil.loadScaledImage("/images/start_game_button.png");
-		this.optionsButton = this.imageUtil.loadScaledImage("/images/options_button.png");
-		this.quitGameButton = this.imageUtil.loadScaledImage("/images/quit_game_button.png");
-		this.mainMenuHighlight = this.imageUtil.loadScaledImage("/images/mainmenu_selection.png");
+		this.logoPart1 = this.imageUtil.loadScaledImage("MainMenu.1");
+		this.logoPart2 = this.imageUtil.loadScaledImage("MainMenu.2");
+		this.logoPart3 = this.imageUtil.loadScaledImage("MainMenu.3");
+		this.logoPart4 = this.imageUtil.loadScaledImage("MainMenu.4");
+		this.logoPart5 = this.imageUtil.loadScaledImage("MainMenu.5");
+		this.startGameButton = this.imageUtil.loadScaledImage("MainMenu.6");
+		this.optionsButton = this.imageUtil.loadScaledImage("MainMenu.7");
+		this.quitGameButton = this.imageUtil.loadScaledImage("MainMenu.8");
+		this.mainMenuHighlight = this.imageUtil.loadScaledImage("MainMenu.9");
 
 		this.selectorPositionX1 = this.imageUtil.getScaledWidthForPosition(START_OVER_POSITION_X);
 		this.selectorPositionY1 = this.imageUtil.getScaledHeight(START_OVER_POSITION_Y);
@@ -174,8 +173,8 @@ public class GameMainMenuImpl implements GameMainMenu {
 		this.optionsButtonHeight = this.optionsButton.getHeight();
 		this.quitGameButtonWidth = this.quitGameButton.getWidth();
 		this.quitGameButtonHeight = this.quitGameButton.getHeight();
-		this.menuSound = new OggAudio("/audio/menu1.ogg", AudioType.SFX);
-		this.menuMusic = new OggAudio("/audio/menumusic.ogg", AudioType.MUSIC);
+		this.menuSound = OggAudio.getAudio("menu.change");
+		this.menuMusic = OggAudio.getAudio("menu.music");
 		menuMusic.play();
 	}
 
@@ -282,15 +281,15 @@ public class GameMainMenuImpl implements GameMainMenu {
 		this.PHEIGHT = pheight;
 		this.imageUtil.updateCanvasProperties(pwidth, pheight, currentAspectRatio);
 
-		this.logoPart1 = this.imageUtil.loadScaledImage("/images/logo_p1.png");
-		this.logoPart2 = this.imageUtil.loadScaledImage("/images/logo_p2.png");
-		this.logoPart3 = this.imageUtil.loadScaledImage("/images/logo_p3.png");
-		this.logoPart4 = this.imageUtil.loadScaledImage("/images/logo_p4.png");
-		this.logoPart5 = this.imageUtil.loadScaledImage("/images/logo_p5.png");
-		this.startGameButton = this.imageUtil.loadScaledImage("/images/start_game_button.png");
-		this.optionsButton = this.imageUtil.loadScaledImage("/images/options_button.png");
-		this.quitGameButton = this.imageUtil.loadScaledImage("/images/quit_game_button.png");
-		this.mainMenuHighlight = this.imageUtil.loadScaledImage("/images/mainmenu_selection.png");
+		this.logoPart1 = this.imageUtil.loadScaledImage("MainMenu.1");
+		this.logoPart2 = this.imageUtil.loadScaledImage("MainMenu.2");
+		this.logoPart3 = this.imageUtil.loadScaledImage("MainMenu.3");
+		this.logoPart4 = this.imageUtil.loadScaledImage("MainMenu.4");
+		this.logoPart5 = this.imageUtil.loadScaledImage("MainMenu.5");
+		this.startGameButton = this.imageUtil.loadScaledImage("MainMenu.6");
+		this.optionsButton = this.imageUtil.loadScaledImage("MainMenu.7");
+		this.quitGameButton = this.imageUtil.loadScaledImage("MainMenu.8");
+		this.mainMenuHighlight = this.imageUtil.loadScaledImage("MainMenu.9");
 
 		this.selectorPositionX1 = this.imageUtil.getScaledWidthForPosition(START_OVER_POSITION_X);
 		this.selectorPositionY1 = this.imageUtil.getScaledHeight(START_OVER_POSITION_Y);

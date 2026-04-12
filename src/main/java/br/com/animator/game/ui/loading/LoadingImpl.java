@@ -39,10 +39,10 @@ public class LoadingImpl implements Loading {
 		this.PWIDTH = pwidth;
 		this.PHEIGHT = pheight;
 		this.imageUtil = new ImageUtil(pwidth, pheight, currentAspectRatio);
-		this.loading1 = this.imageUtil.loadScaledImage("/images/loading_1a.png");
-		this.loading2 = this.imageUtil.loadScaledImage("/images/loading_2a.png");
-		this.loading3 = this.imageUtil.loadScaledImage("/images/loading_3a.png");
-		this.loading4 = this.imageUtil.loadScaledImage("/images/loading_4a.png");
+		this.loading1 = this.imageUtil.loadScaledImage("Loading.1");
+		this.loading2 = this.imageUtil.loadScaledImage("Loading.2");
+		this.loading3 = this.imageUtil.loadScaledImage("Loading.3");
+		this.loading4 = this.imageUtil.loadScaledImage("Loading.4");
 		this.imageWidth = this.loading1.getWidth();
 		this.imageHeight = this.loading1.getHeight();
 		this.positionX = (this.PWIDTH / 2) - (this.imageWidth / 2);

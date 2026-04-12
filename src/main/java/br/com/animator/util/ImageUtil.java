@@ -61,21 +61,31 @@ public class ImageUtil {
 	/**
 	 * Loads an image specified in the parameter.
 	 * 
-	 * @param imagePath
+	 * @param key The key used in LoadResources
 	 * @return
 	 */
-	public BufferedImage loadImage(String imagePath) {
-		return ImageManager.getImage(imagePath);
+	public BufferedImage loadImage(String key) {
+		return ImageManager.get(key);
+	}
+
+	/**
+	 * Retrieves an image from the manager using its key.
+	 * 
+	 * @param key The key used in LoadResources
+	 * @return The BufferedImage
+	 */
+	public static BufferedImage getImage(String key) {
+		return ImageManager.get(key);
 	}
 
 	/**
 	 * Loads an image specified in the parameter.
 	 * 
-	 * @param imagePath
+	 * @param key The key used in LoadResources
 	 * @return
 	 */
-	public BufferedImage loadScaledImage(String imagePath) {
-		return loadScaledImage(ImageManager.getImage(imagePath));
+	public BufferedImage loadScaledImage(String key) {
+		return loadScaledImage(ImageManager.get(key));
 	}
 
 	/**

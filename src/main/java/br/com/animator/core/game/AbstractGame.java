@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 import br.com.animator.audio.AudioManager;
 import br.com.animator.core.engine.GameEngine;
 import br.com.animator.game.factory.CoreGameFactory;
+import br.com.animator.game.LoadResources;
 import br.com.animator.input.ButtonMapper;
 import br.com.animator.input.GameAction;
 import br.com.animator.state.GameStateMachine;
@@ -83,6 +84,11 @@ public abstract class AbstractGame implements IGame {
 			this.mainBuffer = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 			this.graphics2D = this.mainBuffer.createGraphics();
 		}
+
+		// Carregamento de recursos centralizado
+		LoadResources.loadAllImages();
+		LoadResources.loadAllSFX();
+		LoadResources.loadAllMusics();
 
 		// Inicializa o estado lógico do jogo primeiro
 		this.init();

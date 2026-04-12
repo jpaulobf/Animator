@@ -137,33 +137,33 @@ public class GameGraphicsScreenImpl implements GameGraphicsScreen {
 		this.originalGameGraphicsOption = new GameGraphicsImpl(parentGameGraphicsOption);
 
 		// --- Carrega as imagens.
-		this.backgroundGameOptions = this.imageUtil.loadImage("/images/bg_option_screen5.png");
-		this.gameOptionsLogo = this.imageUtil.loadImage("/images/logo_graphics_config.png");
-		this.highlightButton = this.imageUtil.loadImage("/images/optg_gameoption_selector.png");
-		this.labelScreenResolution = this.imageUtil.loadImage("/images/gfx_screen_res_label.png");
-		this.labelEnableTripleBuffer = this.imageUtil.loadImage("/images/gfx_enable_triple_label.png");
-		this.labelScreenMode = this.imageUtil.loadImage("/images/gfx_screen_mode_label.png");
-		this.labelDeepColor = this.imageUtil.loadImage("/images/gfx_deep_color_label.png");
-		this.labelApply = this.imageUtil.loadImage("/images/gfx_apply_label.png");
-		this.labelCancel = this.imageUtil.loadImage("/images/gfx_cancel_label.png");
-		this.screenResolutionStrip = this.imageUtil.loadImage("/images/gfx_number_value.png");
-		this.screenModeStrip = this.imageUtil.loadImage("/images/gfx_screen_mode_value.png");
-		this.deepColorStrip = this.imageUtil.loadImage("/images/gfx_deep_colors_value.png");
-		this.checked = this.imageUtil.loadImage("/images/optg_check.png");
-		this.unchecked = this.imageUtil.loadImage("/images/optg_uncheck.png");
-		this.labelYes = this.imageUtil.loadImage("/images/optg_yes.png");
-		this.labelNo = this.imageUtil.loadImage("/images/optg_no.png");
-		this.buttonArrowLeft = this.imageUtil.loadImage("/images/bt_arrow_left.png");
-		this.buttonArrowRight = this.imageUtil.loadImage("/images/bt_arrow_right.png");
-		this.buttonArrowLeftWhite = this.imageUtil.loadImage("/images/bt_arrow_left_white.png");
-		this.buttonArrowRightWhite = this.imageUtil.loadImage("/images/bt_arrow_right_white.png");
+		this.backgroundGameOptions = this.imageUtil.loadImage("GameGraphicsConfig.1");
+		this.gameOptionsLogo = this.imageUtil.loadImage("GameGraphicsConfig.2");
+		this.highlightButton = this.imageUtil.loadImage("GameGraphicsConfig.3");
+		this.labelScreenResolution = this.imageUtil.loadImage("GameGraphicsConfig.4");
+		this.labelEnableTripleBuffer = this.imageUtil.loadImage("GameGraphicsConfig.5");
+		this.labelScreenMode = this.imageUtil.loadImage("GameGraphicsConfig.6");
+		this.labelDeepColor = this.imageUtil.loadImage("GameGraphicsConfig.7");
+		this.labelApply = this.imageUtil.loadImage("GameGraphicsConfig.8");
+		this.labelCancel = this.imageUtil.loadImage("GameGraphicsConfig.9");
+		this.screenResolutionStrip = this.imageUtil.loadImage("GameGraphicsConfig.10");
+		this.screenModeStrip = this.imageUtil.loadImage("GameGraphicsConfig.11");
+		this.deepColorStrip = this.imageUtil.loadImage("GameGraphicsConfig.12");
+		this.checked = this.imageUtil.loadImage("GameGraphicsConfig.13");
+		this.unchecked = this.imageUtil.loadImage("GameGraphicsConfig.14");
+		this.labelYes = this.imageUtil.loadImage("GameGraphicsConfig.15");
+		this.labelNo = this.imageUtil.loadImage("GameGraphicsConfig.16");
+		this.buttonArrowLeft = this.imageUtil.loadImage("GameGraphicsConfig.17");
+		this.buttonArrowRight = this.imageUtil.loadImage("GameGraphicsConfig.18");
+		this.buttonArrowLeftWhite = this.imageUtil.loadImage("GameGraphicsConfig.19");
+		this.buttonArrowRightWhite = this.imageUtil.loadImage("GameGraphicsConfig.20");
+		this.mustApplyForChanges = this.imageUtil.loadImage("GameGraphicsConfig.21");
 		this.screenModeValues = new BufferedImage[2];
 		this.screenModeValues[0] = this.imageUtil.copyImage(this.screenModeStrip, 0, 0, 153, 27);
 		this.screenModeValues[1] = this.imageUtil.copyImage(this.screenModeStrip, 181, 0, 164, 27);
 		this.deepColorValues = new BufferedImage[2];
 		this.deepColorValues[0] = this.imageUtil.copyImage(this.deepColorStrip, 0, 0, 299, 33);
 		this.deepColorValues[1] = this.imageUtil.copyImage(this.deepColorStrip, 337, 0, 260, 33);
-		this.mustApplyForChanges = this.imageUtil.loadImage("/images/gfx_must_apply.png");
 
 		// TODO: VERIFICAR SE DESEJA MONTAR LISTA DE IMAGEM DE RESOLUCOES...
 

@@ -73,12 +73,12 @@ public class LogoIntroImpl implements LogoIntro {
 		this.imageUtil = new ImageUtil(pwidth, pheight, currentAspectRatio);
 
 		// -------- SUBINTRO ------------------------------------//
-		this.logoPart1 = this.imageUtil.loadScaledImage("/images/logo_p1.png");
-		this.logoPart2 = this.imageUtil.loadScaledImage("/images/logo_p2.png");
-		this.logoPart3 = this.imageUtil.loadScaledImage("/images/logo_p3.png");
-		this.logoPart4 = this.imageUtil.loadScaledImage("/images/logo_p4.png");
-		this.logoPart5 = this.imageUtil.loadScaledImage("/images/logo_p5.png");
-		this.buttonPressStart = this.imageUtil.loadScaledImage("/images/bt_press.png");
+		this.logoPart1 = this.imageUtil.loadScaledImage("LogoIntro.1");
+		this.logoPart2 = this.imageUtil.loadScaledImage("LogoIntro.2");
+		this.logoPart3 = this.imageUtil.loadScaledImage("LogoIntro.3");
+		this.logoPart4 = this.imageUtil.loadScaledImage("LogoIntro.4");
+		this.logoPart5 = this.imageUtil.loadScaledImage("LogoIntro.5");
+		this.buttonPressStart = this.imageUtil.loadScaledImage("LogoIntro.6");
 
 		this.logoPart1PositionX = this.imageUtil.getScaledWidthForPosition(LOGO_P1_POSITION_X);
 		this.logoPart1PositionY = this.imageUtil.getScaledHeight(LOGO_P1_POSITION_Y);
@@ -238,12 +238,12 @@ public class LogoIntroImpl implements LogoIntro {
 				- (this.imageUtil.getScaledWidthForPosition(this.buttonPressStart.getWidth()) / 2);
 		this.logoPart6PositionY = this.imageUtil.getScaledHeight(LOGO_P6_POSITION_Y);
 
-		this.logoPart1 = this.imageUtil.loadScaledImage("/images/logo_p1.png");
-		this.logoPart2 = this.imageUtil.loadScaledImage("/images/logo_p2.png");
-		this.logoPart3 = this.imageUtil.loadScaledImage("/images/logo_p3.png");
-		this.logoPart4 = this.imageUtil.loadScaledImage("/images/logo_p4.png");
-		this.logoPart5 = this.imageUtil.loadScaledImage("/images/logo_p5.png");
-		this.buttonPressStart = this.imageUtil.loadScaledImage("/images/bt_press.png");
+		this.logoPart1 = this.imageUtil.loadScaledImage("LogoIntro.1");
+		this.logoPart2 = this.imageUtil.loadScaledImage("LogoIntro.2");
+		this.logoPart3 = this.imageUtil.loadScaledImage("LogoIntro.3");
+		this.logoPart4 = this.imageUtil.loadScaledImage("LogoIntro.4");
+		this.logoPart5 = this.imageUtil.loadScaledImage("LogoIntro.5");
+		this.buttonPressStart = this.imageUtil.loadScaledImage("LogoIntro.6");
 	}
 
 	/**

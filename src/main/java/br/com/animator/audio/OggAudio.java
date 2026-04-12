@@ -17,14 +17,25 @@ public class OggAudio {
     private float volume = 1.0f;
     private boolean isMuted = false;
 
-    public OggAudio(String resourcePath, AudioType type) {
+    public OggAudio(String key) {
         AudioManager.init(); // Garante que o contexto existe
-        this.type = type;
         
+        String resourcePath = AudioManager.getAudioPath(key);
+        this.type = AudioManager.getAudioType(key);
+
+        if (resourcePath == null) {
+            System.err.println("OggAudio: Key not found in LoadResources -> " + key);
+            return;
+        }
+
         this.bufferId = AudioManager.getBuffer(resourcePath);
         this.sourceId = alGenSources();
         alSourcei(sourceId, AL_BUFFER, bufferId);
         updateVolume();
+    }
+
+    public static OggAudio getAudio(String key) {
+        return AudioManager.getAudio(key);
     }
 
     public void play() {
