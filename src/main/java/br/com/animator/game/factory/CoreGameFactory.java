@@ -1,13 +1,13 @@
 package br.com.animator.game.factory;
 
-import br.com.animator.core.CoreGameLogic;
+import br.com.animator.core.factory.AbstractCoreGameFactory;
+import br.com.animator.core.game.CoreGameLogic;
 import br.com.animator.game.data.GameGraphics;
 import br.com.animator.game.data.GameGraphicsImpl;
 import br.com.animator.game.data.GameOptions;
 import br.com.animator.game.data.GameOptionsImpl;
 import br.com.animator.game.data.GameSoundOptions;
 import br.com.animator.game.data.GameSoundOptionsImpl;
-import br.com.animator.game.data.enumerators.ScreenMode;
 import br.com.animator.game.ui.advertise.DeveloperAdvertiseImpl;
 import br.com.animator.game.ui.intro.GameIntroImpl;
 import br.com.animator.game.ui.intro.LogoIntroImpl;
@@ -21,8 +21,6 @@ import br.com.animator.game.ui.score.GameScorePresentationImpl;
 import br.com.animator.state.GameStateMachine;
 import br.com.animator.state.GameStates;
 import br.com.animator.window.Window;
-import java.util.EnumMap;
-import java.util.Map;
 
 /**
  * CoreGameFactory - Factory class responsible for creating instances of
@@ -35,13 +33,12 @@ import java.util.Map;
  * implementation.
  *
  */
-public class CoreGameFactory {
+public class CoreGameFactory extends AbstractCoreGameFactory {
 
-    private static final Map<GameStates, CoreGameLogic> screenCache = new EnumMap<>(GameStates.class);
     private static GameGraphics gameGraphics;
     private static GameOptions gameOptions = new GameOptionsImpl();
 	private static GameSoundOptions gameSoundOptions = new GameSoundOptionsImpl();
-
+    
     /**
      * getInstance - Factory method to create instances of CoreGameLogic based on
      * the current state of the game.
@@ -52,19 +49,11 @@ public class CoreGameFactory {
      */
     public static CoreGameLogic getInstance(GameStateMachine gameStateMachine, Window gameWindow) {    
 
-        if (gameGraphics == null) {
-            gameGraphics = new GameGraphicsImpl(gameWindow.isFullScreen(), gameWindow.isTripleBuffering());
-        }
-
+        // Returns cached version
         GameStates state = gameStateMachine.getCurrentState();
-
-        // Se o estado já estiver no cache, retornamos ele (exceto estados que exigem reinicialização)
-        if (screenCache.containsKey(state) && isCacheable(state)) {
-            return screenCache.get(state);
-        }
-
-        CoreGameLogic logic = null;
-
+        CoreGameLogic logic = AbstractCoreGameFactory.getChachedInstance(gameStateMachine, state, isCacheable(state));
+        if (logic != null) return logic;
+        
         switch (state) {
             case DEV_LOGO_SCREEN:
                 logic = new DeveloperAdvertiseImpl(gameWindow.getPanelWidth(), gameWindow.getPanelHeight(),
@@ -92,6 +81,9 @@ public class CoreGameFactory {
                 break;
 
             case GAME_OPTIONS_SCREEN:
+                if (gameGraphics == null) {
+                    gameGraphics = new GameGraphicsImpl(gameWindow.isFullScreen(), gameWindow.isTripleBuffering());
+                }
                 logic = new GameOptionScreenImpl(gameOptions, gameWindow.getPanelWidth(), gameWindow.getPanelHeight(),
                         gameWindow.getCurrentAspectRatio());
                 break;
@@ -137,23 +129,16 @@ public class CoreGameFactory {
      * Defines which states should be cached. 
      * Screens like LOADING or IN_GAME usually should be fresh instances.
      */
-    private static boolean isCacheable(GameStates state) {
+    protected static boolean isCacheable(GameStates state) {
         return switch (state) {
             case LOADING, IN_GAME_SCREEN, GAME_OVER_SCREEN -> false;
             default -> true;
         };
     }
 
-    /**
-     * Clears the screen cache. Should be called when resolution or aspect ratio changes.
-     */
-    public static void clearCache() {
-        screenCache.clear();
-    }
-
-    public static void configureGameGraphics(ScreenMode screenMode) {
-        if (gameGraphics != null) {
-            gameGraphics.setScreenMode(screenMode);
-        }
-    }
+    // public static void configureGameGraphics(ScreenMode screenMode) {
+    //     if (gameGraphics != null) {
+    //         gameGraphics.setScreenMode(screenMode);
+    //     }
+    // }
 }

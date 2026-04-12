@@ -2,8 +2,7 @@ package br.com.animator.game.ui.options;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-
-import br.com.animator.core.IGame;
+import br.com.animator.core.game.IGame;
 import br.com.animator.game.Game;
 import br.com.animator.game.data.GameOptions;
 import br.com.animator.game.data.enumerators.GameDifficulty;

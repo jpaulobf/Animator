@@ -1,6 +1,6 @@
 package br.com.animator.ui.score;
 
-import br.com.animator.core.CoreGameLogic;
+import br.com.animator.core.game.CoreGameLogic;
 
 /**
  * author: Joao Paulo Faria

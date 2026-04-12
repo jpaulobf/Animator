@@ -22,8 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JFrame;
 import br.com.animator.config.GlobalProperties;
+import br.com.animator.core.game.IGame;
 import br.com.animator.input.JoystickHandler;
-import br.com.animator.core.IGame;
 
 /**
  * Window - Class responsible for creating and managing the game window,
@@ -262,8 +262,8 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 				ratioConfig.get(WindowScale.X1));
 
 		synchronized (dimensionLock) {
-			this.CURRENT_WINDOW_WIDTH = dims.width;
-			this.CURRENT_WINDOW_HEIGHT = dims.height;
+			this.CURRENT_WINDOW_WIDTH = dims.width();
+			this.CURRENT_WINDOW_HEIGHT = dims.height();
 		}
 	}
 

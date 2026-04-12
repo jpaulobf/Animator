@@ -7,7 +7,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
-import br.com.animator.core.IGame;
+import br.com.animator.core.game.IGame;
 import br.com.animator.game.data.GameScore;
 import br.com.animator.game.data.GameScoreImpl;
 import br.com.animator.input.GameAction;

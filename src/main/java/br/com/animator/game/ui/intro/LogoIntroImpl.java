@@ -4,7 +4,7 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import br.com.animator.core.IGame;
+import br.com.animator.core.game.IGame;
 import br.com.animator.input.GameAction;
 import br.com.animator.ui.intro.LogoIntro;
 import br.com.animator.util.ImageUtil;

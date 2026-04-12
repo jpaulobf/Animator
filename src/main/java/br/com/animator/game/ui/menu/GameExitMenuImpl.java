@@ -3,7 +3,7 @@ package br.com.animator.game.ui.menu;
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import br.com.animator.core.IGame;
+import br.com.animator.core.game.IGame;
 import br.com.animator.input.GameAction;
 import br.com.animator.ui.menu.GameExitMenu;
 import br.com.animator.util.ImageUtil;

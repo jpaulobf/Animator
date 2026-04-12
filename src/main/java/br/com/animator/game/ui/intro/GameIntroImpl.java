@@ -3,7 +3,7 @@ package br.com.animator.game.ui.intro;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import br.com.animator.core.IGame;
+import br.com.animator.core.game.IGame;
 import br.com.animator.input.GameAction;
 import br.com.animator.ui.intro.GameIntro;
 import br.com.animator.util.ImageUtil;
