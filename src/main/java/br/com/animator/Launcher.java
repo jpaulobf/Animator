@@ -12,7 +12,7 @@ public class Launcher {
 		SwingUtilities.invokeLater(new Runnable() {
 
 			public void run() {
-				new Game().startGame(0);
+				new Game().startGame(60);
 			}
 		});
 	}
