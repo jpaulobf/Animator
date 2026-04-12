@@ -23,7 +23,7 @@ public class OggAudio {
         String resourcePath = AudioManager.getAudioPath(key);
         this.type = AudioManager.getAudioType(key);
 
-        if (resourcePath == null) {
+        if (resourcePath == null || resourcePath.isEmpty()) {
             System.err.println("OggAudio: Key not found in LoadResources -> " + key);
             return;
         }
@@ -39,16 +39,18 @@ public class OggAudio {
     }
 
     public void play() {
-        alSourcePlay(sourceId);
+        if (sourceId != 0) alSourcePlay(sourceId);
     }
 
     public void stop() {
-        alSourceStop(sourceId);
+        if (sourceId != 0) alSourceStop(sourceId);
     }
 
     public void loop() {
-        alSourcei(sourceId, AL_LOOPING, AL_TRUE);
-        alSourcePlay(sourceId);
+        if (sourceId != 0) {
+            alSourcei(sourceId, AL_LOOPING, AL_TRUE);
+            alSourcePlay(sourceId);
+        }
     }
 
     public void volumeUp() {
