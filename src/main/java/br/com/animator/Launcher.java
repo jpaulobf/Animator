@@ -1,7 +1,6 @@
 package br.com.animator;
 
 import javax.swing.SwingUtilities;
-
 import br.com.animator.game.Game;
 
 /**
