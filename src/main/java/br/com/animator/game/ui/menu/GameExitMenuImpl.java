@@ -3,6 +3,7 @@ package br.com.animator.game.ui.menu;
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import br.com.animator.audio.OggAudio;
 import br.com.animator.core.game.IGame;
 import br.com.animator.input.GameAction;
 import br.com.animator.ui.menu.GameExitMenu;
@@ -37,6 +38,7 @@ public class GameExitMenuImpl implements GameExitMenu {
 	private BufferedImage buttonYesExitMenu = null;
 	private BufferedImage buttonNoExitMenu = null;
 	private BufferedImage highlightButtonExitMenu = null;
+	private OggAudio menuSound;
 
 	/**
 	 * Construtor
@@ -52,6 +54,7 @@ public class GameExitMenuImpl implements GameExitMenu {
 		this.highlightButtonExitMenu = this.imageUtil.loadScaledImage("GameExitMenu.5");
 		this.MENU_BACKGROUND_POSITION_X = (this.PWIDTH / 2) - (this.bgExitMenu.getWidth() / 2);
 		this.MENU_BACKGROUND_POSITION_Y = (this.PHEIGHT / 2) - (this.bgExitMenu.getHeight() / 2);
+		this.menuSound = OggAudio.getAudio("menu.change");
 	}
 
 	@Override
@@ -168,9 +171,11 @@ public class GameExitMenuImpl implements GameExitMenu {
 	public void handleInput(IGame game, GameAction action) {
 		switch (action) {
             case LEFT:
-                this.previousGameOption();
+				this.menuSound.play();
+				this.previousGameOption();
                 break;
             case RIGHT:
+				this.menuSound.play();
                 this.nextGameOption();
                 break;
             case START:

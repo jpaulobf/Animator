@@ -2,6 +2,7 @@ package br.com.animator.game.ui.options;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import br.com.animator.audio.OggAudio;
 import br.com.animator.core.game.IGame;
 import br.com.animator.game.Game;
 import br.com.animator.game.data.GameGraphics;
@@ -118,6 +119,7 @@ public class GameGraphicsScreenImpl implements GameGraphicsScreen {
 	private Integer counterArrowRightScreenMode = 0;
 	private Integer counterArrowLeftDeepColor = 0;
 	private Integer counterArrowRightDeepColor = 0;
+	private OggAudio menuSound;
 
 	/**
 	 * Constructor
@@ -166,6 +168,7 @@ public class GameGraphicsScreenImpl implements GameGraphicsScreen {
 		this.deepColorValues[1] = this.imageUtil.copyImage(this.deepColorStrip, 337, 0, 260, 33);
 
 		// TODO: VERIFICAR SE DESEJA MONTAR LISTA DE IMAGEM DE RESOLUCOES...
+		this.menuSound = OggAudio.getAudio("menu.change");
 
 	}
 
@@ -694,9 +697,11 @@ public class GameGraphicsScreenImpl implements GameGraphicsScreen {
 				// todo
 			}
 		} else if (action == GameAction.UP) {
+			this.menuSound.play();
 			this.previousOption();
 
 		} else if (action == GameAction.DOWN) {
+			this.menuSound.play();
 			this.nextOption();
 
 		} else if (action == GameAction.LEFT) {

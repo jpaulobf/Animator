@@ -316,23 +316,7 @@ public abstract class AbstractGame implements IGame {
      * Handles logical actions when exit menu is visible.
      */
     protected void handleExitMenuAction(GameAction action) {
-        switch (action) {
-            case LEFT:
-                gameExitMenu.previousGameOption();
-                break;
-            case RIGHT:
-                gameExitMenu.nextGameOption();
-                break;
-            case START:
-            case BUTTON_1: // Enter maps to Start or B1
-                if (gameExitMenu.isToExit()) {
-                    stopGame();
-                } else {
-                    gameExitMenu.hideExitMenu();
-                }
-                break;
-            default: break;
-        }
+        gameExitMenu.handleInput(this, action);
     }
 
     /**
@@ -343,7 +327,7 @@ public abstract class AbstractGame implements IGame {
 	public void processKey(int keyCode, boolean isAltDown) {
         GameAction action = ButtonMapper.getKeyboardAction(keyCode);
         if (gameExitMenu.isShowingExitMenu()) {
-            if (action != null) handleExitMenuAction(action);
+            if (action != null) gameExitMenu.handleInput(this, action);
             return;
         }
 
@@ -362,7 +346,7 @@ public abstract class AbstractGame implements IGame {
     public void processJoystickButton(int joystickId, int buttonCode) {
         GameAction action = ButtonMapper.getJoystickAction(buttonCode);
         if (gameExitMenu.isShowingExitMenu()) {
-            if (action != null) handleExitMenuAction(action);
+            if (action != null) gameExitMenu.handleInput(this, action);
             return;
         }
 
@@ -380,7 +364,7 @@ public abstract class AbstractGame implements IGame {
         if (state == 0) return;
         GameAction action = ButtonMapper.getHatAction(state);
         if (gameExitMenu.isShowingExitMenu()) {
-            if (action != null) handleExitMenuAction(action);
+            if (action != null) gameExitMenu.handleInput(this, action);;
             return;
         }
 

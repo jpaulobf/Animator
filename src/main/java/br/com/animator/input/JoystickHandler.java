@@ -153,7 +153,6 @@ public class JoystickHandler {
         for (int b = 0; b < buttons.limit() && b < 64; b++) {
             boolean currentlyPressed = buttons.get(b) == GLFW.GLFW_PRESS;
             if (currentlyPressed && !buttonHistory[jid][b]) {
-                // Notify the listener instead of just printing
                 if (listener != null) {
                     listener.onButtonPressed(jid, b);
                 }
@@ -171,7 +170,6 @@ public class JoystickHandler {
         for (int a = 0; a < axes.limit() && a < 64; a++) {
             float currentValue = axes.get(a);
             if (Math.abs(currentValue - axisHistory[jid][a]) > AXIS_THRESHOLD) {
-                System.out.printf("[%s] Axis Moved: %d | Value: %.2f%n", controller.getName(), a, currentValue);
                 axisHistory[jid][a] = currentValue;
             }
         }
@@ -186,7 +184,6 @@ public class JoystickHandler {
         for (int h = 0; h < hats.limit() && h < 64; h++) {
             byte currentHat = hats.get(h);
             if (currentHat != hatHistory[jid][h]) {
-                // Notifica o listener sobre a mudança de estado do DPAD
                 if (listener != null) {
                     listener.onHatChanged(jid, h, currentHat);
                 }

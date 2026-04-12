@@ -2,6 +2,7 @@ package br.com.animator.game.ui.options;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import br.com.animator.audio.OggAudio;
 import br.com.animator.core.game.IGame;
 import br.com.animator.game.Game;
 import br.com.animator.game.data.GameOptions;
@@ -129,6 +130,7 @@ public class GameOptionScreenImpl implements GameOptionScreen {
 	private Integer counterArrowRightContinue 						= 0;
 	private Integer counterArrowLeftExtraLife 						= 0;
 	private Integer counterArrowRightExtraLife 						= 0;
+	private OggAudio menuSound;
 	
 	/**
 	 * Constructor
@@ -190,6 +192,8 @@ public class GameOptionScreenImpl implements GameOptionScreen {
 		this.imageGameExtraLife[0]			= this.imageUtil.copyImage(this.imageGameExtraLifeStrip, 0, 0, 246, 33);
 		this.imageGameExtraLife[1]			= this.imageUtil.copyImage(this.imageGameExtraLifeStrip, 302, 0, 246, 33);
 		this.imageGameExtraLife[2]			= this.imageUtil.copyImage(this.imageGameExtraLifeStrip, 616, 0, 88, 33);
+
+		this.menuSound = OggAudio.getAudio("menu.change");
 	}
 	
 	public void update(long frametime) {
@@ -788,9 +792,11 @@ public class GameOptionScreenImpl implements GameOptionScreen {
 				((Game)game).gotoMainOption();
 			}
 		} else if (action == GameAction.UP) {
+			this.menuSound.play();
 			this.previousOption();
 
 		} else if (action == GameAction.DOWN) {
+			this.menuSound.play();
 			this.nextOption();
 
 		} else if (action == GameAction.LEFT) {

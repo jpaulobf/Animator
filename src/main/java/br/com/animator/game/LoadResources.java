@@ -10,35 +10,39 @@ public class LoadResources {
      * enquanto o resto é processado.
      */
     public static void loadBootstrap() {
-        // Assets da tela de Loading (essencial para o feedback visual)
+        // Loading screen
         ImageManager.load("Loading.1", "/images/loading_1a.png");
         ImageManager.load("Loading.2", "/images/loading_2a.png");
         ImageManager.load("Loading.3", "/images/loading_3a.png");
         ImageManager.load("Loading.4", "/images/loading_4a.png");
 
-        // Assets do Menu de Saída (pois ele é instanciado no init())
+        // Exit Menu
         ImageManager.load("GameExitMenu.1","/images/quit_bg.png");
         ImageManager.load("GameExitMenu.2","/images/really_quit_question.png");
         ImageManager.load("GameExitMenu.3","/images/yes_button.png");
         ImageManager.load("GameExitMenu.4","/images/no_button.png");
         ImageManager.load("GameExitMenu.5","/images/yes_no_highlight.png");
 
+		// dev logo
         ImageManager.load("DeveloperAdvertise.logo", "/images/logo_phoenix.png");
-    }
 
-    public static void loadAllImages() {
-
-        ImageManager.load("GameIntro.1", "/images/transparence_intro_top.png");
-        ImageManager.load("GameIntro.2", "/images/transparence_intro_bottom.png");
-        ImageManager.load("GameIntro.3", "/images/text_intro_1.png");
-        ImageManager.load("GameIntro.4", "/images/text_intro_2.png");
-
-        ImageManager.load("LogoIntro.1", "/images/logo_p1.png");
+		// Logo intro
+		ImageManager.load("LogoIntro.1", "/images/logo_p1.png");
 		ImageManager.load("LogoIntro.2", "/images/logo_p2.png");
 		ImageManager.load("LogoIntro.3", "/images/logo_p3.png");
 		ImageManager.load("LogoIntro.4", "/images/logo_p4.png");
 		ImageManager.load("LogoIntro.5", "/images/logo_p5.png");
 		ImageManager.load("LogoIntro.6", "/images/bt_press.png");
+
+		// load menu sound
+		AudioManager.loadSFX("menu.change", "/audio/menu1.ogg");
+    }
+
+    public static void loadAllImages() {
+		ImageManager.load("GameIntro.1", "/images/transparence_intro_top.png");
+        ImageManager.load("GameIntro.2", "/images/transparence_intro_bottom.png");
+        ImageManager.load("GameIntro.3", "/images/text_intro_1.png");
+        ImageManager.load("GameIntro.4", "/images/text_intro_2.png");
 
         ImageManager.load("MainMenu.1", "/images/logo_p1.png");
 		ImageManager.load("MainMenu.2", "/images/logo_p2.png");

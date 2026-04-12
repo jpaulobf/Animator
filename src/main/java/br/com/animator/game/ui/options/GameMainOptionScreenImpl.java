@@ -2,6 +2,7 @@ package br.com.animator.game.ui.options;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import br.com.animator.audio.OggAudio;
 import br.com.animator.core.game.IGame;
 import br.com.animator.game.Game;
 import br.com.animator.input.GameAction;
@@ -42,6 +43,7 @@ public class GameMainOptionScreenImpl implements GameMainOptionScreen {
 	private BufferedImage btConfigSFX = null;
 	private BufferedImage btBackMainMenu = null;
 	private BufferedImage highlightButton = null;
+	private OggAudio menuSound;
 
 	/**
 	 * Constructor
@@ -62,6 +64,7 @@ public class GameMainOptionScreenImpl implements GameMainOptionScreen {
 		this.btConfigSFX = this.imageUtil.loadImage("GameMainOption.5");
 		this.btBackMainMenu = this.imageUtil.loadImage("GameMainOption.6");
 		this.highlightButton = this.imageUtil.loadImage("GameMainOption.7");
+		this.menuSound = OggAudio.getAudio("menu.change");
 	}
 
 	public void update(long frametime) {
@@ -197,8 +200,10 @@ public class GameMainOptionScreenImpl implements GameMainOptionScreen {
 				((Game)game).gotoGFXConfigMenu();
 			}
 		} else if (action == GameAction.UP) {
+			this.menuSound.play();
 			this.previousGameOption();
 		} else if (action == GameAction.DOWN) {
+			this.menuSound.play();
 			this.nextGameOption();
 		}
 	}

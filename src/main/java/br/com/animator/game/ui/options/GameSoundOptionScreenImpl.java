@@ -2,6 +2,7 @@ package br.com.animator.game.ui.options;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import br.com.animator.audio.OggAudio;
 import br.com.animator.core.game.IGame;
 import br.com.animator.game.Game;
 import br.com.animator.game.data.GameSoundOptions;
@@ -73,6 +74,7 @@ public class GameSoundOptionScreenImpl implements GameSoundOptionScreen {
 	private final static Integer COMMAND_MUSIC_VOL_POSITION_Y 		= 572;
 	private final static Integer COMMAND_SFX_VOL_POSITION_X 		= 703;
 	private final static Integer COMMAND_SFX_VOL_POSITION_Y 		= 692;
+	private OggAudio menuSound;
 	
 	/**
 	 * Constructor
@@ -110,6 +112,8 @@ public class GameSoundOptionScreenImpl implements GameSoundOptionScreen {
 		this.imagesVolumes[7]				= this.imageUtil.loadImage("GameSoundConfig.20");
 		this.imagesVolumes[8]				= this.imageUtil.loadImage("GameSoundConfig.21");
 		this.imagesVolumes[9]				= this.imageUtil.loadImage("GameSoundConfig.22");
+
+		this.menuSound = OggAudio.getAudio("menu.change");
 	}
 	
 	public void update(long frametime) {
@@ -410,9 +414,11 @@ public class GameSoundOptionScreenImpl implements GameSoundOptionScreen {
 				((Game)game).gotoMainOption();
 			}
 		} else if (action == GameAction.UP) {
+			this.menuSound.play();
 			this.previousOption();
 
 		} else if (action == GameAction.DOWN) {
+			this.menuSound.play();
 			this.nextOption();
 
 		} else if (action == GameAction.LEFT) {

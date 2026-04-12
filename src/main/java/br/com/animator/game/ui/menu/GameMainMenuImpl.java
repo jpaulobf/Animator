@@ -399,7 +399,6 @@ public class GameMainMenuImpl implements GameMainMenu {
 	public void handleInput(IGame game, GameAction action) {
 		if (action == GameAction.START || action == GameAction.BUTTON_1) {
 			if (this.isExitSelected()) {
-				menuMusic.stop();
 				((Game)game).showExitMenu();
 			} else if (this.isOptionSelected()) {
 				((Game)game).gotoMainOption();
