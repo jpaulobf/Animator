@@ -85,17 +85,31 @@ public abstract class AbstractGame implements IGame {
 			this.graphics2D = this.mainBuffer.createGraphics();
 		}
 
-		// Carregamento de recursos centralizado
-		LoadResources.loadAllImages();
-		LoadResources.loadAllSFX();
-		LoadResources.loadAllMusics();
+		// Load the basics (bootstrap)
+		LoadResources.loadBootstrap();
 
-		// Inicializa o estado lógico do jogo primeiro
+		// Initiate the logical state
 		this.init();
 
+        // Set initial state to loading...
+		this.loading();
+        
+		// Start the render loop
 		this.renderer.init(this.gameWindow);
-
 		this.gameEngine = new GameEngine(this, fps);
+
+		// Start a separated Thread to load the resources in background
+		new Thread(() -> {
+			try {
+				LoadResources.loadAllImages();
+				LoadResources.loadAllSFX();
+				LoadResources.loadAllMusics();
+			} catch (Exception e) {
+				System.err.println("Could not load resources: " + e.getMessage());
+			} finally {
+				this.loadingDone();
+			}
+		}, "ResourceLoaderThread").start();
 	}
 
 	public abstract void init();
