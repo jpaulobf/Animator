@@ -2,6 +2,15 @@
 
 All notable changes to the **Animator Engine** will be documented in this file.
 
+## [1.3.0] - 2026-04-12
+### Added
+- **ImageManager**: Centralized hardware-accelerated image caching to prevent redundant disk I/O and optimize rendering.
+- **Bootstrap Loading**: Implemented a two-stage loading process (`loadBootstrap` and `loadAllResources`) to allow immediate UI feedback.
+- **Background Resource Loading**: Integrated a dedicated `ResourceLoaderThread` in `AbstractGame` to load heavy assets without freezing the main game loop.
+- **Unified Resource API**: Refactored `ImageUtil` and `OggAudio` to act as clean interfaces for resource retrieval using unique keys, hiding internal Manager complexity.
+### Improved
+- **Architecture**: Decoupled asset registration (configuration) from asset usage (game logic).
+
 ## [1.2.0] - 2026-04-11
 ### Added
 - **Dynamic FPS Control**: Implementation of runtime FPS switching within the `GameEngine`.

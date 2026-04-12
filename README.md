@@ -54,7 +54,9 @@
 - Double-buffering for flicker-free graphics
 - Fullscreen and windowed modes
 - Multiple color depth support (16-bit, 24-bit, 32-bit)
-- Resource caching and optimization
+- **Hardware-Accelerated Image Caching**: Integrated `ImageManager` for optimized asset storage.
+- **Bootstrap & Background Loading**: Non-blocking resource loading system with support for splash screens and progress tracking.
+- Rendering optimization with automatic `GraphicsConfiguration` compatibility.
 
 ### 🎵 Audio System
 - **Hardware-accelerated OGG support** via LWJGL (OpenAL & STB)
@@ -69,6 +71,8 @@
 - Alt+Tab blocking (optional)
 
 ### 🎯 Game State Management
+- **Centralized Asset Management**: `LoadResources` class for easy registration of all game assets (Images, SFX, Music).
+- **Decoupled Architecture**: Clean separation between resource loading (Managers) and resource usage (Utils).
 - Finite State Machine pattern
 - Professional state transitions
 - Intro screens, menus, gameplay, pause, game over
@@ -103,6 +107,8 @@
 |---------|-------|----------|
 | **Factory** | `CoreGameFactory` | Create game components |
 | **State Machine** | `GameStateMachine` | Manage game states |
+| **Manager/Cache** | `ImageManager` & `AudioManager` | Asset caching and hardware optimization |
+| **Bootstrap** | `LoadResources` | Two-stage resource initialization |
 | **Strategy** | `Game` implementations | Different game behaviors |
 | **Singleton** | `GameConfig` | Single configuration instance |
 | **Template Method** | `AbstractGame` | Standard game structure |
@@ -115,6 +121,8 @@
 │     Game Implementation             │  Your custom game logic
 ├─────────────────────────────────────┤
 │     Game Framework (AbstractGame)   │  Base class with game loop
+├─────────────────────────────────────┤
+│     Resource Management Layer       │  ImageManager, AudioManager, LoadResources
 ├─────────────────────────────────────┤
 │     Game Engine (GameEngine)        │  Core loop, timing, rendering
 ├─────────────────────────────────────┤
@@ -180,6 +188,7 @@ animator-engine/
 │       │   └── GameEngine.java             # Core game loop
 │       ├── game/
 │       │   ├── Game.java                   # Game interface
+│       │   ├── LoadResources.java          # Resource registration
 │       │   ├── core/
 │       │   │   ├── AbstractGame.java       # Base implementation
 │       │   │   └── IGame.java              # Core interface
@@ -211,6 +220,7 @@ animator-engine/
 │       ├── util/
 │       │   ├── AltTabStopper.java          # Alt+Tab blocker
 │       │   ├── GlobalProperties.java       # Global settings
+│       │   ├── ImageManager.java           # Internal image cache
 │       │   ├── ImageUtil.java              # Image utilities
 │       │   └── ValueComparator.java        # Comparator utility
 │       ├── window/
