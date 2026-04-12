@@ -2,7 +2,7 @@ package br.com.animator.game;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import br.com.animator.core.AbstractGame;
+import br.com.animator.core.game.AbstractGame;
 import br.com.animator.game.ui.menu.GameExitMenuImpl;
 import br.com.animator.input.GameAction;
 import br.com.animator.state.GameStateMachine;
