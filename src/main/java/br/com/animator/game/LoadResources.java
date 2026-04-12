@@ -6,9 +6,7 @@ import br.com.animator.util.ImageManager;
 public class LoadResources {
 
     public static void loadAllImages() {
-        // Assets para GameScorePresentationImpl
         ImageManager.load("DeveloperAdvertise.logo", "/images/logo_phoenix.png");
-
 
         ImageManager.load("GameIntro.1", "/images/transparence_intro_top.png");
         ImageManager.load("GameIntro.2", "/images/transparence_intro_bottom.png");
@@ -122,9 +120,6 @@ public class LoadResources {
 		ImageManager.load("GameSoundConfig.20", "/images/volume_7.png");
 		ImageManager.load("GameSoundConfig.21", "/images/volume_8.png");
 		ImageManager.load("GameSoundConfig.22", "/images/volume_9.png");
-
- 
-
     }
 
     public static void loadAllSFX() {
