@@ -50,7 +50,7 @@ public class LoadingImpl implements Loading {
 	}
 
 	public void draw(Graphics2D g2d) {
-		g2d.setColor(Color.LIGHT_GRAY);
+		g2d.setColor(Color.BLACK);
 		g2d.fillRect(0, 0, this.PWIDTH, this.PHEIGHT);
 
 		if (this.currentStatus == 0) {
