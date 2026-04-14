@@ -103,8 +103,8 @@ public class GameExitMenuImpl implements GameExitMenu {
 			g2d.drawImage(this.buttonNoExitMenu,
 					MENU_BACKGROUND_POSITION_X + this.imageUtil.getScaledWidth(BUTTON_NO_POSITION_X),
 					MENU_BACKGROUND_POSITION_Y + this.imageUtil.getScaledHeight(BUTTON_NO_POSITION_Y),
-					this.buttonYesExitMenu.getWidth(),
-					this.buttonYesExitMenu.getHeight(),
+					this.buttonNoExitMenu.getWidth(),
+					this.buttonNoExitMenu.getHeight(),
 					null);
 		}
 	}
