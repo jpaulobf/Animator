@@ -74,7 +74,6 @@ public class GameSoundOptionScreenImpl implements GameSoundOptionScreen {
 	private final static Integer COMMAND_MUSIC_VOL_POSITION_Y 		= 572;
 	private final static Integer COMMAND_SFX_VOL_POSITION_X 		= 703;
 	private final static Integer COMMAND_SFX_VOL_POSITION_Y 		= 692;
-	private OggAudio menuSound;
 	
 	/**
 	 * Constructor
@@ -112,8 +111,6 @@ public class GameSoundOptionScreenImpl implements GameSoundOptionScreen {
 		this.imagesVolumes[7]				= this.imageUtil.loadImage("GameSoundConfig.20");
 		this.imagesVolumes[8]				= this.imageUtil.loadImage("GameSoundConfig.21");
 		this.imagesVolumes[9]				= this.imageUtil.loadImage("GameSoundConfig.22");
-
-		this.menuSound = OggAudio.getAudio("menu.change");
 	}
 	
 	public void update(long frametime) {
@@ -410,18 +407,20 @@ public class GameSoundOptionScreenImpl implements GameSoundOptionScreen {
 	public void handleInput(IGame game, GameAction action) {
 		if (action == GameAction.START || action == GameAction.BUTTON_1) {
 			if (this.isToBackToMainOption()) {
+				OggAudio.getAudio("menu.back").play();
 				this.resetCounters();
 				((Game)game).gotoMainOption();
 			}
 		} else if (action == GameAction.UP) {
-			this.menuSound.play();
+			OggAudio.getAudio("menu.change").play();
 			this.previousOption();
 
 		} else if (action == GameAction.DOWN) {
-			this.menuSound.play();
+			OggAudio.getAudio("menu.change").play();
 			this.nextOption();
 
 		} else if (action == GameAction.LEFT) {
+			OggAudio.getAudio("menu.change").play();
 			if (this.isOverEnableMusic()) {
 				this.setMusicEnable();
 			} else if (this.isOverEnableSFX()) {
@@ -433,7 +432,7 @@ public class GameSoundOptionScreenImpl implements GameSoundOptionScreen {
 			}
 
 		} else if (action == GameAction.RIGHT) {
-
+			OggAudio.getAudio("menu.change").play();
 			if (this.isOverEnableMusic()) {
 				this.setMusicDisable();
 			} else if (this.isOverEnableSFX()) {
