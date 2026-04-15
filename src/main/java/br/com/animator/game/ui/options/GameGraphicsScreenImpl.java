@@ -119,7 +119,6 @@ public class GameGraphicsScreenImpl implements GameGraphicsScreen {
 	private Integer counterArrowRightScreenMode = 0;
 	private Integer counterArrowLeftDeepColor = 0;
 	private Integer counterArrowRightDeepColor = 0;
-	private OggAudio menuSound;
 
 	/**
 	 * Constructor
@@ -166,10 +165,6 @@ public class GameGraphicsScreenImpl implements GameGraphicsScreen {
 		this.deepColorValues = new BufferedImage[2];
 		this.deepColorValues[0] = this.imageUtil.copyImage(this.deepColorStrip, 0, 0, 299, 33);
 		this.deepColorValues[1] = this.imageUtil.copyImage(this.deepColorStrip, 337, 0, 260, 33);
-
-		// TODO: VERIFICAR SE DESEJA MONTAR LISTA DE IMAGEM DE RESOLUCOES...
-		this.menuSound = OggAudio.getAudio("menu.change");
-
 	}
 
 	public void update(long frametime) {
@@ -690,21 +685,23 @@ public class GameGraphicsScreenImpl implements GameGraphicsScreen {
 	public void handleInput(IGame game, GameAction action) {
 		if (action == GameAction.START || action == GameAction.BUTTON_1) {
 			if (this.isToBackToMainOption()) {
+				OggAudio.getAudio("menu.back").play();
 				this.resetCounters();
 				this.cancelChanges();
 				((Game)game).gotoMainOption();
 			} else if (this.isToApply()) {
-				// todo
+				OggAudio.getAudio("menu.back").play();
 			}
 		} else if (action == GameAction.UP) {
-			this.menuSound.play();
+			OggAudio.getAudio("menu.change").play();
 			this.previousOption();
 
 		} else if (action == GameAction.DOWN) {
-			this.menuSound.play();
+			OggAudio.getAudio("menu.change").play();
 			this.nextOption();
 
 		} else if (action == GameAction.LEFT) {
+			OggAudio.getAudio("menu.change").play();
 			if (this.isOverEnableTripleBuffering()) {
 				this.enableTripleBuffer();
 			} else if (this.isOverScreenMode()) {
@@ -714,6 +711,7 @@ public class GameGraphicsScreenImpl implements GameGraphicsScreen {
 			}
 
 		} else if (action == GameAction.RIGHT) {
+			OggAudio.getAudio("menu.change").play();
 			if (this.isOverEnableTripleBuffering()) {
 				this.disableTripleBuffer();
 			} else if (this.isOverScreenMode()) {
