@@ -130,7 +130,6 @@ public class GameOptionScreenImpl implements GameOptionScreen {
 	private Integer counterArrowRightContinue 						= 0;
 	private Integer counterArrowLeftExtraLife 						= 0;
 	private Integer counterArrowRightExtraLife 						= 0;
-	private OggAudio menuSound;
 	
 	/**
 	 * Constructor
@@ -192,8 +191,6 @@ public class GameOptionScreenImpl implements GameOptionScreen {
 		this.imageGameExtraLife[0]			= this.imageUtil.copyImage(this.imageGameExtraLifeStrip, 0, 0, 246, 33);
 		this.imageGameExtraLife[1]			= this.imageUtil.copyImage(this.imageGameExtraLifeStrip, 302, 0, 246, 33);
 		this.imageGameExtraLife[2]			= this.imageUtil.copyImage(this.imageGameExtraLifeStrip, 616, 0, 88, 33);
-
-		this.menuSound = OggAudio.getAudio("menu.change");
 	}
 	
 	public void update(long frametime) {
@@ -788,18 +785,20 @@ public class GameOptionScreenImpl implements GameOptionScreen {
 	public void handleInput(IGame game, GameAction action) {
 		if (action == GameAction.START || action == GameAction.BUTTON_1) {
 			if (this.isToBackToMainOption()) {
+				OggAudio.getAudio("menu.back").play();
 				this.resetCounters();
 				((Game)game).gotoMainOption();
 			}
 		} else if (action == GameAction.UP) {
-			this.menuSound.play();
+			OggAudio.getAudio("menu.change").play();
 			this.previousOption();
 
 		} else if (action == GameAction.DOWN) {
-			this.menuSound.play();
+			OggAudio.getAudio("menu.change").play();
 			this.nextOption();
 
 		} else if (action == GameAction.LEFT) {
+			OggAudio.getAudio("menu.change").play();
 			if (this.isOverEnableSubtitles()) {
 				this.enableSubtitles();
 			} else if (this.isOverGameDifficulty()) {
@@ -813,6 +812,7 @@ public class GameOptionScreenImpl implements GameOptionScreen {
 			}
 
 		} else if (action == GameAction.RIGHT) {
+			OggAudio.getAudio("menu.change").play();
 			if (this.isOverEnableSubtitles()) {
 				this.disableSubtitles();
 			} else if (this.isOverGameDifficulty()) {
