@@ -38,7 +38,6 @@ public class GameExitMenuImpl implements GameExitMenu {
 	private BufferedImage buttonYesExitMenu = null;
 	private BufferedImage buttonNoExitMenu = null;
 	private BufferedImage highlightButtonExitMenu = null;
-	private OggAudio menuSound;
 
 	/**
 	 * Construtor
@@ -54,7 +53,6 @@ public class GameExitMenuImpl implements GameExitMenu {
 		this.highlightButtonExitMenu = this.imageUtil.loadScaledImage("GameExitMenu.5");
 		this.MENU_BACKGROUND_POSITION_X = (this.PWIDTH / 2) - (this.bgExitMenu.getWidth() / 2);
 		this.MENU_BACKGROUND_POSITION_Y = (this.PHEIGHT / 2) - (this.bgExitMenu.getHeight() / 2);
-		this.menuSound = OggAudio.getAudio("menu.change");
 	}
 
 	@Override
@@ -171,15 +169,16 @@ public class GameExitMenuImpl implements GameExitMenu {
 	public void handleInput(IGame game, GameAction action) {
 		switch (action) {
             case LEFT:
-				this.menuSound.play();
+				OggAudio.getAudio("menu.change").play();
 				this.previousGameOption();
                 break;
             case RIGHT:
-				this.menuSound.play();
+				OggAudio.getAudio("menu.change").play();
                 this.nextGameOption();
                 break;
             case START:
             case BUTTON_1: // Enter maps to Start or B1
+				OggAudio.getAudio("menu.select").play();
                 if (this.isToExit()) {
                     game.stopGame();
                 } else {
