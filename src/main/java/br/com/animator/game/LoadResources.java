@@ -36,6 +36,8 @@ public class LoadResources {
 
 		// load menu sound
 		AudioManager.loadSFX("menu.change", "/audio/menu1.ogg");
+		AudioManager.loadSFX("menu.select", "/audio/select.ogg");
+		AudioManager.loadSFX("menu.back", "/audio/back.ogg");
     }
 
     public static void loadAllImages() {
