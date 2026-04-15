@@ -43,7 +43,6 @@ public class GameMainOptionScreenImpl implements GameMainOptionScreen {
 	private BufferedImage btConfigSFX = null;
 	private BufferedImage btBackMainMenu = null;
 	private BufferedImage highlightButton = null;
-	private OggAudio menuSound;
 
 	/**
 	 * Constructor
@@ -64,7 +63,6 @@ public class GameMainOptionScreenImpl implements GameMainOptionScreen {
 		this.btConfigSFX = this.imageUtil.loadImage("GameMainOption.5");
 		this.btBackMainMenu = this.imageUtil.loadImage("GameMainOption.6");
 		this.highlightButton = this.imageUtil.loadImage("GameMainOption.7");
-		this.menuSound = OggAudio.getAudio("menu.change");
 	}
 
 	public void update(long frametime) {
@@ -187,23 +185,27 @@ public class GameMainOptionScreenImpl implements GameMainOptionScreen {
 	public void handleInput(IGame game, GameAction action) {
 		if (action == GameAction.START || action == GameAction.BUTTON_1) {
 			if (this.isToBackToMainMenu()) {
+				OggAudio.getAudio("menu.back").play();
 				this.resetCounters();
 				((Game)game).gotoMainMenu();
-			} else if (this.isToGoToGameOptions()) {
-				this.resetCounters();
-				((Game)game).gotoGameOptions();
-			} else if (this.isToConfigSFX()) {
-				this.resetCounters();
-				((Game)game).gotoSFXConfigMenu();
-			} else if (this.isToConfigGFX()) {
-				this.resetCounters();
-				((Game)game).gotoGFXConfigMenu();
+			} else {
+				OggAudio.getAudio("menu.select").play();
+				if (this.isToGoToGameOptions()) {
+					this.resetCounters();
+					((Game)game).gotoGameOptions();
+				} else if (this.isToConfigSFX()) {
+					this.resetCounters();
+					((Game)game).gotoSFXConfigMenu();
+				} else if (this.isToConfigGFX()) {
+					this.resetCounters();
+					((Game)game).gotoGFXConfigMenu();
+				}
 			}
 		} else if (action == GameAction.UP) {
-			this.menuSound.play();
+			OggAudio.getAudio("menu.change").play();
 			this.previousGameOption();
 		} else if (action == GameAction.DOWN) {
-			this.menuSound.play();
+			OggAudio.getAudio("menu.change").play();
 			this.nextGameOption();
 		}
 	}
