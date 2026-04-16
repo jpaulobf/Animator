@@ -43,6 +43,54 @@ public class AudioManager {
         System.out.println("OpenAL Initialized");
     }
 
+    public static void setAllSFXVolume(float percent) {
+        for (OggAudio audio : audioCache.values()) {
+            if (audio.getType() == OggAudio.AudioType.SFX) {
+                audio.volumeTo(percent);
+            }
+        }
+    }
+
+    public static void setAllMusicVolume(float percent) {
+        for (OggAudio audio : audioCache.values()) {
+            if (audio.getType() == OggAudio.AudioType.MUSIC) {
+                audio.volumeTo(percent);
+            }
+        }
+    }
+
+    public static void muteAllSFX() {
+        for (OggAudio audio : audioCache.values()) {
+            if (audio.getType() == OggAudio.AudioType.SFX) {
+                audio.muted();
+            }
+        }
+    }
+
+    public static void unmuteAllSFX() {
+        for (OggAudio audio : audioCache.values()) {
+            if (audio.getType() == OggAudio.AudioType.SFX) {
+                audio.unmuted();
+            }
+        }
+    }
+
+    public static void muteAllMusic() {
+        for (OggAudio audio : audioCache.values()) {
+            if (audio.getType() == OggAudio.AudioType.MUSIC) {
+                audio.muted();
+            }
+        }
+    }
+
+    public static void unmuteAllMusic() {
+        for (OggAudio audio : audioCache.values()) {
+            if (audio.getType() == OggAudio.AudioType.MUSIC) {
+                audio.unmuted();
+            }
+        }
+    }
+
     /**
      * Registers a sound effect (SFX) with a specific key and resource path.
      * 
