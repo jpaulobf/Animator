@@ -2,6 +2,8 @@ package br.com.animator.game.ui.options;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+
+import br.com.animator.audio.AudioManager;
 import br.com.animator.audio.OggAudio;
 import br.com.animator.core.game.IGame;
 import br.com.animator.game.Game;
@@ -356,7 +358,7 @@ public class GameSoundOptionScreenImpl implements GameSoundOptionScreen {
 
 	public void setMusicEnable() {
 		this.parentGameSoundOption.setMusicEnabled(true);
-		this.parentGameSoundOption.setMusicVolume(3);
+		this.parentGameSoundOption.setMusicVolume(9);
 	}
 
 	public void setMusicDisable() {
@@ -366,7 +368,7 @@ public class GameSoundOptionScreenImpl implements GameSoundOptionScreen {
 
 	public void setSFXEnable() {
 		this.parentGameSoundOption.setSFXEnabled(true);
-		this.parentGameSoundOption.setSFXVolume(3);
+		this.parentGameSoundOption.setSFXVolume(9);
 	}
 
 	public void setSFXDisable() {
@@ -422,26 +424,40 @@ public class GameSoundOptionScreenImpl implements GameSoundOptionScreen {
 		} else if (action == GameAction.LEFT) {
 			OggAudio.getAudio("menu.change").play();
 			if (this.isOverEnableMusic()) {
+				AudioManager.unmuteAllMusic();
 				this.setMusicEnable();
+				AudioManager.setAllMusicVolume(calcVolume(this.parentGameSoundOption.getMusicVolume()));
 			} else if (this.isOverEnableSFX()) {
+				AudioManager.unmuteAllSFX();
 				this.setSFXEnable();
+				AudioManager.setAllSFXVolume(calcVolume(this.parentGameSoundOption.getSFXVolume()));
 			} else if (this.isOverMusicVolume()) {
 				this.decreaseMusicVolume();
+				AudioManager.setAllMusicVolume(calcVolume(this.parentGameSoundOption.getMusicVolume()));
 			} else if (this.isOverSFXVolume()) {
 				this.decreaseSFXVolume();
+				AudioManager.setAllSFXVolume(calcVolume(this.parentGameSoundOption.getSFXVolume()));
 			}
 
 		} else if (action == GameAction.RIGHT) {
 			OggAudio.getAudio("menu.change").play();
 			if (this.isOverEnableMusic()) {
+				AudioManager.muteAllMusic();
 				this.setMusicDisable();
 			} else if (this.isOverEnableSFX()) {
+				AudioManager.muteAllSFX();
 				this.setSFXDisable();
 			} else if (this.isOverMusicVolume()) {
 				this.increaseMusicVolume();
+				AudioManager.setAllMusicVolume(calcVolume(this.parentGameSoundOption.getMusicVolume()));
 			} else if (this.isOverSFXVolume()) {
 				this.increaseSFXVolume();
+				AudioManager.setAllSFXVolume(calcVolume(this.parentGameSoundOption.getSFXVolume()));
 			}
 		}
+	}
+
+	public float calcVolume(int volume) {
+		return volume * 100 / 9;
 	}
 }
