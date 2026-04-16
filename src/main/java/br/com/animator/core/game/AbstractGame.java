@@ -65,6 +65,10 @@ public abstract class AbstractGame implements IGame {
 
 	public void startGame(int fps) {
 		this.originalFPS = fps;
+
+        //keep the scale avoiding SO changements.
+		System.setProperty("sun.java2d.uiScale", "1.0");
+
 		this.gameWindow = new Window(this);
 
 		// Initialize the renderer based on configuration
