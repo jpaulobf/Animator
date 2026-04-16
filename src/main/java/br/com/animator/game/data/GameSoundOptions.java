@@ -46,5 +46,12 @@ public interface GameSoundOptions {
 	 * Sets the SFX volume
 	 */
 	public void setSFXVolume(Integer volume);
-	
+
+	public int getOldMusicVolume();
+
+	public void setOldMusicVolume(int oldMusicVolume);
+
+	public int getOldSFXVolume();
+
+	public void setOldSFXVolume(int oldSFXVolume);
 }
