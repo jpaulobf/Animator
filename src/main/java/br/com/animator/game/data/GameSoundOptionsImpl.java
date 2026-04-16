@@ -14,8 +14,8 @@ public class GameSoundOptionsImpl implements GameSoundOptions {
 	public GameSoundOptionsImpl() {
 		this.musicEnabled 	= true;
 		this.sfxEnabled 	= true;
-		this.musicVolume 	= 3;
-		this.sfxVolume		= 3;
+		this.musicVolume 	= 9;
+		this.sfxVolume		= 9;
 	}
 	
 	/* (non-Javadoc)
