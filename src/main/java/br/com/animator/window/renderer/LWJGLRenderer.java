@@ -250,6 +250,12 @@ public class LWJGLRenderer implements Renderer {
         // Make the window visible
         GLFW.glfwShowWindow(glfwWindow);
 
+        // Detect Window Scale (DPI)
+        float[] xscale = new float[1];
+        float[] yscale = new float[1];
+        GLFW.glfwGetWindowContentScale(glfwWindow, xscale, yscale);
+        System.out.println("  Detected Monitor Scale: " + xscale[0] + "x (DPI Awareness)");
+
         // Focus the window to bring it to front
         GLFW.glfwFocusWindow(glfwWindow);
 
