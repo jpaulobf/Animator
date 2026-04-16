@@ -65,7 +65,12 @@ public class OggAudio {
     }
 
     public void muted() {
-        this.isMuted = !this.isMuted;
+        this.isMuted = true;
+        updateVolume();
+    }
+
+    public void unmuted() {
+        this.isMuted = false;
         updateVolume();
     }
 
