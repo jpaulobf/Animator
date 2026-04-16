@@ -358,20 +358,22 @@ public class GameSoundOptionScreenImpl implements GameSoundOptionScreen {
 
 	public void setMusicEnable() {
 		this.parentGameSoundOption.setMusicEnabled(true);
-		this.parentGameSoundOption.setMusicVolume(9);
+		this.parentGameSoundOption.setMusicVolume(this.parentGameSoundOption.getOldMusicVolume());
 	}
 
 	public void setMusicDisable() {
+		this.parentGameSoundOption.setOldMusicVolume(this.parentGameSoundOption.getMusicVolume());
 		this.parentGameSoundOption.setMusicEnabled(false);
 		this.parentGameSoundOption.setMusicVolume(0);
 	}
 
 	public void setSFXEnable() {
 		this.parentGameSoundOption.setSFXEnabled(true);
-		this.parentGameSoundOption.setSFXVolume(9);
+		this.parentGameSoundOption.setSFXVolume(this.parentGameSoundOption.getOldSFXVolume());
 	}
 
 	public void setSFXDisable() {
+		this.parentGameSoundOption.setOldSFXVolume(this.parentGameSoundOption.getSFXVolume());
 		this.parentGameSoundOption.setSFXEnabled(false);
 		this.parentGameSoundOption.setSFXVolume(0);
 	}
