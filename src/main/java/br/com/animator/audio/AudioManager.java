@@ -123,7 +123,7 @@ public class AudioManager {
      * @param key Unique identifier for the audio.
      * @return An OggAudio instance.
      */
-    public static OggAudio getAudio(String key) {
+    public synchronized static OggAudio getAudio(String key) {
         return audioCache.computeIfAbsent(key, k -> new OggAudio(k));
     }
 

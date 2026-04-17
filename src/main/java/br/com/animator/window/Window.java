@@ -49,7 +49,7 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 	private final Object dimensionLock = new Object();
 	private volatile boolean fullScreen = FULLSCREEN;
 	private volatile boolean isTransitioning = false;
-	private volatile FullscreenType fullscreenType = FullscreenType.BORDERLESS_FULLSCREEN;
+	private volatile FullscreenType fullscreenType = FullscreenType.EXCLUSIVE_FULLSCREEN;
 	private GraphicsDevice graphicsDevice = null;
 	private Canvas gameCanvas = null;
 	private volatile Integer panelWidth = null;
