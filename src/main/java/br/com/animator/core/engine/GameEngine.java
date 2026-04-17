@@ -115,7 +115,9 @@ public class GameEngine implements Runnable {
 				this.gameRender(elapsed);
 				this.paint();
 
-				Thread.yield();
+				// onSpinWait() to optimize the cpu thread.
+				Thread.onSpinWait();
+				
 				overSleep = 0; // Reset compensation when in unlimited
 			} else {
 				// --- FIXED FPS MODE ---
