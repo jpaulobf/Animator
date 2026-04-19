@@ -4,6 +4,7 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import br.com.animator.core.game.GameGlobals;
 import br.com.animator.core.game.IGame;
 import br.com.animator.input.GameAction;
 import br.com.animator.ui.intro.LogoIntro;
@@ -15,7 +16,7 @@ import br.com.animator.util.ImageUtil;
 public class LogoIntroImpl implements LogoIntro {
 
 	// --- Properties
-	private Integer subIntroCounter = 0;
+	private double subIntroCounter = 0;
 	private Integer PWIDTH = null;
 	private Integer PHEIGHT = null;
 	private ImageUtil imageUtil = null;
@@ -41,12 +42,12 @@ public class LogoIntroImpl implements LogoIntro {
 	private Integer logoPart6PositionY = null;
 
 	// -------- SUB INTRO PROPERTIES
-	private int calcP1x = 0;
-	private int calcP2x = 0;
-	private float alpha1 = 0;
+	private double calcP1x = 0;
+	private double calcP2x = 0;
+	private double alpha1 = 0;
 	private int scale4factor = 10;
-	private int calcP5y = 0;
-	private int startTimer = 0;
+	private double calcP5y = 0;
+	private double startTimer = 0;
 	private volatile boolean subIntroFinished = false;
 	private final static Integer LOGO_P1_POSITION_X = 459;
 	private final static Integer LOGO_P1_POSITION_Y = 295;
@@ -98,17 +99,17 @@ public class LogoIntroImpl implements LogoIntro {
 	}
 
 	public void update(long deltaTime) {
-		this.subIntroCounter++;
+		this.subIntroCounter = this.subIntroCounter + (1d * GameGlobals.GAME_VELOCITY);
 
 		if (this.calcP1x < this.logoPart1PositionX) {
-			this.calcP1x = this.calcP1x + 8;
+			this.calcP1x = this.calcP1x + (8d * GameGlobals.GAME_VELOCITY);
 		}
 		if (this.calcP1x > this.logoPart1PositionX) {
 			this.calcP1x = this.logoPart1PositionX;
 		}
 
 		if (this.calcP2x > this.logoPart2PositionX) {
-			this.calcP2x = this.calcP2x - 25;
+			this.calcP2x = this.calcP2x - (25 * GameGlobals.GAME_VELOCITY);
 		}
 		if (this.calcP2x < this.logoPart2PositionX) {
 			this.calcP2x = this.logoPart2PositionX;
@@ -116,14 +117,14 @@ public class LogoIntroImpl implements LogoIntro {
 
 		if (this.calcP2x == this.logoPart2PositionX) {
 			if (this.alpha1 < 1) {
-				this.alpha1 = this.alpha1 + 0.04f;
+				this.alpha1 = this.alpha1 + (0.04f * GameGlobals.GAME_VELOCITY);
 				this.alpha1 = (this.alpha1 > 1) ? 1 : this.alpha1;
 			}
 		}
 
 		if (this.calcP2x == this.logoPart2PositionX && this.alpha1 == 1 && this.scale4factor <= 7) {
 			if (this.calcP5y > this.logoPart2PositionY) {
-				this.calcP5y = this.calcP5y - 20;
+				this.calcP5y = this.calcP5y - (20 * GameGlobals.GAME_VELOCITY);
 			}
 			if (this.calcP5y < this.logoPart5PositionY) {
 				this.calcP5y = this.logoPart5PositionY;
@@ -132,7 +133,7 @@ public class LogoIntroImpl implements LogoIntro {
 
 		if (this.calcP2x == this.logoPart2PositionX && this.alpha1 == 1 && this.scale4factor <= 7
 				&& this.calcP5y == this.logoPart5PositionY) {
-			this.startTimer = (this.startTimer + 1) % 70;
+			this.startTimer = (this.startTimer + (1  * GameGlobals.GAME_VELOCITY)) % 70;
 		}
 
 		if (this.subIntroCounter >= MAX_COUNTER_SUBINTRO_VALUE) {
@@ -149,21 +150,21 @@ public class LogoIntroImpl implements LogoIntro {
 		g2d.setColor(Color.BLACK);
 
 		g2d.drawImage(this.logoPart1,
-				this.calcP1x,
+				(int)this.calcP1x,
 				this.logoPart1PositionY,
 				this.logoPart1.getWidth(),
 				this.logoPart1.getHeight(),
 				null);
 
 		g2d.drawImage(this.logoPart2,
-				this.calcP2x,
+				(int)this.calcP2x,
 				this.logoPart2PositionY,
 				this.logoPart2.getWidth(),
 				this.logoPart2.getHeight(),
 				null);
 
 		if (this.calcP2x == this.logoPart2PositionX) {
-			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, this.alpha1));
+			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)this.alpha1));
 			g2d.drawImage(this.logoPart3,
 					this.logoPart3PositionX,
 					this.logoPart3PositionY,
@@ -180,7 +181,7 @@ public class LogoIntroImpl implements LogoIntro {
 				if (this.scale4factor <= 7) {
 					g2d.drawImage(this.logoPart5,
 							this.logoPart5PositionX,
-							this.calcP5y,
+							(int)this.calcP5y,
 							this.logoPart5.getWidth(),
 							this.logoPart5.getHeight(),
 							null);
