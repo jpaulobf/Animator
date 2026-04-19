@@ -166,10 +166,9 @@ public class GameEngine implements Runnable {
 					}
 
 					while (System.nanoTime() < targetEnd) {
-						// onSpinWait é muito mais leve que yield para o processador
 						Thread.onSpinWait();
 					}
-					// Calcula o atraso real exato para compensar no próximo frame
+					// Calculate the real delay to compensate the next frame
 					overSleep = System.nanoTime() - targetEnd;
 				} else {
 					// We are behind schedule
