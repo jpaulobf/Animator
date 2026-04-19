@@ -2,6 +2,7 @@ package br.com.animator.core.engine;
 
 import java.text.DecimalFormat;
 import java.util.concurrent.locks.LockSupport;
+import br.com.animator.core.game.GameGlobals;
 import br.com.animator.core.game.IGame;
 
 /**
@@ -25,7 +26,7 @@ public class GameEngine implements Runnable {
 	private volatile int targetFPS;
 	private volatile long targetFrametime;
 	private volatile boolean running = false;
-
+	private volatile boolean isToCalc = true;
 	private volatile boolean storeStats = true;
 	private long frameCount = 0;
 	private long lastFrameCount = 0L;
@@ -126,6 +127,10 @@ public class GameEngine implements Runnable {
 				if (elapsed > MAX_DELTA_TIME)
 					elapsed = MAX_DELTA_TIME;
 
+				//--- set default game velocity
+				this.calcVelocity(elapsed);
+
+				//--- gameloop
 				this.gameUpdate(elapsed);
 				this.gameRender(elapsed);
 				this.paint();
@@ -137,6 +142,10 @@ public class GameEngine implements Runnable {
 				elapsed = now - lastTime;
 				lastTime = now;
 
+				//--- set default game velocity
+				this.calcVelocity(elapsed);
+
+				//--- gameloop
 				this.gameUpdate(elapsed);
 				this.gameRender(elapsed);
 				this.paint();
@@ -172,6 +181,11 @@ public class GameEngine implements Runnable {
 					// Frame Skipping: Limit skips per cycle to prevent extreme lag recovery
 					int skipsThisCycle = 0;
 					while ((overSleep >= currentTarget) && (skipsThisCycle < 2)) {
+
+						//--- set default game velocity
+						this.calcVelocity(currentTarget);
+
+						//--- gameloop
 						this.gameUpdate(currentTarget);
 						overSleep -= currentTarget;
 						skipsThisCycle++;
@@ -305,5 +319,13 @@ public class GameEngine implements Runnable {
 
 	public void stop() {
 		this.running = false;
+	}
+
+	public void calcVelocity(long currentTarget) {
+		GameGlobals.GAME_VELOCITY = (this.isToCalc)?currentTarget * GameGlobals.GAME_TARGET_VELOCITY:1;
+	}
+
+	public void setToCalc(boolean isToCalc) {
+		this.isToCalc = isToCalc;
 	}
 }
