@@ -35,6 +35,7 @@ public class GameEngine implements Runnable {
 	private volatile double averageFPS = 0.0;
 	private volatile double averageUPS = 0.0;
 	private long prevStatsTime = 0L;
+	private long nextStatsTime = 0L;
 	private double fpsStore[] = new double[STATS_BUFFER_SIZE];
 	private double upsStore[] = new double[STATS_BUFFER_SIZE];
 	private double totalFPSStore = 0.0;
@@ -42,7 +43,6 @@ public class GameEngine implements Runnable {
 	private long statsCount = 0;
 	private long framesSkipped = 0L;
 	private long totalFramesSkipped = 0L;
-	private boolean startStoreStats = false;
 
 	/**
 	 * Constructor
@@ -113,6 +113,7 @@ public class GameEngine implements Runnable {
 		long overSleep = 0;
 		this.running = true;
 		this.prevStatsTime = lastTime;
+		this.nextStatsTime = lastTime + FIRST_STATS_INTERVAL;
 
 		while (running) {
 			// Capture target frametime locally to ensure consistency during this iteration
@@ -241,25 +242,21 @@ public class GameEngine implements Runnable {
 	 */
 	private void storeStats(long timeNow) {
 		this.frameCount++;
+
+		if (timeNow < this.nextStatsTime) {
+			return;
+		}
+
 		long realElapsedTime = timeNow - this.prevStatsTime;
+		if (realElapsedTime <= 0) return;
 
-		// Uses initial intervals or the max_stats
-		long triggerInterval = startStoreStats ? MAX_STATS_INTERVAL : FIRST_STATS_INTERVAL;
+		// Calculate FPS and UPS using a multiplier to avoid multiple divisions
+		double invTime = 1_000_000_000.0 / realElapsedTime;
+		long framesInInterval = this.frameCount - this.lastFrameCount;
+		this.lastFrameCount = this.frameCount;
 
-		if (realElapsedTime >= triggerInterval) {
-			this.startStoreStats = true;
-
-			// Validation for zero time (edge case)
-			if (realElapsedTime <= 0)
-				return;
-
-			// Calculate how many frames occurred ONLY in this previous interval
-			long framesInInterval = this.frameCount - this.lastFrameCount;
-			this.lastFrameCount = this.frameCount;
-
-			// FPS and UPS based on real elapsed time in the interval
-			double actualFPS = (framesInInterval * 1_000_000_000.0) / realElapsedTime;
-			double actualUPS = ((framesInInterval + this.framesSkipped) * 1_000_000_000.0) / realElapsedTime;
+		double actualFPS = framesInInterval * invTime;
+		double actualUPS = (framesInInterval + this.framesSkipped) * invTime;
 
 			this.totalFramesSkipped += this.framesSkipped;
 
@@ -287,8 +284,8 @@ public class GameEngine implements Runnable {
 			// Reset interval data
 			this.framesSkipped = 0;
 			this.prevStatsTime = timeNow;
+			this.nextStatsTime = timeNow + MAX_STATS_INTERVAL;
 		}
-	}
 
 	/**
 	 * printStats - Thread-safe stats printing
