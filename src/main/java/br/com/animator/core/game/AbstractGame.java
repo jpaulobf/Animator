@@ -142,6 +142,7 @@ public abstract class AbstractGame implements IGame {
 
 	@Override
 	public void toggleFastForward(boolean active) {
+        this.gameEngine.setToCalc(!active);
 		this.setTargetFPS(active ? 0 : this.originalFPS);
 	}
 
