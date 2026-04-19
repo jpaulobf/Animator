@@ -4,6 +4,8 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+
+import br.com.animator.core.game.GameGlobals;
 import br.com.animator.core.game.IGame;
 import br.com.animator.input.GameAction;
 import br.com.animator.ui.advertise.DeveloperAdvertise;
@@ -15,7 +17,7 @@ import br.com.animator.util.ImageUtil;
 public class DeveloperAdvertiseImpl implements DeveloperAdvertise {
 
 	// --- Properties
-	private Integer mainCounter = 0;
+	private double mainCounter = 0;
 	private BufferedImage devLogo = null;
 	private Integer PWIDTH = null;
 	private Integer PHEIGHT = null;
@@ -46,7 +48,7 @@ public class DeveloperAdvertiseImpl implements DeveloperAdvertise {
 	 * @param frametime
 	 */
 	public void update(long frametime) {
-		this.mainCounter++;
+		this.mainCounter = this.mainCounter + (1d * GameGlobals.GAME_VELOCITY);
 		int factor = 60;
 
 		if (this.mainCounter <= MAX_COUNTER_VALUE) {
@@ -56,7 +58,7 @@ public class DeveloperAdvertiseImpl implements DeveloperAdvertise {
 				} else if (this.mainCounter > factor * 2.5 && this.mainCounter <= factor * 4) {
 					this.alpha = 1;
 				} else if (this.mainCounter > factor * 4 && this.mainCounter <= factor * 5) {
-					this.alpha = ((float) (100f / (float) factor) * (factor * 5f - this.mainCounter)) / 100f;
+					this.alpha = ((float) (100f / (float) factor) * (factor * 5f - (float)this.mainCounter)) / 100f;
 				}
 			}
 		}
