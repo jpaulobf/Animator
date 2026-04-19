@@ -3,6 +3,8 @@ package br.com.animator.game.ui.loading;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+
+import br.com.animator.core.game.GameGlobals;
 import br.com.animator.core.game.IGame;
 import br.com.animator.input.GameAction;
 import br.com.animator.ui.loading.Loading;
@@ -14,7 +16,7 @@ import br.com.animator.util.ImageUtil;
 public class LoadingImpl implements Loading {
 
 	// --- Properties
-	private Integer loadingCounter = 0;
+	private double loadingCounter = 0;
 	private BufferedImage loading1 = null;
 	private BufferedImage loading2 = null;
 	private BufferedImage loading3 = null;
@@ -85,7 +87,7 @@ public class LoadingImpl implements Loading {
 	}
 
 	public void update(long frametime) {
-		this.loadingCounter = (this.loadingCounter + 2) % 400;
+		this.loadingCounter = (this.loadingCounter + (2d * GameGlobals.GAME_VELOCITY)) % 400;
 		if (this.loadingCounter >= 0 && this.loadingCounter < 100) {
 			this.currentStatus = 0;
 		} else if (this.loadingCounter >= 100 && this.loadingCounter < 200) {
