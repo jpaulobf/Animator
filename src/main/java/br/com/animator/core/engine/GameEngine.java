@@ -1,6 +1,7 @@
 package br.com.animator.core.engine;
 
 import java.text.DecimalFormat;
+import java.util.concurrent.locks.LockSupport;
 import br.com.animator.core.game.IGame;
 
 /**
@@ -10,6 +11,7 @@ import br.com.animator.core.game.IGame;
 public class GameEngine implements Runnable {
 
 	// --- Constants ---//
+	private static final long MAX_ACCUMULATED_LAG = 1_000_000_000L; // 1 second cap
 	private static final long MAX_DELTA_TIME = 100_000_000L; // 100ms cap for delta time
 	private static final long SLEEP_BUFFER = 500_000L; // 0.5ms sleep buffer
 	private static final int STATS_BUFFER_SIZE = 10; // Circular buffer size for statistics
@@ -51,6 +53,17 @@ public class GameEngine implements Runnable {
 		this.game = game;
 		this.targetFPS = targetFPS;
 		this.targetFrametime = getTargetFrametime(this.targetFPS);
+
+		// Add high resolution timer mode
+		Thread timerResolutionDaemon = new Thread(() -> {
+			try {
+				Thread.sleep(Long.MAX_VALUE);
+			} catch (InterruptedException ignored) {
+			}
+		}, "TimerResolutionTrigger");
+		timerResolutionDaemon.setDaemon(true);
+		timerResolutionDaemon.start();
+
 		this.startEngine();
 	}
 
@@ -69,6 +82,7 @@ public class GameEngine implements Runnable {
 
 	/**
 	 * Dynamically updates the target FPS.
+	 * 
 	 * @param fps The new target FPS (0 or negative for unlimited)
 	 */
 	public void setTargetFPS(int fps) {
@@ -109,15 +123,13 @@ public class GameEngine implements Runnable {
 				elapsed = now - lastTime;
 				lastTime = now;
 
-				if (elapsed > MAX_DELTA_TIME) elapsed = MAX_DELTA_TIME;
+				if (elapsed > MAX_DELTA_TIME)
+					elapsed = MAX_DELTA_TIME;
 
 				this.gameUpdate(elapsed);
 				this.gameRender(elapsed);
 				this.paint();
 
-				// onSpinWait() to optimize the cpu thread.
-				Thread.onSpinWait();
-				
 				overSleep = 0; // Reset compensation when in unlimited
 			} else {
 				// --- FIXED FPS MODE ---
@@ -136,24 +148,26 @@ public class GameEngine implements Runnable {
 				wait = currentTarget - workTime - overSleep;
 
 				if (wait > 0) {
-					try {
-						long sleepBuffer = Math.max(SLEEP_BUFFER, wait / 10); // Adaptive buffer
-						long sleepMs = (wait - sleepBuffer) / 1_000_000;
+					long targetEnd = now + currentTarget - overSleep;
+					long nanosToPark = wait - SLEEP_BUFFER;
 
-						if (sleepMs > 0) {
-							Thread.sleep(sleepMs);
-						}
-
-						while (System.nanoTime() < now + currentTarget - overSleep) {
-							Thread.yield();
-						}
-						overSleep = 0;
-					} catch (InterruptedException e) {
-						Thread.currentThread().interrupt();
+					if (nanosToPark > 0) {
+						LockSupport.parkNanos(nanosToPark);
 					}
+
+					while (System.nanoTime() < targetEnd) {
+						// onSpinWait é muito mais leve que yield para o processador
+						Thread.onSpinWait();
+					}
+					// Calcula o atraso real exato para compensar no próximo frame
+					overSleep = System.nanoTime() - targetEnd;
 				} else {
 					// We are behind schedule
 					overSleep = -wait;
+					
+					// Cap accumulated lag to prevent "spiral of death" after long pauses
+					if (overSleep > MAX_ACCUMULATED_LAG) 
+						overSleep = MAX_ACCUMULATED_LAG;
 
 					// Frame Skipping: Limit skips per cycle to prevent extreme lag recovery
 					int skipsThisCycle = 0;
@@ -172,7 +186,7 @@ public class GameEngine implements Runnable {
 		}
 
 		this.printStats();
-		System.exit(0);	
+		System.exit(0);
 	}
 
 	/**
@@ -208,6 +222,7 @@ public class GameEngine implements Runnable {
 	/**
 	 * Store the game statistics in the Stats Store to calculate the average FPS and
 	 * UPS.
+	 * 
 	 * @param timeNow The current time in nanoseconds already captured in the loop.
 	 */
 	private void storeStats(long timeNow) {
