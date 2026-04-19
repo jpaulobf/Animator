@@ -3,6 +3,7 @@ package br.com.animator.game.ui.intro;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import br.com.animator.core.game.GameGlobals;
 import br.com.animator.core.game.IGame;
 import br.com.animator.input.GameAction;
 import br.com.animator.ui.intro.GameIntro;
@@ -36,8 +37,8 @@ public class GameIntroImpl implements GameIntro {
 	private Integer transBasePositionWidth = null;
 	private Integer transBasePositionHeight = null;
 	private volatile boolean introFinished = false;
-	private float calcText1y = 0f;
-	private float calcText2y = 0f;
+	private double calcText1y = 0f;
+	private double calcText2y = 0f;
 
 	/**
 	 * Constructor
@@ -76,7 +77,7 @@ public class GameIntroImpl implements GameIntro {
 	 * Update the intro logic. This method is called by the game loop.
 	 */
 	public void update(long deltaTime) {
-		float textSpeedy = 1f;
+		double textSpeedy = 1d * GameGlobals.GAME_VELOCITY;
 
 		if (this.calcText1y < this.introText1PositionY) {
 			this.calcText1y = this.calcText1y + textSpeedy;
