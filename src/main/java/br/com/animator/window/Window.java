@@ -49,7 +49,7 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 	private final Object dimensionLock = new Object();
 	private volatile boolean fullScreen = FULLSCREEN;
 	private volatile boolean isTransitioning = false;
-	private volatile FullscreenType fullscreenType = FullscreenType.BORDERLESS_FULLSCREEN;
+	private volatile FullscreenType fullscreenType = FullscreenType.EXCLUSIVE_FULLSCREEN;
 	private GraphicsDevice graphicsDevice = null;
 	private Canvas gameCanvas = null;
 	private volatile Integer panelWidth = null;
@@ -179,9 +179,12 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 					(int) ((Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 2) - (CURRENT_WINDOW_WIDTH / 2)),
 					(int) ((Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2) - (CURRENT_WINDOW_HEIGHT / 2)
 							- 20));
+			
+		
+
 			this.pack();
 			this.add(gameCanvas);
-
+			this.initializeCanvasBufferStrategy();
 			super.addWindowListener(this);
 			this.addKeyListener(this);
 			this.addMouseListener(this);
@@ -238,8 +241,10 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 			return (GlobalProperties.ASPECT_RATIO_4_3);
 		} else if (ratio == ((double) 16 / (double) 10)) {
 			return (GlobalProperties.ASPECT_RATIO_16_10);
-		} else {
+		} else if (ratio == ((double) 16 / (double) 9)) {
 			return (GlobalProperties.ASPECT_RATIO_16_9);
+		} else {
+			throw new IllegalArgumentException("Invalid aspect ratio: " + ratio);
 		}
 	}
 
@@ -288,7 +293,7 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
 	 */
 	public void initializeCanvasBufferStrategy() {
 		if (!this.gameCanvas.isDisplayable()) {
-			return; // Evita "Component must have a valid peer"
+			return;
 		}
 		try {
 			boolean multiBufferAvailable = true;
