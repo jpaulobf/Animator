@@ -1,165 +1,29 @@
-# 🎮 Animator Engine - Java2D Game Framework
+# Animator Engine - Java2D Game Framework
 
-> A **production-ready, Maven-based Java2D game framework** designed for creating full-featured 2D games with minimal boilerplate. Built with clean architecture patterns, extensive configuration options, and comprehensive tooling.
+Animator Engine is a Maven-based Java2D framework designed for creating 2D games with minimal boilerplate, focusing on clean architecture and high performance.
 
-## 📋 Table of Contents
+## Documentation Index
 
-1. [Overview](#overview)
-2. [Key Features](#key-features)
-3. [Architecture](#architecture)
-4. [Quick Start](#quick-start)
-5. [Project Structure](#project-structure)
-6. [Core Components](#core-components)
-7. [Configuration](#configuration)
-8. [Game Development Workflow](#game-development-workflow)
-9. [Usage Examples](#usage-examples)
-10. [Creating New Games](#creating-new-games)
-11. [Performance Notes](#performance-notes)
-12. [Contributing](#contributing)
+Detailed information is organized into specific files:
 
----
+- **[INSTRUCTIONS.md](documentation/INSTRUCTIONS.md)**: Features, Architecture, Components, and Configuration.
+- **[CHANGELOG.md](CHANGELOG.md)**: Version history and recent changes.
+- **[START_HERE.md](documentation/START_HERE.md)**: Main orientation guide.
+- **[TEMPLATE_NEW_GAME.md](documentation/TEMPLATE_NEW_GAME.md)**: Step-by-step guide to creating a new game.
 
-## 🎯 Overview
+## Prerequisites
 
-**Animator Engine** is a comprehensive Java2D game framework that abstracts common game development tasks while maintaining flexibility and control. It's designed to be:
+* Java 14 or higher
+* OpenGL compatible drivers (for OpenAL)
+* Maven 3.6 or higher
 
-- **Framework**: Reusable base for multiple games
-- **Configurable**: Runtime properties without code changes
-- **Extensible**: Clean interfaces for custom implementations
-- **Production-Ready**: Professional architecture patterns included
-- **Maven-Based**: Easy dependency management and distribution
-
-### Use Cases
-
-✅ Create 2D puzzle games
-✅ Build platformers
-✅ Develop action/arcade games
-✅ Create turn-based strategy games
-✅ Prototype new game ideas quickly
-✅ Build educational games
-
----
-
-## ✨ Key Features
-
-### 🎮 Core Game Loop
-- **Fast Forward Mode**: Toggle unlimited FPS instantly by holding the **TAB** key for rapid testing or gameplay acceleration.
-- Professional game engine with configurable frame rates
-- Fixed timestep physics support
-- Input handling (keyboard + mouse)
-- Anti-aliasing and rendering optimization
-
-### 🎨 Graphics & Rendering
-- Hardware-accelerated Swing rendering
-- Double-buffering for flicker-free graphics
-- Fullscreen and windowed modes
-- Multiple color depth support (16-bit, 24-bit, 32-bit)
-- **Hardware-Accelerated Image Caching**: Integrated `ImageManager` for optimized asset storage.
-- **Bootstrap & Background Loading**: Non-blocking resource loading system with support for splash screens and progress tracking.
-- Rendering optimization with automatic `GraphicsConfiguration` compatibility.
-
-### 🎵 Audio System
-- **Hardware-accelerated OGG support** via LWJGL (OpenAL & STB)
-- Real-time volume control (0% to 100%)
-- Mute/unmute and Looping functionality
-- High-performance decoding for Music and SFX
-
-### 🎮 Input Handling
-- Configurable keyboard input
-- Mouse support (position, buttons, clicks)
-- Key state tracking
-- Alt+Tab blocking (optional)
-
-### 🎯 Game State Management
-- **Centralized Asset Management**: `LoadResources` class for easy registration of all game assets (Images, SFX, Music).
-- **Decoupled Architecture**: Clean separation between resource loading (Managers) and resource usage (Utils).
-- Finite State Machine pattern
-- Professional state transitions
-- Intro screens, menus, gameplay, pause, game over
-- Extensible state interface
-
-### 📱 UI Components
-- Main menu with customizable options
-- Options/settings screen (graphics, sound, gameplay)
-- Graphics settings (resolution, color depth, fullscreen)
-- Sound settings (volume control, muting)
-- Score display and high score tracking
-- Pause menu functionality
-
-### ⚙️ Configuration System
-- Runtime editable `config.ini`
-- Boolean flags for feature toggles
-- Easy customization without recompilation
-- Persistent settings saved to disk
-
-### 🏭 Factory Pattern
-- CoreGameFactory for creating game components
-- Decoupled from specific implementations
-- Easy to extend and customize
-
----
-
-## 🏗️ Architecture
-
-### Design Patterns Used
-
-| Pattern | Where | Purpose |
-|---------|-------|----------|
-| **Factory** | `CoreGameFactory` | Create game components |
-| **State Machine** | `GameStateMachine` | Manage game states |
-| **Manager/Cache** | `ImageManager` & `AudioManager` | Asset caching and hardware optimization |
-| **Bootstrap** | `LoadResources` | Two-stage resource initialization |
-| **Strategy** | `Game` implementations | Different game behaviors |
-| **Singleton** | `GameConfig` | Single configuration instance |
-| **Template Method** | `AbstractGame` | Standard game structure |
-| **Observer** | Mouse/Keyboard handlers | Input event handling |
-
-### Layered Architecture
-
-```
-┌─────────────────────────────────────┐
-│     Game Implementation             │  Your custom game logic
-├─────────────────────────────────────┤
-│     Game Framework (AbstractGame)   │  Base class with game loop
-├─────────────────────────────────────┤
-│     Resource Management Layer       │  ImageManager, AudioManager, LoadResources
-├─────────────────────────────────────┤
-│     Game Engine (GameEngine)        │  Core loop, timing, rendering
-├─────────────────────────────────────┤
-│     Window Management (Window)      │  Fullscreen, resolution, modes
-├─────────────────────────────────────┤
-│     Input Handling (Keyboard/Mouse) │  User input processing
-├─────────────────────────────────────┤
-│     UI Components & State Machine   │  Menus, options, screens
-├─────────────────────────────────────┤
-│     Configuration System            │  Runtime settings
-└─────────────────────────────────────┘
-```
-
----
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-```bash
-# Required
-Java 14 or higher
-OpenGL compatible drivers (for OpenAL)
-Maven 3.6 or higher
-
-# Verify installation
-java -version
-mvn --version
-```
-
-### Build the Framework
+## Build and Install
 
 ```bash
 # Clean, compile, and package
 mvn clean package
 
-# Install locally for use in other projects
+# Install to local Maven repository
 mvn install
 ```
 
@@ -177,7 +41,7 @@ Quick summary:
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 animator-engine/
@@ -237,7 +101,7 @@ animator-engine/
 
 ---
 
-## 🔩 Core Components
+## Core Components
 
 ### GameEngine
 The heart of the framework. Manages:
@@ -300,7 +164,7 @@ Singleton configuration holder:
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 
 ### config.ini Format
 
@@ -329,137 +193,7 @@ graphics.setColorDepth(DeepColor.BIT_32);
 graphics.setScreenMode(ScreenMode.FULLSCREEN);
 ```
 
----
-
-## 🎮 Game Development Workflow
-
-### Step 1: Extend AbstractGame
-```java
-public class MyGame extends AbstractGame {
-    @Override
-    public void handleInput(Game game, int keyCode, boolean isAltDown) {
-        // Process keyboard input
-    }
-    
-    @Override
-    public void updateGame() {
-        // Update game logic (called ~60x per second)
-    }
-    
-    @Override
-    public void drawGame(Graphics2D g) {
-        // Render graphics
-    }
-}
-```
-
-### Step 2: Create Launcher
-```java
-public class MyGameLauncher extends Launcher {
-    public static void main(String[] args) {
-        new MyGameLauncher();
-    }
-}
-```
-
-### Step 3: Configure pom.xml
-```xml
-<dependency>
-    <groupId>br.com.game</groupId>
-    <artifactId>animator-engine</artifactId>
-    <version>1.0.0</version>
-</dependency>
-```
-
-### Step 4: Build & Run
-```bash
-mvn clean package
-java -jar target/my-game-1.0.0.jar
-```
-
----
-
-## 💡 Usage Examples
-
-### Example 1: Simple Input Handling
-```java
-@Override
-public void handleInput(Game game, int keyCode, boolean isAltDown) {
-    if (keyCode == KeyEvent.VK_LEFT) {
-        playerX -= 5;
-    } else if (keyCode == KeyEvent.VK_RIGHT) {
-        playerX += 5;
-    }
-}
-```
-
-### Example 2: Game State Updates
-```java
-@Override
-public void updateGame() {
-    // Update positions
-    playerY += velocity;
-    
-    // Check collisions
-    if (checkCollision(playerX, playerY)) {
-        // Handle collision
-    }
-    
-    // Update score
-    score++;
-}
-```
-
-### Example 3: Graphics Rendering
-```java
-@Override
-public void drawGame(Graphics2D g) {
-    // Clear background
-    g.setColor(Color.BLACK);
-    g.fillRect(0, 0, screenWidth, screenHeight);
-    
-    // Draw player
-    g.setColor(Color.WHITE);
-    g.fillRect(playerX, playerY, 32, 32);
-    
-    // Draw score
-    g.setFont(new Font("Arial", Font.BOLD, 20));
-    g.drawString("Score: " + score, 10, 30);
-}
-```
-
-### Example 4: Sound Effects
-```java
-public void playSound() {
-    GameSoundOptions soundOptions = GameConfig.getInstance()
-        .getGameSoundOptions();
-    if (!soundOptions.isMuted()) {
-        // Play sound effect
-    }
-}
-```
-
----
-
-## 🎮 Creating New Games
-
-**Complete guide: [TEMPLATE_NEW_GAME.md](TEMPLATE_NEW_GAME.md)**
-
-Minimal 10-step process:
-1. Setup Maven project
-2. Add animator-engine dependency
-3. Create game class extending AbstractGame
-4. Create launcher extending Launcher
-5. Implement game logic (3 methods)
-6. Add resources (images, sounds, config)
-7. Build with Maven
-8. Test locally
-9. Package as JAR
-10. Share or publish
-
----
-
-## ⚡ Performance Notes
+## Performance Notes
 
 ### Benchmarks
 - **Frame Rate**: 60 FPS target (configurable)
@@ -482,7 +216,7 @@ Minimal 10-step process:
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 ### Code Style
 - Follow Google Java Style Guide
@@ -504,7 +238,7 @@ Minimal 10-step process:
 
 ---
 
-## 📚 Documentation Index
+## Documentation Index
 
 | Document | Purpose |
 |----------|----------|
@@ -520,7 +254,7 @@ Minimal 10-step process:
 
 ---
 
-## 📞 Support
+## Support
 
 ### Common Questions
 
@@ -538,13 +272,13 @@ A: Java 14+. Java 17 LTS, Java 21 LTS recommended.
 
 ---
 
-## 📄 License
+## License
 
 This project is provided as-is for educational and commercial game development.
 
 ---
 
-## 🚀 Version History
+## Version History
 
 See [CHANGELOG.md](CHANGELOG.md) for complete version history and improvements.
 
@@ -552,4 +286,4 @@ See [CHANGELOG.md](CHANGELOG.md) for complete version history and improvements.
 
 **Last Updated:** April 2026
 **Framework Version:** 1.0.0
-**Status:** ✅ Production Ready
+**Status:** Production Ready
