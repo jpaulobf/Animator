@@ -6,7 +6,7 @@ Animator Engine is a Maven-based Java2D framework designed for creating 2D games
 
 Detailed information is organized into specific files:
 
-- **[INSTRUCTIONS.md](documentation/INSTRUCTIONS.md)**: Features, Architecture, Components, and Configuration.
+- **[INSTRUCTIONS.md](INSTRUCTIONS.md)**: Features, Architecture, Components, and Configuration.
 - **[CHANGELOG.md](CHANGELOG.md)**: Version history and recent changes.
 - **[START_HERE.md](documentation/START_HERE.md)**: Main orientation guide.
 - **[TEMPLATE_NEW_GAME.md](documentation/TEMPLATE_NEW_GAME.md)**: Step-by-step guide to creating a new game.
