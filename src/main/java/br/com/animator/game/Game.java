@@ -26,7 +26,6 @@ public class Game extends AbstractGame {
      * dimensions and aspect ratio.
      */
     public void init() {
-        this.gameWindow = this.getGameWindow();
         this.gameStateMachine = new GameStateMachine();
         this.gameExitMenu = new GameExitMenuImpl(
             gameWindow.getPanelWidth(), 
