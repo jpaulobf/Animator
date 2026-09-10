@@ -5,11 +5,13 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+
 import javax.swing.JOptionPane;
+
 import br.com.animator.audio.AudioManager;
 import br.com.animator.core.engine.GameEngine;
-import br.com.animator.game.factory.CoreGameFactory;
 import br.com.animator.game.LoadResources;
+import br.com.animator.game.factory.CoreGameFactory;
 import br.com.animator.input.ButtonMapper;
 import br.com.animator.input.GameAction;
 import br.com.animator.state.GameStateMachine;
@@ -20,177 +22,185 @@ import br.com.animator.window.renderer.RendererFactory;
 
 /**
  * AbstractGame - Abstract class that implements the IGame interface and
- * provides common functionality for all games.
- * This class is responsible for managing the game loop, handling the game
- * window, and providing methods for pausing, resuming, and stopping the game.
- * It also defines abstract methods for updating the game state, rendering the
- * game, and handling key presses, which must be implemented by any
- * concrete game class that extends this abstract class.
+ * provides common functionality for all games. This class is responsible for
+ * managing the game loop, handling the game window, and providing methods for
+ * pausing, resuming, and stopping the game. It also defines abstract methods
+ * for updating the game state, rendering the game, and handling key presses,
+ * which must be implemented by any concrete game class that extends this
+ * abstract class.
  */
 public abstract class AbstractGame implements IGame {
 
-	//--- Constants ---//
+    //--- Constants ---//
     private static final String FS_ERROR_TITLE = "Error changing fullscreen mode";
-    private static final String FS_ERROR_MESSAGE = "Failed to initialize in FullScreen mode.\n" +
-                                                   "Try changing the video mode in Game-Options.";
+    private static final String FS_ERROR_MESSAGE = """
+                                                   Failed to initialize in FullScreen mode.
+                                                   Try changing the video mode in Game-Options.""";
 
-	// --- Properties ---//
-	protected Graphics2D graphics2D = null;
-	protected BufferedImage mainBuffer = null;
-	protected Window gameWindow = null;
-	protected GameEngine gameEngine = null;
-	protected Renderer renderer = null;
-	protected volatile boolean running = false;
-	protected volatile boolean gameOver = false;
-	protected volatile boolean isPaused = false;
-	protected volatile boolean loading = false;
-	protected volatile boolean isToShowFPS = true;
-	protected int originalFPS = 60;
+    // --- Properties ---//
+    protected Graphics2D graphics2D = null;
+    protected BufferedImage mainBuffer = null;
+    protected Window gameWindow = null;
+    protected GameEngine gameEngine = null;
+    protected Renderer renderer = null;
+    protected volatile boolean running = false;
+    protected volatile boolean gameOver = false;
+    protected volatile boolean isPaused = false;
+    protected volatile boolean loading = false;
+    protected volatile boolean isToShowFPS = true;
+    protected int originalFPS = 60;
 
-	//--- Properties ---//
+    //--- Properties ---//
     protected CoreGameLogic currentCoreGame;
     protected GameStateMachine gameStateMachine;
     protected GameExitMenu gameExitMenu;
 
-	/**
-	 * Constructor
-	 */
-	public AbstractGame() {
-		// do nothing
-	}
+    /**
+     * Constructor
+     */
+    public AbstractGame() {
+        // do nothing
+    }
 
-	public void startGame() {
-		this.startGame(60);
-	}
+    @Override
+    public void startGame() {
+        this.startGame(60);
+    }
 
-	public void startGame(int fps) {
-		this.originalFPS = fps;
+    @Override
+    public void startGame(int fps) {
+        this.originalFPS = fps;
 
         //keep the scale avoiding SO changements.
-		System.setProperty("sun.java2d.uiScale", "1.0");
+        System.setProperty("sun.java2d.uiScale", "1.0");
 
-		this.gameWindow = new Window(this);
+        this.gameWindow = new Window(this);
 
-		// Initialize the renderer based on configuration
-		this.renderer = RendererFactory.createRenderer();
+        // Initialize the renderer based on configuration
+        this.renderer = RendererFactory.createRenderer();
 
-		// Configure visibility and native peer before init
-		if (this.renderer.isNative()) {
-			if (this.gameWindow.isFullScreen()) {
-				this.gameWindow.setFullScreen();
-			} else {
-				this.gameWindow.setVisible(true);
-			}
-		} else {
-			this.gameWindow.addNotify();
-			int w = gameWindow.getPanelWidth();
-			int h = gameWindow.getPanelHeight();
-			this.mainBuffer = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-			this.graphics2D = this.mainBuffer.createGraphics();
-		}
+        // Configure visibility and native peer before init
+        if (this.renderer.isNative()) {
+            if (this.gameWindow.isFullScreen()) {
+                this.gameWindow.setFullScreen();
+            } else {
+                this.gameWindow.setVisible(true);
+            }
+        } else {
+            this.gameWindow.addNotify();
+            int w = gameWindow.getPanelWidth();
+            int h = gameWindow.getPanelHeight();
+            this.mainBuffer = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+            this.graphics2D = this.mainBuffer.createGraphics();
+        }
 
-		// Load the basics (bootstrap)
-		LoadResources.loadBootstrap();
+        // Load the basics (bootstrap)
+        LoadResources.loadBootstrap();
 
-		// Initiate the logical state
-		this.init();
+        // Initiate the logical state
+        this.init();
 
         // Set initial state to loading...
-		this.loading();
-        
-		// Start the render loop
-		this.renderer.init(this.gameWindow);
-		this.gameEngine = new GameEngine(this, fps);
+        this.loading();
 
-		// Start a separated Thread to load the resources in background
-		new Thread(() -> {
-			try {
-				LoadResources.loadAllImages();
-				LoadResources.loadAllSFX();
-				LoadResources.loadAllMusics();
-			} catch (Exception e) {
-				System.err.println("Could not load resources: " + e.getMessage());
-			} finally {
-				this.loadingDone();
-			}
-		}, "ResourceLoaderThread").start();
-	}
+        // Start the render loop
+        this.renderer.init(this.gameWindow);
+        this.gameEngine = new GameEngine(this, fps);
 
-	public abstract void init();
+        // Start a separated Thread to load the resources in background
+        new Thread(() -> {
+            try {
+                LoadResources.loadAllImages();
+                LoadResources.loadAllSFX();
+                LoadResources.loadAllMusics();
+            } catch (Exception e) {
+                System.err.println("Could not load resources: " + e.getMessage());
+            } finally {
+                this.loadingDone();
+            }
+        }, "ResourceLoaderThread").start();
+    }
 
-	/**
-	 * paintScreen - Paint the buffer to the screen using the configured renderer.
-	 */
-	public void paintScreen() {
-		if (renderer == null) {
-			return;
-		}
+    public abstract void init();
 
-		try {
-			renderer.render(this.graphics2D);
-		} catch (Exception e) {
-			this.running = false;
-		}
-	}
+    /**
+     * paintScreen - Paint the buffer to the screen using the configured
+     * renderer.
+     */
+    @Override
+    public void paintScreen() {
+        if (renderer == null) {
+            return;
+        }
 
-	@Override
-	public void setTargetFPS(int fps) {
-		if (this.gameEngine != null) {
-			this.gameEngine.setTargetFPS(fps);
-		}
-	}
+        try {
+            renderer.render(this.graphics2D);
+        } catch (Exception e) {
+            this.running = false;
+        }
+    }
 
-	@Override
-	public void toggleFastForward(boolean active) {
+    @Override
+    public void setTargetFPS(int fps) {
+        if (this.gameEngine != null) {
+            this.gameEngine.setTargetFPS(fps);
+        }
+    }
+
+    @Override
+    public void toggleFastForward(boolean active) {
         this.gameEngine.setToCalc(!active);
-		this.setTargetFPS(active ? 0 : this.originalFPS);
-	}
+        this.setTargetFPS(active ? 0 : this.originalFPS);
+    }
 
-	/**
-	 * Pause the game.
-	 */
-	public void pauseGame() {
-		this.isPaused = true;
-	}
+    /**
+     * Pause the game.
+     */
+    @Override
+    public void pauseGame() {
+        this.isPaused = true;
+    }
 
-	/**
-	 * Resume the game.
-	 */
-	public void resumeGame() {
-		this.isPaused = false;
-	}
+    /**
+     * Resume the game.
+     */
+    @Override
+    public void resumeGame() {
+        this.isPaused = false;
+    }
 
-	/**
-	 * Stop the game.
-	 */
-	public void stopGame() {
-		if (renderer != null) {
-			renderer.dispose();
-		}
-		AudioManager.cleanup();
-		gameEngine.stop();
-	}
+    /**
+     * Stop the game.
+     */
+    @Override
+    public void stopGame() {
+        if (renderer != null) {
+            renderer.dispose();
+        }
+        AudioManager.cleanup();
+        gameEngine.stop();
+    }
 
-	public Window getGameWindow() {
-		return gameWindow;
-	}
+    public Window getGameWindow() {
+        return gameWindow;
+    }
 
-	public BufferedImage getMainBuffer() {
-		return mainBuffer;
-	}
+    @Override
+    public BufferedImage getMainBuffer() {
+        return mainBuffer;
+    }
 
-	/**
-	 * Get the current renderer instance.
-	 * Useful for subclasses or other components that need direct renderer access.
-	 * 
-	 * @return The Renderer instance
-	 */
-	public Renderer getRenderer() {
-		return renderer;
-	}
+    /**
+     * Get the current renderer instance. Useful for subclasses or other
+     * components that need direct renderer access.
+     *
+     * @return The Renderer instance
+     */
+    public Renderer getRenderer() {
+        return renderer;
+    }
 
-
-	/**
+    /**
      * Updates the current core game instance based on state machine.
      * Centralizes the factory call to reduce duplication.
      */
@@ -198,21 +208,22 @@ public abstract class AbstractGame implements IGame {
         this.currentCoreGame = CoreGameFactory.getInstance(this.gameStateMachine, this.gameWindow);
     }
 
-	/**
+    /**
      * Draws the FPS/UPS overlay on the screen.
      */
     protected void drawFPSOverlay(Graphics2D g2d) {
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
         g2d.setColor(Color.RED);
-        String fpsText = String.format("Média de FPS / UPS: %d / %d", 
-            (int) gameEngine.getAverageFPS(), 
-            (int) gameEngine.getAverageUPS());
+        String fpsText = String.format("Média de FPS / UPS: %d / %d",
+                (int) gameEngine.getAverageFPS(),
+                (int) gameEngine.getAverageUPS());
         g2d.drawString(fpsText, 10, 20);
     }
 
-	/**
+    /**
      * Updates the game settings based on the current state of the game window.
      */
+    @Override
     public void updateGameSettings(boolean isFullScreen, Integer pWIDTH, Integer pHEIGHT) {
         // Validate parameters
         if (pWIDTH == null || pWIDTH <= 0 || pHEIGHT == null || pHEIGHT <= 0) {
@@ -231,7 +242,7 @@ public abstract class AbstractGame implements IGame {
         }
     }
 
-	/**
+    /**
      * Toggles the pause state.
      */
     protected void togglePause() {
@@ -242,7 +253,7 @@ public abstract class AbstractGame implements IGame {
         }
     }
 
-	/**
+    /**
      * Handles fullscreen toggle via Alt+Enter.
      */
     protected void handleFullscreenToggle() {
@@ -265,13 +276,14 @@ public abstract class AbstractGame implements IGame {
         }
     }
 
-	/**
-	 * Handle with the System Shortcuts
-	 * @param keyCode
-	 * @param isAltDown
-	 * @return
-	 */
-	protected boolean handleSystemShortcuts(int keyCode, boolean isAltDown) {
+    /**
+     * Handle with the System Shortcuts
+     *
+     * @param keyCode
+     * @param isAltDown
+     * @return
+     */
+    protected boolean handleSystemShortcuts(int keyCode, boolean isAltDown) {
         if (isAltDown && keyCode == KeyEvent.VK_F4 && canShowExitMenu()) {
             gameExitMenu.showExitMenu();
             return true;
@@ -283,17 +295,18 @@ public abstract class AbstractGame implements IGame {
         return false;
     }
 
-	/**
+    /**
      * Checks if the exit menu can be shown.
      */
     private boolean canShowExitMenu() {
         return !gameStateMachine.isInIntroDev() && !gameStateMachine.isInOptions();
     }
 
-	/**
-     * loading - Set the loading flag to true, indicating that the game is currently
-     * loading resources or performing some initialization tasks.
+    /**
+     * loading - Set the loading flag to true, indicating that the game is
+     * currently loading resources or performing some initialization tasks.
      */
+    @Override
     public void loading() {
         gameStateMachine.setLoadingState();
         updateCurrentCoreGame();
@@ -304,6 +317,7 @@ public abstract class AbstractGame implements IGame {
      * loadingDone - Set the loading flag to false, indicating that the game has
      * finished loading resources or initialization tasks.
      */
+    @Override
     public void loadingDone() {
         gameStateMachine.unloadState();
         updateCurrentCoreGame();
@@ -317,7 +331,7 @@ public abstract class AbstractGame implements IGame {
         gameExitMenu.showExitMenu();
     }
 
-	/**
+    /**
      * Handles logical actions when exit menu is visible.
      */
     protected void handleExitMenuAction(GameAction action) {
@@ -326,61 +340,87 @@ public abstract class AbstractGame implements IGame {
 
     /**
      * Process Keyboards keys-pressed
+     *
      * @param keyCode
      * @param isAltDown
      */
-	public void processKey(int keyCode, boolean isAltDown) {
+    @Override
+    public void processKey(int keyCode, boolean isAltDown) {
         GameAction action = ButtonMapper.getKeyboardAction(keyCode);
         if (gameExitMenu.isShowingExitMenu()) {
-            if (action != null) gameExitMenu.handleInput(this, action);
+            if (action != null) {
+                gameExitMenu.handleInput(this, action);
+            }
             return;
         }
 
         // Atalhos de Sistema (Não mapeados em GameAction)
-        if (handleSystemShortcuts(keyCode, isAltDown)) return;
-
-        if (action != null)
-            this.keyPressed(action);
-	}
-
-    /**
-     * Process Joystick buttons-pressed
-     * @param joystickId
-     * @param buttonCode
-     */
-    public void processJoystickButton(int joystickId, int buttonCode) {
-        GameAction action = ButtonMapper.getJoystickAction(buttonCode);
-        if (gameExitMenu.isShowingExitMenu()) {
-            if (action != null) gameExitMenu.handleInput(this, action);
+        if (handleSystemShortcuts(keyCode, isAltDown)) {
             return;
         }
 
-        if (action != null)
+        if (action != null) {
+            this.keyPressed(action);
+        }
+    }
+
+    /**
+     * Process Joystick buttons-pressed
+     *
+     * @param joystickId
+     * @param buttonCode
+     */
+    @Override
+    public void processJoystickButton(int joystickId, int buttonCode) {
+        GameAction action = ButtonMapper.getJoystickAction(buttonCode);
+        if (gameExitMenu.isShowingExitMenu()) {
+            if (action != null) {
+                gameExitMenu.handleInput(this, action);
+            }
+            return;
+        }
+
+        if (action != null) {
             this.joystickButtonPressed(action);
+        }
     }
 
     /**
      * Process Joystick hat-moved
+     *
      * @param joystickId
      * @param hatId
      * @param state
      */
+    @Override
+    @SuppressWarnings("empty-statement")
     public void processJoystickHat(int joystickId, int hatId, byte state) {
-        if (state == 0) return;
+        if (state == 0) {
+            return;
+        }
         GameAction action = ButtonMapper.getHatAction(state);
         if (gameExitMenu.isShowingExitMenu()) {
-            if (action != null) gameExitMenu.handleInput(this, action);;
+            if (action != null) {
+                gameExitMenu.handleInput(this, action);
+            };
             return;
         }
 
-        if (action != null)
+        if (action != null) {
             this.joystickHatMoved(action);
+        }
     }
 
     // --- Abstract Methods ---//
-	public abstract void update(long frametime);
-	public abstract void render(long delta);
+    @Override
+    public abstract void update(long frametime);
+
+    @Override
+    public abstract void render(long delta);
+
     public abstract void joystickButtonPressed(GameAction action);
+
     public abstract void joystickHatMoved(GameAction action);
+
     public abstract void keyPressed(GameAction action);
 }
