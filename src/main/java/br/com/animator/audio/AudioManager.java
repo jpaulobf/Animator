@@ -1,10 +1,5 @@
 package br.com.animator.audio;
 
-import org.lwjgl.openal.AL;
-import org.lwjgl.openal.ALC;
-import org.lwjgl.openal.ALCCapabilities;
-import org.lwjgl.system.MemoryStack;
-import org.lwjgl.system.MemoryUtil;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -13,10 +8,24 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.HashMap;
 import java.util.Map;
-import static org.lwjgl.openal.AL10.*;
-import static org.lwjgl.openal.ALC10.*;
+
+import org.lwjgl.openal.AL;
+import static org.lwjgl.openal.AL10.AL_FORMAT_MONO16;
+import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
+import static org.lwjgl.openal.AL10.alBufferData;
+import static org.lwjgl.openal.AL10.alDeleteBuffers;
+import static org.lwjgl.openal.AL10.alGenBuffers;
+import org.lwjgl.openal.ALC;
+import static org.lwjgl.openal.ALC10.alcCloseDevice;
+import static org.lwjgl.openal.ALC10.alcCreateContext;
+import static org.lwjgl.openal.ALC10.alcDestroyContext;
+import static org.lwjgl.openal.ALC10.alcMakeContextCurrent;
+import static org.lwjgl.openal.ALC10.alcOpenDevice;
+import org.lwjgl.openal.ALCCapabilities;
 import static org.lwjgl.stb.STBVorbis.stb_vorbis_decode_memory;
+import org.lwjgl.system.MemoryStack;
 import static org.lwjgl.system.MemoryStack.stackPush;
+import org.lwjgl.system.MemoryUtil;
 
 /**
  * Singleton Manager for OpenAL context and audio buffer caching.
@@ -29,18 +38,39 @@ public class AudioManager {
     private static final Map<String, String> keyPathMap = new HashMap<>();
     private static final Map<String, OggAudio.AudioType> keyTypeMap = new HashMap<>();
     private static final Map<String, OggAudio> audioCache = new HashMap<>();
+    private static boolean isAudioSupported = false;
 
     /**
      * Initializes the OpenAL device and context.
      */
     public static void init() {
-        if (context != 0) return;
-        device = alcOpenDevice((ByteBuffer) null);
-        ALCCapabilities alcCapabilities = ALC.createCapabilities(device);
-        context = alcCreateContext(device, (IntBuffer) null);
-        alcMakeContextCurrent(context);
-        AL.createCapabilities(alcCapabilities);
-        System.out.println("OpenAL Initialized");
+        if (context != 0) {
+            return;
+        }
+
+        try {
+            device = alcOpenDevice((ByteBuffer) null);
+            if (device == 0) {
+                System.err.println("AudioManager: Nenhum dispositivo de áudio detectado pelo ALSA/OpenAL. Executando em modo silencioso.");
+                isAudioSupported = false;
+                return;
+            }
+            ALCCapabilities alcCapabilities = ALC.createCapabilities(device);
+            context = alcCreateContext(device, (IntBuffer) null);
+            if (context == 0) {
+                alcCloseDevice(device);
+                device = 0;
+                isAudioSupported = false;
+                return;
+            }
+            alcMakeContextCurrent(context);
+            AL.createCapabilities(alcCapabilities);
+            isAudioSupported = true;
+            System.out.println("OpenAL Initialized");
+        } catch (Exception e) {
+            System.err.println("AudioManager: Falha ao inicializar OpenAL: " + e.getMessage());
+            isAudioSupported = false;
+        }
     }
 
     public static void setAllSFXVolume(float percent) {
@@ -93,11 +123,15 @@ public class AudioManager {
 
     /**
      * Registers a sound effect (SFX) with a specific key and resource path.
-     * 
-     * @param key  Unique identifier for the audio.
+     *
+     * @param key Unique identifier for the audio.
      * @param path Path to the .ogg resource file.
      */
     public static void loadSFX(String key, String path) {
+        if (!isAudioSupported) {
+            return;
+        }
+
         init();
         keyPathMap.put(key, path);
         keyTypeMap.put(key, OggAudio.AudioType.SFX);
@@ -106,8 +140,8 @@ public class AudioManager {
 
     /**
      * Registers music with a specific key and resource path.
-     * 
-     * @param key  Unique identifier for the audio.
+     *
+     * @param key Unique identifier for the audio.
      * @param path Path to the .ogg resource file.
      */
     public static void loadMusic(String key, String path) {
@@ -119,7 +153,7 @@ public class AudioManager {
 
     /**
      * Retrieves or creates an OggAudio instance for the given key.
-     * 
+     *
      * @param key Unique identifier for the audio.
      * @return An OggAudio instance.
      */
@@ -129,7 +163,7 @@ public class AudioManager {
 
     /**
      * Gets the resource path mapped to a key.
-     * 
+     *
      * @param key Unique identifier for the audio.
      * @return The resource path string.
      */
@@ -139,7 +173,7 @@ public class AudioManager {
 
     /**
      * Gets the AudioType (SFX or MUSIC) mapped to a key.
-     * 
+     *
      * @param key Unique identifier for the audio.
      * @return The OggAudio.AudioType.
      */
@@ -148,9 +182,9 @@ public class AudioManager {
     }
 
     /**
-     * Retrieves an OpenAL buffer ID for the specified resource path.
-     * If the buffer is not in cache, it will be loaded and cached.
-     * 
+     * Retrieves an OpenAL buffer ID for the specified resource path. If the
+     * buffer is not in cache, it will be loaded and cached.
+     *
      * @param resourcePath Path to the .ogg resource file.
      * @return The OpenAL buffer ID.
      */
@@ -166,11 +200,15 @@ public class AudioManager {
 
     /**
      * Decodes an OGG resource and creates an OpenAL buffer.
-     * 
+     *
      * @param resourcePath Path to the .ogg resource file.
      * @return The newly generated OpenAL buffer ID.
      */
     private static int loadAudioToBuffer(String resourcePath) {
+        if (!isAudioSupported) {
+            return 0;
+        }
+
         ByteBuffer encodedBuffer = null;
         try (MemoryStack stack = stackPush()) {
             encodedBuffer = ioResourceToByteBuffer(resourcePath, 32 * 1024);
@@ -195,26 +233,31 @@ public class AudioManager {
         } catch (Exception e) {
             throw new RuntimeException("Error loading OGG to buffer [" + resourcePath + "]: " + e.getMessage());
         } finally {
-            if (encodedBuffer != null) MemoryUtil.memFree(encodedBuffer);
+            if (encodedBuffer != null) {
+                MemoryUtil.memFree(encodedBuffer);
+            }
         }
     }
 
     /**
      * Reads a resource from the classpath into a direct ByteBuffer.
-     * 
-     * @param resource   The path to the resource.
+     *
+     * @param resource The path to the resource.
      * @param bufferSize Initial buffer size for allocation.
      * @return A ByteBuffer containing the resource data.
      */
     private static ByteBuffer ioResourceToByteBuffer(String resource, int bufferSize) throws Exception {
         ByteBuffer buffer;
-        try (InputStream source = AudioManager.class.getResourceAsStream(resource);
-             ReadableByteChannel rbc = Channels.newChannel(source)) {
-            if (source == null) throw new RuntimeException("Resource not found: " + resource);
+        try (InputStream source = AudioManager.class.getResourceAsStream(resource); ReadableByteChannel rbc = Channels.newChannel(source)) {
+            if (source == null) {
+                throw new RuntimeException("Resource not found: " + resource);
+            }
             buffer = MemoryUtil.memAlloc(bufferSize);
             while (true) {
                 int bytes = rbc.read(buffer);
-                if (bytes == -1) break;
+                if (bytes == -1) {
+                    break;
+                }
                 if (buffer.remaining() == 0) {
                     buffer = MemoryUtil.memRealloc(buffer, buffer.capacity() * 2);
                 }
@@ -225,12 +268,14 @@ public class AudioManager {
     }
 
     /**
-     * Releases all audio resources, destroys OpenAL context, 
-     * and clears internal caches.
+     * Releases all audio resources, destroys OpenAL context, and clears
+     * internal caches.
      */
     public static void cleanup() {
-        if (context == 0) return;
-        
+        if (context == 0) {
+            return;
+        }
+
         // Cleanup OggAudio instances (Sources)
         for (OggAudio audio : audioCache.values()) {
             audio.cleanup();
