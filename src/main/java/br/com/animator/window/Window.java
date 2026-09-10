@@ -233,16 +233,18 @@ public final class Window extends JFrame {
         int width = cdm.getWidth();
         int height = cdm.getHeight();
         double ratio = (double) width / (double) height;
+        int roundedRatio = (int) Math.round(ratio * 100.0);
 
-        if (ratio == ((double) 4 / (double) 3)) {
-            return (GlobalProperties.ASPECT_RATIO_4_3);
-        } else if (ratio == ((double) 16 / (double) 10)) {
-            return (GlobalProperties.ASPECT_RATIO_16_10);
-        } else if (ratio == ((double) 16 / (double) 9)) {
-            return (GlobalProperties.ASPECT_RATIO_16_9);
-        } else {
-            throw new IllegalArgumentException("Invalid aspect ratio: " + ratio);
-        }
+        return switch (roundedRatio) {
+            case 133 ->
+                GlobalProperties.ASPECT_RATIO_4_3;
+            case 160 ->
+                GlobalProperties.ASPECT_RATIO_16_10;
+            case 177, 178 ->
+                GlobalProperties.ASPECT_RATIO_16_9;
+            default ->
+                throw new IllegalArgumentException("Invalid aspect ratio: " + ratio);
+        };
     }
 
     private void defineCurrentGameWindow() {
