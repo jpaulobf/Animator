@@ -9,13 +9,12 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
@@ -30,14 +29,13 @@ import br.com.animator.input.JoystickHandler;
 /**
  * Window - Class responsible for creating and managing the game window,
  * handling fullscreen mode, and processing user input. This class extends
- * JFrame and implements WindowListener to handle window events such as
- * activation, deactivation, and closing. It also manages the buffer strategy
- * for rendering the game graphics and provides methods for switching between
- * fullscreen and windowed modes. The Window class interacts with the IGame
- * interface to update the game settings when switching between fullscreen and
- * windowed modes, and to handle key presses for game controls.
+ * JFrame. It manages the buffer strategy for rendering the game graphics and
+ * provides methods for switching between fullscreen and windowed modes. The
+ * Window class interacts with the IGame interface to update the game settings
+ * when switching between fullscreen and windowed modes, and registers dedicated
+ * listeners for game controls and window lifecycle events.
  */
-public class Window extends JFrame implements WindowListener, KeyListener, MouseListener, MouseMotionListener {
+public final class Window extends JFrame {
 
     // --- Constants ---//
     private static final int TRIPLE_BUFFERS = 3;
@@ -130,22 +128,20 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
         // --- Joystick Initialization ---//
         this.joystickHandler = new JoystickHandler();
         if (this.joystickHandler.initialize()) {
-            this.joystickHandler.setJoystickListener(new JoystickHandler.JoystickListener() {
-                @Override
-                public void onButtonPressed(int joystickId, int buttonId) {
-                    game.processJoystickButton(joystickId, buttonId);
-                }
-
-                @Override
-                public void onHatChanged(int joystickId, int hatId, byte state) {
-                    game.processJoystickHat(joystickId, hatId, state);
-                }
-            });
+            this.joystickHandler.setJoystickListener(new GameJoystickListener(this.game));
         }
 
         // Define as dimensões iniciais baseadas no modo (Fullscreen ou Janela)
-        this.panelWidth = this.fullScreen ? graphicsDevice.getDisplayMode().getWidth() : CURRENT_WINDOW_WIDTH;
-        this.panelHeight = this.fullScreen ? graphicsDevice.getDisplayMode().getHeight() : CURRENT_WINDOW_HEIGHT;
+        Integer width = CURRENT_WINDOW_WIDTH;
+        Integer height = CURRENT_WINDOW_HEIGHT;
+        if (width == null) {
+            width = 640;
+        }
+        if (height == null) {
+            height = 480;
+        }
+        this.panelWidth = this.fullScreen ? graphicsDevice.getDisplayMode().getWidth() : width;
+        this.panelHeight = this.fullScreen ? graphicsDevice.getDisplayMode().getHeight() : height;
 
         // Desabilita as teclas de navegação de foco (como o TAB) para que o KeyListener possa capturá-las
         this.setFocusTraversalKeysEnabled(false);
@@ -168,10 +164,6 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
             super.setResizable(false);
 
             this.add(gameCanvas);
-            // --- Set the window to fullscreen ---//
-            this.addKeyListener(this);
-            this.addMouseListener(this);
-            this.addMouseMotionListener(this);
         } else {
             this.setIconImage(
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/images/game-icon.png")));
@@ -185,10 +177,6 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
             this.add(gameCanvas);
             this.pack();
             this.initializeCanvasBufferStrategy();
-            super.addWindowListener(this);
-            this.addKeyListener(this);
-            this.addMouseListener(this);
-            this.addMouseMotionListener(this);
             this.setResizable(false);
         }
 
@@ -197,9 +185,11 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
         super.requestFocus();
 
         // --- Finalize window ---//
-        this.getCurrentAspectRatio();
         this.currentDisplayMode = this.getGraphicsConfiguration().getDevice().getDisplayMode();
         this.hideMouseCursor();
+
+        // --- Register Listeners ---//
+        this.registerListeners();
     }
 
     public DisplayMode[] getAvailableScreenResolutions() {
@@ -420,38 +410,10 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
                 (int) ((Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2) - (CURRENT_WINDOW_HEIGHT / 2)
                 - 20));
 
-        super.addWindowListener(this);
         super.setIgnoreRepaint(false);
         this.setVisible(true);
         this.initializeCanvasBufferStrategy();
         this.isTransitioning = false;
-    }
-
-    // --- Window Listener ---//
-    public void windowActivated(WindowEvent arg0) {
-        game.resumeGame();
-    }
-
-    public void windowClosing(WindowEvent arg0) {
-        game.stopGame();
-    }
-
-    public void windowDeactivated(WindowEvent arg0) {
-        game.pauseGame();
-    }
-
-    public void windowDeiconified(WindowEvent arg0) {
-        game.resumeGame();
-    }
-
-    public void windowIconified(WindowEvent arg0) {
-        game.pauseGame();
-    }
-
-    public void windowOpened(WindowEvent arg0) {
-    }
-
-    public void windowClosed(WindowEvent arg0) {
     }
 
     // --- Accessors (Thread-safe) ---//
@@ -488,8 +450,10 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
      */
     public Dimension getWindowDimensions() {
         synchronized (dimensionLock) {
-            return new Dimension(CURRENT_WINDOW_WIDTH != null ? CURRENT_WINDOW_WIDTH : 0,
-                    CURRENT_WINDOW_HEIGHT != null ? CURRENT_WINDOW_HEIGHT : 0);
+            Integer width = CURRENT_WINDOW_WIDTH;
+            Integer height = CURRENT_WINDOW_HEIGHT;
+            return new Dimension(width != null ? width : 0,
+                    height != null ? height : 0);
         }
     }
 
@@ -509,54 +473,101 @@ public class Window extends JFrame implements WindowListener, KeyListener, Mouse
         return gameCanvas;
     }
 
-    // --- Key Listener ---//
-    @Override
-    public void keyTyped(KeyEvent e) {
+    // --- Listener Registration & Dedicated Listener Classes --- //
+    private void registerListeners() {
+        GameKeyListener keyListener = new GameKeyListener(this.game);
+        GameMouseListener mouseListener = new GameMouseListener();
+
+        this.addWindowListener(new GameWindowListener(this.game));
+        this.addKeyListener(keyListener);
+        this.addMouseListener(mouseListener);
+
+        this.gameCanvas.addKeyListener(keyListener);
+        this.gameCanvas.addMouseListener(mouseListener);
     }
 
-    @Override
-    public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_TAB) {
-            game.toggleFastForward(true);
+    private static class GameWindowListener extends WindowAdapter {
+
+        private final IGame game;
+
+        public GameWindowListener(IGame game) {
+            this.game = game;
         }
-        game.processKey(e.getKeyCode(), e.isAltDown());
-    }
 
-    @Override
-    public void keyReleased(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_TAB) {
-            game.toggleFastForward(false);
+        @Override
+        public void windowActivated(WindowEvent e) {
+            game.resumeGame();
+        }
+
+        @Override
+        public void windowClosing(WindowEvent e) {
+            game.stopGame();
+        }
+
+        @Override
+        public void windowDeactivated(WindowEvent e) {
+            game.pauseGame();
+        }
+
+        @Override
+        public void windowDeiconified(WindowEvent e) {
+            game.resumeGame();
+        }
+
+        @Override
+        public void windowIconified(WindowEvent e) {
+            game.pauseGame();
         }
     }
 
-    // --- Mouse Listener ---//
-    @Override
-    public void mouseMoved(MouseEvent e) {
+    private static class GameKeyListener extends KeyAdapter {
+
+        private final IGame game;
+
+        public GameKeyListener(IGame game) {
+            this.game = game;
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_TAB) {
+                game.toggleFastForward(true);
+            }
+            game.processKey(e.getKeyCode(), e.isAltDown());
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_TAB) {
+                game.toggleFastForward(false);
+            }
+        }
     }
 
-    @Override
-    public void mousePressed(MouseEvent e) {
-        System.out.println("Mouse Click X: " + e.getX() + " Y: " + e.getY());
+    private static class GameMouseListener extends MouseAdapter {
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            System.out.println("Mouse Click X: " + e.getX() + " Y: " + e.getY());
+        }
     }
 
-    // Required interface implementations (empty if unused)
-    @Override
-    public void mouseDragged(MouseEvent e) {
-    }
+    private static class GameJoystickListener implements JoystickHandler.JoystickListener {
 
-    @Override
-    public void mouseClicked(MouseEvent e) {
-    }
+        private final IGame game;
 
-    @Override
-    public void mouseReleased(MouseEvent e) {
-    }
+        public GameJoystickListener(IGame game) {
+            this.game = game;
+        }
 
-    @Override
-    public void mouseEntered(MouseEvent e) {
-    }
+        @Override
+        public void onButtonPressed(int joystickId, int buttonId) {
+            game.processJoystickButton(joystickId, buttonId);
+        }
 
-    @Override
-    public void mouseExited(MouseEvent e) {
+        @Override
+        public void onHatChanged(int joystickId, int hatId, byte state) {
+            game.processJoystickHat(joystickId, hatId, state);
+        }
     }
 }
