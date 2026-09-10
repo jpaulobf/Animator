@@ -2,14 +2,17 @@ package br.com.animator.game;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+
 import br.com.animator.core.game.AbstractGame;
 import br.com.animator.game.ui.menu.GameExitMenuImpl;
 import br.com.animator.input.GameAction;
 import br.com.animator.state.GameStateMachine;
 
 /**
- * Class responsible for managing the game menu, including the developer logo, intro, high score presentation, 
- * main menu, options menu, and exit menu. It handles user input to navigate through these screens and updates the game settings accordingly.
+ * Class responsible for managing the game menu, including the developer logo,
+ * intro, high score presentation, main menu, options menu, and exit menu. It
+ * handles user input to navigate through these screens and updates the game
+ * settings accordingly.
  */
 public class Game extends AbstractGame {
 
@@ -19,24 +22,26 @@ public class Game extends AbstractGame {
     public Game() {
         //do nothing
     }
-    
+
     /**
-     * Initializes the game menu by creating instances of the various screens 
-     * and options, and setting up their properties based on the game window's 
+     * Initializes the game menu by creating instances of the various screens
+     * and options, and setting up their properties based on the game window's
      * dimensions and aspect ratio.
      */
+    @Override
     public void init() {
         this.gameStateMachine = new GameStateMachine();
         this.gameExitMenu = new GameExitMenuImpl(
-            gameWindow.getPanelWidth(), 
-            gameWindow.getPanelHeight(), 
-            gameWindow.getCurrentAspectRatio()
+                gameWindow.getPanelWidth(),
+                gameWindow.getPanelHeight(),
+                gameWindow.getCurrentAspectRatio()
         );
         this.updateCurrentCoreGame();
     }
 
     /**
-     * Updates the game menu based on the current state and the elapsed time since the last frame.
+     * Updates the game menu based on the current state and the elapsed time
+     * since the last frame.
      */
     @Override
     public void update(long frametime) {
@@ -51,21 +56,27 @@ public class Game extends AbstractGame {
     }
 
     /**
-     * Renders the game menu based on the current state and the elapsed time since the last frame.
+     * Renders the game menu based on the current state and the elapsed time
+     * since the last frame.
+     *
      * @param delta The time elapsed since the last frame.
      */
     @Override
     public void render(long delta) {
-        Graphics2D g2d = null;
+        Graphics2D g2d;
 
         if (this.renderer.isNative()) {
-            if (!gameWindow.isReadyToRender()) return;
+            if (!gameWindow.isReadyToRender()) {
+                return;
+            }
             g2d = (Graphics2D) gameWindow.getBufferStrategy().getDrawGraphics();
         } else {
             g2d = this.graphics2D;
         }
 
-        if (g2d == null) return;
+        if (g2d == null) {
+            return;
+        }
 
         try {
             // Limpa o fundo do buffer
@@ -88,14 +99,15 @@ public class Game extends AbstractGame {
             System.err.println("Error during game rendering: " + e.getMessage());
         } finally {
             // No modo native, precisamos liberar o context do BufferStrategy
-            if (this.renderer.isNative() && g2d != null) {
+            if (this.renderer.isNative()) {
                 g2d.dispose();
             }
         }
     }
 
     /**
-     * Handles key press events to navigate through the game menu and update settings based on user input.
+     * Handles key press events to navigate through the game menu and update
+     * settings based on user input.
      */
     @Override
     public void keyPressed(GameAction action) {
@@ -104,6 +116,7 @@ public class Game extends AbstractGame {
 
     /**
      * Trata o pressionamento de botões do Joystick.
+     *
      * @param buttonCode O código do botão pressionado.
      */
     @Override
@@ -134,8 +147,8 @@ public class Game extends AbstractGame {
     }
 
     /**
-     * Navigate to a game state using the provided state navigator.
-     * Centralizes state transitions and core game updates.
+     * Navigate to a game state using the provided state navigator. Centralizes
+     * state transitions and core game updates.
      */
     private void navigateToState(Runnable stateNavigator) {
         stateNavigator.run();
